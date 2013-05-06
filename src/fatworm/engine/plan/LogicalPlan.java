@@ -148,12 +148,15 @@ public class LogicalPlan {
 					for (int pos = 0; pos < child.getChildCount(); ++pos) {
 						Tree cur = child.getChild(pos);
 						
-						if (cur.getChildCount() == 2) {
-							sortColumnList.add( cur.getChild(0).toString() );
-							sortOrderList.add( cur.getChild(1).getType() == Symbol.ASC );
-						} else {
-							sortColumnList.add( cur.toString() );
+						if (cur.getType() == Symbol.ASC) {
+							sortColumnList.add( getColumnName(cur.getChild(0)) );
 							sortOrderList.add( Boolean.TRUE );							
+						} else if (cur.getType() == Symbol.DESC) {
+							sortColumnList.add( getColumnName(cur.getChild(0)) );
+							sortOrderList.add( Boolean.FALSE );								
+						} else {
+							sortColumnList.add( getColumnName(cur) );
+							sortOrderList.add( Boolean.TRUE );
 						}
 					}
 				}
@@ -261,6 +264,7 @@ public class LogicalPlan {
 	private List<Predicate> getValueTuple(Tree child) throws Exception {
 		List<Predicate> result = new LinkedList<Predicate>();
 		for (int i = 0; i < child.getChildCount(); ++i) {
+			System.out.println(child.getChild(i).toStringTree());
 			result.add(translateValue(child.getChild(i)));
 		}
 		return result;
@@ -385,11 +389,18 @@ public class LogicalPlan {
 		} else if (t.getChildCount() == 1) {//System.out.println(t.getType());
 			// primary : bool_expr
 			return translateOR(t);
-		} else {
+		} else if (t.getType() == Symbol.LESS ||
+				t.getType() == Symbol.LESS_EQ ||
+				t.getType() == Symbol.GTR ||
+				t.getType() == Symbol.GTR_EQ ||
+				t.getType() == Symbol.EQ ||
+				t.getType() == Symbol.NEQ) {
 			// primary : value cop value
 			return new BooleanCompPredicate(translateValue(t.getChild(0)),
 					translateValue(t.getChild(1)),
 					t.getType());
+		} else {
+			return translateOR(t);
 		}
 	}
 	
@@ -398,7 +409,7 @@ public class LogicalPlan {
 			Predicate[] child = new Predicate[2];
 			for (int i = 0; i < 2; ++i) {
 				Tree tree = t.getChild(i);
-				child[i] = translateAND(tree);		
+				child[i] = translateOR(tree);		
 			}
 			return new BooleanPredicate(child[0], child[1], t.getType() );
 		} else {
@@ -420,7 +431,7 @@ public class LogicalPlan {
 	}
 
 	private Predicate translateValue(Tree t) throws Exception {
-		if (t.getType() == Symbol.PLUS || t.getType() == Symbol.MINUS) {
+		if (t.getChildCount() == 2 && (t.getType() == Symbol.PLUS || t.getType() == Symbol.MINUS)) {
 			return new NumberCalcPredicate(translateMultiplicative(t.getChild(0)),
 					translateMultiplicative(t.getChild(1)),
 					t.getType());
@@ -430,7 +441,7 @@ public class LogicalPlan {
 	}
 	
 	private Predicate translateMultiplicative(Tree t) throws Exception {
-		if (t.getType() == Symbol.MUL || t.getType() == Symbol.DIV || t.getType() == Symbol.MOD) {
+		if (t.getChildCount() == 2 && (t.getType() == Symbol.MUL || t.getType() == Symbol.DIV || t.getType() == Symbol.MOD)) {
 			return new NumberCalcPredicate(translateAtom(t.getChild(0)),
 					translateAtom(t.getChild(1)),
 					t.getType());
@@ -452,7 +463,7 @@ public class LogicalPlan {
 				child.getType() == Symbol.MAX ||
 				child.getType() == Symbol.SUM) {
 			// func^ (! colName )!
-			return new FuncPredicate(child.getType(), getColumnName(child.getChild(1)));
+			return new FuncPredicate(child.getType(), getColumnName(child.getChild(0)));
 		} else if (child.getType() == Symbol.MINUS) {
 			// -^ atom
 			return new NumberCalcPredicate(new ConstantPredicate(new IntegerData(0, new IntegerType())), translateAtom(child.getChild(0)), Symbol.MINUS);
@@ -479,6 +490,9 @@ public class LogicalPlan {
 
 	private Predicate getConstantValue(Tree child) throws Exception {
 		if (child.getType() == Symbol.INTEGER_LITERAL) {
+			if (child.toString().length() >= 10) {
+				return new ConstantPredicate(new DecimalType(0, 0).valueOf(child.toString()));
+			}
 			return new ConstantPredicate(new IntegerType().valueOf(child.toString()));
 		} else if (child.getType() == Symbol.STRING_LITERAL) {
 			String c = child.toString();

@@ -17,16 +17,9 @@ public class DriverTest {
 			Connection connection = DriverManager.getConnection("jdbc:fatworm://localhost");
 			Statement statement = connection.createStatement();
 			
-			statement.execute("SELECT QUUX.SHIP FROM " +
-							"(SELECT SHIP, BATTLE2, DATE AS DATE1 FROM " +
-							"(SELECT FOO.SHIP AS SHIP, FOO.BATTLE AS BATTLE1, BAR.BATTLE AS BATTLE2 FROM " +
-							"(SELECT * FROM Outcomes AS O1 WHERE O1.RESULT = 'damaged') AS FOO, " +
-							"(SELECT * FROM Outcomes AS O2 ) AS BAR " +
-							"WHERE FOO.BATTLE <> BAR.BATTLE AND FOO.SHIP = BAR.SHIP ) AS BAT, " +
-							"(SELECT * FROM Battles ) AS QUX " +
-							"WHERE QUX.NAME = BAT.BATTLE1) AS QUUX, " +
-							"(SELECT * FROM Battles ) AS QUUUX " +
-							"WHERE QUUUX.NAME = QUUX.BATTLE2 AND QUUUX.DATE > QUUX.DATE1");
+			statement.execute("insert into test1 values(1,111111111111111)");
+//			statement.execute("SELECT MODEL306.IS_MUTAGEN, COUNT( MODEL306.MODEL_ID ) FROM MODEL AS MODEL306, BOND AS T1008290441960  WHERE MODEL306.MODEL_ID=T1008290441960.MODEL_ID AND MODEL306.LOGP='0' GROUP BY MODEL306.IS_MUTAGEN ORDER BY MODEL306.IS_MUTAGEN ASC");
+			//statement.execute("delete from test1 where (a=1 and b=9) or (a=2 or b=8)");
 			//statement.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

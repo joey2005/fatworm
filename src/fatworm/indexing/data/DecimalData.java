@@ -17,8 +17,7 @@ public class DecimalData extends NumberData {
 	public DecimalData(String s, DecimalType type, int added) {
 		this.type = type;
 		if (s != null) {
-			byte[] buf = s.getBytes();
-			BigInteger b = new BigInteger(buf);
+			BigInteger b = new BigInteger(s);
 			this.d = new BigDecimal(b);
 			this.d = this.d.scaleByPowerOfTen(-type.getScale());
 		} else {

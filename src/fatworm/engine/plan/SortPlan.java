@@ -20,7 +20,7 @@ public class SortPlan extends Plan {
 	@Override
 	public String toString() {
 		String result = tablePlan.toString() + "\n";
-		result = "Plan #" + (planID = Plan.planCount++) + " <- " + "Sort Plan #" + tablePlan.getPlanID() + " as:\n";
+		result += "Plan #" + (planID = Plan.planCount++) + " <- " + "Sort Plan #" + tablePlan.getPlanID() + " as:\n";
 		for (int i = 0; i < colNameList.size(); ++i) {
 			result += "sort " + colNameList.get(i) + " by ";
 			if (orderList.get(i)) {
