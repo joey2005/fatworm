@@ -1,6 +1,7 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 import java.util.List;
 
@@ -8,11 +9,11 @@ import fatworm.engine.predicate.*;
 
 public class ProjectPlan extends Plan {
 
-	public Plan subPlan;
-	public List<Predicate> projectList;
-	public List<String> alias;
-	public int planID;
-	public String groupBy;
+	private Plan subPlan;
+	private List<Predicate> projectList;
+	private List<String> alias;
+	private int planID;
+	private String groupBy;
 	
 	public ProjectPlan(Plan subPlan, List<Predicate> pList, List<String> alias, String groupBy) {
 		this.subPlan = subPlan;
@@ -47,6 +48,17 @@ public class ProjectPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		return subPlan;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

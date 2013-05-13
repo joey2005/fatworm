@@ -1,13 +1,14 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 import fatworm.engine.predicate.*;
 
 public class DeletePlan extends Plan {
 	
-	public String tableName;
-	public Predicate whereCondition;
-	public int planID;
+	private String tableName;
+	private Predicate whereCondition;
+	private int planID;
 	
 	public DeletePlan(String tableName, Predicate whereCondition) {
 		this.tableName = tableName;
@@ -30,6 +31,18 @@ public class DeletePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

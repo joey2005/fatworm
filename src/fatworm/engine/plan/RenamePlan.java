@@ -1,12 +1,13 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 public class RenamePlan extends Plan {
 
-	public Plan subPlan;
-	public String alias;
-	public int planID;
+	private Plan subPlan;
+	private String alias;
+	private int planID;
 	
 	public RenamePlan(Plan subPlan, String alias) {
 		this.subPlan = subPlan;
@@ -27,6 +28,17 @@ public class RenamePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		return subPlan;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

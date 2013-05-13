@@ -122,7 +122,7 @@ public class LogicalPlan {
 					if (cur.getType() == Symbol.AS) {//System.out.println(cur.toStringTree());
 						if (cur.getChild(0).getType() == Symbol.SELECT || cur.getChild(0).getType() == Symbol.SELECT_DISTINCT) {
 							// subquery as alias
-							tmp = new RenamePlan(getSubquery(cur.getChild(0)), cur.getChild(1).toString());
+							tmp = new RenamePlan(getSubQuery(cur.getChild(0)), cur.getChild(1).toString());
 						} else {
 							tmp = new RenamePlan(new TablePlan(cur.getChild(0).toString()), cur.getChild(1).toString());
 						}
@@ -138,7 +138,7 @@ public class LogicalPlan {
 			} else if (child.getType() == Symbol.WHERE) {
 				whereCondition = getCondition(child.getChild(0));
 			} else if (child.getType() == Symbol.GROUP) {
-				groupBy = getColumnName(child.getChild(0));
+				groupBy = translateColName(child.getChild(0));
 			} else if (child.getType() == Symbol.HAVING) {
 				havingCondition = getCondition(child.getChild(0));
 			} else if (child.getType() == Symbol.ORDER) {
@@ -149,13 +149,13 @@ public class LogicalPlan {
 						Tree cur = child.getChild(pos);
 						
 						if (cur.getType() == Symbol.ASC) {
-							sortColumnList.add( getColumnName(cur.getChild(0)) );
+							sortColumnList.add( translateColName(cur.getChild(0)) );
 							sortOrderList.add( Boolean.TRUE );							
 						} else if (cur.getType() == Symbol.DESC) {
-							sortColumnList.add( getColumnName(cur.getChild(0)) );
+							sortColumnList.add( translateColName(cur.getChild(0)) );
 							sortOrderList.add( Boolean.FALSE );								
 						} else {
-							sortColumnList.add( getColumnName(cur) );
+							sortColumnList.add( translateColName(cur) );
 							sortOrderList.add( Boolean.TRUE );
 						}
 					}
@@ -220,7 +220,7 @@ public class LogicalPlan {
 	private Plan getCreateIndex(CommonTree t) {
 		String indexName = t.getChild(0).toString();
 		String tableName = t.getChild(1).toString();
-		String colName = getColumnName(t.getChild(2));
+		String colName = translateColName(t.getChild(2));
 		boolean isUnique = t.getType() == Symbol.CREATE_UNIQUE_INDEX;
 		return new CreateIndexPlan(indexName, isUnique, tableName, colName);
 	}
@@ -240,19 +240,19 @@ public class LogicalPlan {
 				values = getValueTuple(t.getChild(i));
 				break;
 			}
-			schema.add( getColumnName(t.getChild(i)) );
+			schema.add( translateColName(t.getChild(i)) );
 		}
 		return new InsertValuePlan(tableName, values, schema);
 	}
 
 	private Plan getInsertSubquery(CommonTree t) throws Exception {
 		String tableName = t.getChild(0).toString();
-		Plan subPlan = getSubquery(t.getChild(1));
+		Plan subPlan = getSubQuery(t.getChild(1));
 		return new InsertSubqueryPlan(tableName, subPlan);
 	}
 
-	private Plan getSubquery(Tree child) throws Exception {
-		return getSelect((CommonTree)child);
+	private Plan getSubQuery(Tree child) throws Exception {// may need to change
+		return new SubQueryPlan(getSelect((CommonTree)child));
 	}
 
 	private Plan getInsertValues(CommonTree t) throws Exception {
@@ -279,7 +279,7 @@ public class LogicalPlan {
 			Tree cur = t.getChild(i);
 			Attribute att = new Attribute();
 			if (cur.getType() == Symbol.CREATE_DEFINITION) {
-				String colName = getColumnName(cur.getChild(0));
+				String colName = translateColName(cur.getChild(0));
 				att.setColumnName(colName);
 				
 				DataType type = null;
@@ -356,7 +356,7 @@ public class LogicalPlan {
 		Predicate whereCondition = null;
 		for (int i = 1; i < t.getChildCount(); ++i) {
 			if (t.getChild(i).getType() == Symbol.UPDATE_PAIR) {
-				colNameList.add( getColumnName( t.getChild(i).getChild(0) ) );
+				colNameList.add( translateColName( t.getChild(i).getChild(0) ) );
 				valueList.add(translateValue( t.getChild(i).getChild(1) ));
 			} else {
 				whereCondition = getCondition( t.getChild(i).getChild(0) );
@@ -372,20 +372,20 @@ public class LogicalPlan {
 
 	private Predicate translatePrimary(Tree t) throws Exception {
 		if (t.getType() == Symbol.NOT_EXISTS) {
-			return new ExistsPredicate(true, getSubquery(t.getChild(0)));
+			return new ExistsPredicate(true, getSubQuery(t.getChild(0)));
 		} else if (t.getType() == Symbol.EXISTS) {
-			return new ExistsPredicate(false, getSubquery(t.getChild(0)));
+			return new ExistsPredicate(false, getSubQuery(t.getChild(0)));
 		} else if (t.getType() == Symbol.IN) {
 			return new InPredicate(translateValue(t.getChild(0)), 
-					getSubquery(t.getChild(1)));
+					getSubQuery(t.getChild(1)));
 		} else if (t.getType() == Symbol.ANY) {
 			return new AnyPredicate(translateValue(t.getChild(0)),
 					t.getChild(1).toString(),
-					getSubquery(t.getChild(2)));
+					getSubQuery(t.getChild(2)));
 		} else if (t.getType() == Symbol.ALL) {
 			return new AllPredicate(translateValue(t.getChild(0)),
 					t.getChild(1).toString(),
-					getSubquery(t.getChild(2)));			
+					getSubQuery(t.getChild(2)));			
 		} else if (t.getChildCount() == 1) {//System.out.println(t.getType());
 			// primary : bool_expr
 			return translateOR(t);
@@ -453,17 +453,17 @@ public class LogicalPlan {
 	private Predicate translateAtom(Tree child) throws Exception {//System.out.println(child.toStringTree());
 		if (child.getType() == Symbol.DOT || child.getType() == Symbol.ID) {
 			//col_name
-			return new VariablePredicate(getColumnName(child));// where to get the table_name?
+			return new VariablePredicate(translateColName(child));// where to get the table_name?
 		} else if (child.getType() == Symbol.SELECT || child.getType() == Symbol.SELECT_DISTINCT) {
 			//subquery
-			return new SubqueryPredicate(getSubquery(child));
+			return new SubqueryPredicate(getSubQuery(child));
 		} else if (child.getType() == Symbol.AVG ||
 				child.getType() == Symbol.COUNT ||
 				child.getType() == Symbol.MIN ||
 				child.getType() == Symbol.MAX ||
 				child.getType() == Symbol.SUM) {
 			// func^ (! colName )!
-			return new FuncPredicate(child.getType(), getColumnName(child.getChild(0)));
+			return new FuncPredicate(child.getType(), translateColName(child.getChild(0)));
 		} else if (child.getType() == Symbol.MINUS) {
 			// -^ atom
 			return new NumberCalcPredicate(new ConstantPredicate(new IntegerData(0, new IntegerType())), translateAtom(child.getChild(0)), Symbol.MINUS);
@@ -480,7 +480,7 @@ public class LogicalPlan {
 		}
 	}
 
-	private String getColumnName(Tree child) {
+	private String translateColName(Tree child) {
 		if (child.getType() == Symbol.DOT) {
 			return child.getChild(0).toString() + "." + child.getChild(1).toString();
 		} else {

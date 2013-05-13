@@ -1,6 +1,7 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 import java.util.List;
 
@@ -8,17 +9,15 @@ import fatworm.engine.predicate.*;
 
 public class InsertValuePlan extends Plan {
 	
-	public String tableName;
-	public List<Predicate> args;
-	public List<String> schema;
-	public int planID;
+	private String tableName;
+	private List<Predicate> args;
+	private int planID;
 	
-	public InsertValuePlan(String tableName, List<Predicate> args, List<String> schema) {
+	public InsertValuePlan(String tableName, List<Predicate> args, List<String> columns) {
 		this.tableName = tableName;
 		this.args = args;
-		this.schema = schema;
 		
-		if (this.schema == null) {
+		if (columns == null) {
 			//read the schema of this table into this.schema
 		}
 	}
@@ -40,6 +39,18 @@ public class InsertValuePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

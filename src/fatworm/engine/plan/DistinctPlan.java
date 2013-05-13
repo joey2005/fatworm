@@ -1,11 +1,12 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 public class DistinctPlan extends Plan {
 	
-	public Plan subPlan;
-	public int planID;
+	private Plan subPlan;
+	private int planID;
 	
 	public DistinctPlan(Plan subPlan) {
 		this.subPlan = subPlan;
@@ -25,6 +26,17 @@ public class DistinctPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		return subPlan;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

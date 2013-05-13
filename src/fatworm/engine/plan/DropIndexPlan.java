@@ -1,12 +1,13 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 public class DropIndexPlan extends Plan {
 
-	public String indexName;
-	public String tableName;
-	public int planID;
+	private String indexName;
+	private String tableName;
+	private int planID;
 	
 	public DropIndexPlan(String indexName, String tableName) {
 		this.indexName = indexName;
@@ -25,6 +26,18 @@ public class DropIndexPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

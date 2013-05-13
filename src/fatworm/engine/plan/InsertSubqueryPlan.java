@@ -1,12 +1,13 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 public class InsertSubqueryPlan extends Plan {
 	
-	public String tableName;
-	public Plan subPlan;
-	public int planID;
+	private String tableName;
+	private Plan subPlan;
+	private int planID;
 	
 	public InsertSubqueryPlan(String tableName, Plan subPlan) {
 		this.tableName = tableName;
@@ -27,6 +28,17 @@ public class InsertSubqueryPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		return subPlan;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

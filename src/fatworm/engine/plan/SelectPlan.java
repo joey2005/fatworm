@@ -1,13 +1,14 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 import fatworm.engine.predicate.*;
 
 public class SelectPlan extends Plan {
 	
-	public Plan subPlan;
-	public Predicate whereCondition;
-	public int planID;
+	private Plan subPlan;
+	private Predicate whereCondition;
+	private int planID;
 	
 	public SelectPlan(Plan subPlan, Predicate whereCondition) {
 		this.subPlan = subPlan;
@@ -31,6 +32,17 @@ public class SelectPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		return subPlan;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

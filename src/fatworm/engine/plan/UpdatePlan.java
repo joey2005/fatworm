@@ -1,6 +1,7 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 import java.util.List;
 
@@ -8,11 +9,11 @@ import fatworm.engine.predicate.*;
 
 public class UpdatePlan extends Plan {
 	
-	public String tableName;
-	public List<String> colNameList;
-	public List<Predicate> valueList;
-	public Predicate whereCondition;
-	public int planID;
+	private String tableName;
+	private List<String> colNameList;
+	private List<Predicate> valueList;
+	private Predicate whereCondition;
+	private int planID;
 	
 	public UpdatePlan(String tableName, List<String> colNameList, List<Predicate> valueList, Predicate whereCondition2) {
 		this.tableName = tableName;
@@ -40,6 +41,18 @@ public class UpdatePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

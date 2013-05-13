@@ -1,11 +1,12 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 public class TablePlan extends Plan {
 
-	String tableName;
-	public int planID;
+	private String tableName;
+	private int planID;
 	
 	public TablePlan(String tableName) {
 		this.tableName = tableName;
@@ -23,6 +24,18 @@ public class TablePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

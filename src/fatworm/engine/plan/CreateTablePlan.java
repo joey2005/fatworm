@@ -8,8 +8,8 @@ import java.util.List;
 
 public class CreateTablePlan extends Plan {
 	
-	public Schema schema;
-	public int planID;
+	private Schema schema;
+	private int planID;
 	
 	public CreateTablePlan(Schema schema) {
 		this.schema = schema;
@@ -38,6 +38,18 @@ public class CreateTablePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

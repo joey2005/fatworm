@@ -1,15 +1,16 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 import java.util.List;
 
 public class SortPlan extends Plan {
 	
-	public Plan tablePlan;
-	public List<String> colNameList;
-	public List<Boolean> orderList;
-	public int planID;
+	private Plan tablePlan;
+	private List<String> colNameList;
+	private List<Boolean> orderList;
+	private int planID;
 	
 	public SortPlan(Plan tablePlan, List<String> colNameList, List<Boolean> orderList) {
 		this.tablePlan = tablePlan;
@@ -40,6 +41,17 @@ public class SortPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		return tablePlan;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}

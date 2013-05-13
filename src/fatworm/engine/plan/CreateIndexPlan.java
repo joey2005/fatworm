@@ -1,13 +1,15 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 
 public class CreateIndexPlan extends Plan {
-	public String indexName;
-	public boolean isUnique;
-	public String tableName;
-	public String colName;
-	public int planID;
+	
+	private String indexName;
+	private boolean isUnique;
+	private String tableName;
+	private String colName;
+	private int planID;
 	
 	public CreateIndexPlan(String indexName, boolean isUnique, String tableName, String colName) {
 		this.indexName = indexName;
@@ -34,6 +36,18 @@ public class CreateIndexPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Plan subPlan() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Schema getSchema() {
 		// TODO Auto-generated method stub
 		return null;
 	}
