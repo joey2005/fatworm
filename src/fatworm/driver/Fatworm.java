@@ -10,7 +10,7 @@ import org.antlr.runtime.tree.CommonTree;
 
 import fatworm.engine.parser.FatwormLexer;
 import fatworm.engine.parser.FatwormParser;
-import fatworm.engine.plan.LogicalPlan;
+import fatworm.engine.plan.Planner;
 import fatworm.engine.plan.Plan;
 import fatworm.indexing.scan.Scan;
 import fatworm.test.DriverTest;
@@ -34,7 +34,7 @@ public class Fatworm {
 	}
 	
 	public static Scan translateQuery(CommonTree tree) {
-		LogicalPlan planner = new LogicalPlan(tree);
+		Planner planner = new Planner(tree);
 		Plan plan = null;
 		Scan result = null;
 		try {

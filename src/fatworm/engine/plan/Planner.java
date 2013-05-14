@@ -13,7 +13,7 @@ import org.antlr.runtime.tree.Tree;
 import fatworm.engine.predicate.*;
 import fatworm.engine.symbol.Symbol;
 
-public class LogicalPlan {
+public class Planner {
 	
 	private List<String> extractList(List<CommonTree> tokens) {
 		List<String> result = new LinkedList<String>();
@@ -26,7 +26,7 @@ public class LogicalPlan {
 	
 	CommonTree tree;
 	
-	public LogicalPlan(CommonTree tree) {
+	public Planner(CommonTree tree) {
 		this.tree = tree;
 	}
 
