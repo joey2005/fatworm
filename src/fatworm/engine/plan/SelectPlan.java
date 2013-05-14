@@ -7,12 +7,14 @@ import fatworm.engine.predicate.*;
 public class SelectPlan extends Plan {
 	
 	private Plan subPlan;
+	private Schema schema;
 	private Predicate whereCondition;
 	private int planID;
 	
 	public SelectPlan(Plan subPlan, Predicate whereCondition) {
 		this.subPlan = subPlan;
 		this.whereCondition = whereCondition;
+		this.schema = subPlan.getSchema();
 	}
 	
 	@Override
@@ -43,7 +45,6 @@ public class SelectPlan extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 }

@@ -6,10 +6,12 @@ import fatworm.indexing.schema.Schema;
 public class TablePlan extends Plan {
 
 	private String tableName;
+	private Schema schema;
 	private int planID;
 	
-	public TablePlan(String tableName) {
+	public TablePlan(String tableName, Schema schema) {
 		this.tableName = tableName;
+		this.schema = schema;
 	}
 	
 	@Override
@@ -36,7 +38,6 @@ public class TablePlan extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 }

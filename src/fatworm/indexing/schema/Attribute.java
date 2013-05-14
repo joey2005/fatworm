@@ -5,13 +5,12 @@ import fatworm.engine.predicate.Predicate;
 
 public class Attribute {
 	
+	public Attribute(String colName, DataType type) {
+		this.colName = colName;
+		this.type = type;
+	}
+	
 	public Attribute() {
-		colName = null;
-		isNull = -1;
-		autoIncrement = false;
-		isDefault = false;
-		defaultValue = null;
-		type = null;
 	}
 	
 	public void setColumnName(String colName) {
@@ -43,11 +42,11 @@ public class Attribute {
 		return type;
 	}
 	
-	private String colName;
-	private int isNull;
-	private boolean autoIncrement;
-	private boolean isDefault;
-	private Predicate defaultValue;
-	private DataType type;
+	private String colName = null;
+	private int isNull = -1;
+	private boolean autoIncrement = false;
+	private boolean isDefault = false;
+	private Predicate defaultValue = null;
+	private DataType type = null;
 
 }

@@ -3,13 +3,13 @@ package fatworm.engine.plan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
 
-public class InsertSubqueryPlan extends Plan {
+public class InsertSubQueryPlan extends Plan {
 	
 	private String tableName;
 	private Plan subPlan;
 	private int planID;
 	
-	public InsertSubqueryPlan(String tableName, Plan subPlan) {
+	public InsertSubQueryPlan(String tableName, Plan subPlan) {
 		this.tableName = tableName;
 		this.subPlan = subPlan;
 	}

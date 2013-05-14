@@ -4,35 +4,76 @@ import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
 
 public class ProductScan extends Scan {
+	
+	private Scan s1, s2;
+	private Record left, right;
+	private boolean start;
+	private Schema schema;
+	
+	public ProductScan(Scan s1, Scan s2, Schema schema) {
+		this.s1 = s1;
+		this.s2 = s2;
+		this.schema = schema;
+		beforeFirst();
+	}
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+		return s1.hasNext() || s2.hasNext();
 	}
 
 	@Override
 	public Record next() {
+		Record result = null;
+		if (!start) {
+			s1.beforeFirst();
+			s2.beforeFirst();
+			if (s1.hasNext()) {
+				left = s1.next();
+			}
+			right = null;
+			start = true;
+		}
+		if (s2.hasNext()) {
+			right = s2.next();
+			result = union(left, right);
+		} else {
+			if (s1.hasNext()) {
+				left = s1.next();
+				s2.beforeFirst();
+				if (s2.hasNext()) {
+					right = s2.next();
+					result = union(left, right);
+				}
+			}
+		}
+		return result;
+	}
+
+	private Record union(Record left, Record right) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 
 	@Override
 	public void beforeFirst() {
-		// TODO Auto-generated method stub
-
+		s1.beforeFirst();
+		s2.beforeFirst();
+		left = right = null;
+		start = false;
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
+		s1.close();
+		s2.close();
+		left = right = null;
+		s1 = s2 = null;
 	}
 
 }

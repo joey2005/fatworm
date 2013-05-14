@@ -41,14 +41,12 @@ public class SubQueryPlan extends Plan {
 
 	@Override
 	public Plan subPlan() {
-		// TODO Auto-generated method stub
-		return null;
+		return subPlan;
 	}
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 
 	@Override

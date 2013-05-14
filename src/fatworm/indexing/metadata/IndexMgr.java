@@ -1,5 +1,5 @@
 package fatworm.indexing.metadata;
 
-public class IndexMetadata {
+public class IndexMgr {
 
 }

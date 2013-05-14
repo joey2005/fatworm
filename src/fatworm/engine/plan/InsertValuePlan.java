@@ -1,7 +1,10 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.data.Data;
+import fatworm.indexing.scan.InsertValueScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
+import fatworm.indexing.table.Record;
 
 import java.util.List;
 
@@ -10,12 +13,13 @@ import fatworm.engine.predicate.*;
 public class InsertValuePlan extends Plan {
 	
 	private String tableName;
-	private List<Predicate> args;
+	private Schema schema;
+	private List<Predicate> list;
 	private int planID;
 	
-	public InsertValuePlan(String tableName, List<Predicate> args, List<String> columns) {
+	public InsertValuePlan(String tableName, List<Predicate> list, List<String> columns) {
 		this.tableName = tableName;
-		this.args = args;
+		this.list = list;
 		
 		if (columns == null) {
 			//read the schema of this table into this.schema
@@ -25,8 +29,8 @@ public class InsertValuePlan extends Plan {
 	@Override
 	public String toString() {
 		String result = "insert into " + tableName + ": value( ";
-		for (Predicate vp : args) {
-			result += vp.toString() + ", ";
+		for (Predicate p : list) {
+			result += p.toString() + ", ";
 		}
 		result += " )";
 		return "Plan #" + (planID = Plan.planCount++) + " <- " + result;
@@ -39,8 +43,8 @@ public class InsertValuePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Data> datas = null;
+		return new InsertValueScan(tableName, new Record(datas, schema));
 	}
 
 	@Override
@@ -51,7 +55,6 @@ public class InsertValuePlan extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 }

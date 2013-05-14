@@ -8,6 +8,7 @@ import java.util.List;
 public class SortPlan extends Plan {
 	
 	private Plan tablePlan;
+	private Schema schema;
 	private List<String> colNameList;
 	private List<Boolean> orderList;
 	private int planID;
@@ -16,6 +17,7 @@ public class SortPlan extends Plan {
 		this.tablePlan = tablePlan;
 		this.colNameList = colNameList;
 		this.orderList = orderList;
+		this.schema = tablePlan.getSchema();
 	}
 	
 	@Override
@@ -52,7 +54,6 @@ public class SortPlan extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 }

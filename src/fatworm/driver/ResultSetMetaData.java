@@ -74,7 +74,7 @@ public class ResultSetMetaData implements java.sql.ResultSetMetaData {
 			return -1;
 		}
 		try {
-			DataType type = schema.getAttributeOf(column - 1).getType();
+			DataType type = schema.getFields(column - 1).getType();
 			if (type instanceof BooleanType) {
 				return java.sql.Types.BOOLEAN;
 			}

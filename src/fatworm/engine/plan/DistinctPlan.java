@@ -7,9 +7,11 @@ public class DistinctPlan extends Plan {
 	
 	private Plan subPlan;
 	private int planID;
+	private Schema schema;
 	
 	public DistinctPlan(Plan subPlan) {
 		this.subPlan = subPlan;
+		this.schema = subPlan.getSchema();
 	}
 	
 	@Override
@@ -37,7 +39,6 @@ public class DistinctPlan extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 }

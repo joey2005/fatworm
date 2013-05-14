@@ -9,21 +9,23 @@ import java.util.List;
 public class CreateTablePlan extends Plan {
 	
 	private Schema schema;
+	private List<String> primaryKeys;
 	private int planID;
 	
-	public CreateTablePlan(Schema schema) {
+	public CreateTablePlan(Schema schema, List<String> primaryKeys) {
 		this.schema = schema;
+		this.primaryKeys = primaryKeys;
 	}
 	
 	@Override
 	public String toString() {
 		String result = "create table: " + schema.getTableName() + "\n(";
 		for (int i = 0; i < schema.getColumnCount(); ++i) {
-			Attribute at = schema.getAttributeOf(i);
+			Attribute at = schema.getFields(i);
 			result += at.getColumnName() + ": " + at.getType().toString() + "\n";
 		}
 		result += "primary key: ";
-		for (String c : schema.getPrimaryKey()) {
+		for (String c : primaryKeys) {
 			result += c + ", ";
 		}
 		result += "\n)";
@@ -50,9 +52,7 @@ public class CreateTablePlan extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
-	
 	
 }

@@ -4,6 +4,7 @@ import fatworm.indexing.data.*;
 import fatworm.indexing.schema.Attribute;
 import fatworm.indexing.schema.Schema;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,6 +23,15 @@ public class Planner {
 		}
 		//System.out.println(result.toString());
 		return result;
+	}
+	
+	/**
+	 * return the schema of given table
+	 * @param tblname
+	 * @return
+	 */
+	private Schema getSchema(String tblname) {
+		return null;
 	}
 	
 	CommonTree tree;
@@ -124,10 +134,12 @@ public class Planner {
 							// subquery as alias
 							tmp = new RenamePlan(getSubQuery(cur.getChild(0)), cur.getChild(1).toString());
 						} else {
-							tmp = new RenamePlan(new TablePlan(cur.getChild(0).toString()), cur.getChild(1).toString());
+							String tblname = cur.getChild(0).toString();
+							tmp = new RenamePlan(new TablePlan(tblname, getSchema(tblname)), cur.getChild(1).toString());
 						}
 					} else {
-						tmp = new TablePlan(cur.toString());
+						String tblname = cur.getChild(0).toString();
+						tmp = new TablePlan(tblname, getSchema(tblname));
 					}
 					if (fromResult == null) {
 						fromResult = tmp;
@@ -248,7 +260,7 @@ public class Planner {
 	private Plan getInsertSubquery(CommonTree t) throws Exception {
 		String tableName = t.getChild(0).toString();
 		Plan subPlan = getSubQuery(t.getChild(1));
-		return new InsertSubqueryPlan(tableName, subPlan);
+		return new InsertSubQueryPlan(tableName, subPlan);
 	}
 
 	private Plan getSubQuery(Tree child) throws Exception {// may need to change
@@ -272,6 +284,7 @@ public class Planner {
 
 	private Plan getCreateTable(CommonTree t) throws Exception {
 		Schema schema = new Schema();
+		List<String> primaryKeys = new ArrayList<String>();
 		String tableName = t.getChild(0).toString();
 		schema.setTableName(tableName);
 		//System.err.println(t.getChildCount());
@@ -339,10 +352,10 @@ public class Planner {
 				//insert columns into schema
 				schema.addColumn(att);
 			} else if (cur.getType() == Symbol.PRIMARY_KEY) {
-				schema.addPrimaryKey( cur.getChild(0).toString() );
+				primaryKeys.add(cur.getChild(0).toString());
 			}
 		}
-		return new CreateTablePlan(schema);
+		return new CreateTablePlan(schema, primaryKeys);
 	}
 	
 	private Plan getDropTable(CommonTree t) {
@@ -456,7 +469,7 @@ public class Planner {
 			return new VariablePredicate(translateColName(child));// where to get the table_name?
 		} else if (child.getType() == Symbol.SELECT || child.getType() == Symbol.SELECT_DISTINCT) {
 			//subquery
-			return new SubqueryPredicate(getSubQuery(child));
+			return new SubQueryPredicate(getSubQuery(child));
 		} else if (child.getType() == Symbol.AVG ||
 				child.getType() == Symbol.COUNT ||
 				child.getType() == Symbol.MIN ||

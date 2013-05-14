@@ -6,12 +6,14 @@ import fatworm.indexing.schema.Schema;
 public class RenamePlan extends Plan {
 
 	private Plan subPlan;
+	private Schema schema;
 	private String alias;
 	private int planID;
 	
 	public RenamePlan(Plan subPlan, String alias) {
 		this.subPlan = subPlan;
 		this.alias = alias;
+		this.schema = subPlan.getSchema();
 	}
 	
 	@Override
@@ -39,7 +41,6 @@ public class RenamePlan extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 }
