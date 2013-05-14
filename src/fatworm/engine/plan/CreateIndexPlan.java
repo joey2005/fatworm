@@ -1,5 +1,6 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.scan.CreateIndexScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
 
@@ -36,8 +37,7 @@ public class CreateIndexPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		return new CreateIndexScan(tableName, indexName, colName, isUnique);
 	}
 
 	@Override

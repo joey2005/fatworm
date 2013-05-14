@@ -1,5 +1,6 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.scan.InsertSubQueryScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
 
@@ -28,8 +29,7 @@ public class InsertSubQueryPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		return new InsertSubQueryScan(tableName, subPlan.createScan());
 	}
 
 	@Override

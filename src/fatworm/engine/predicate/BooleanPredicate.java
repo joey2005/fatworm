@@ -1,6 +1,8 @@
 package fatworm.engine.predicate;
 
 import fatworm.engine.symbol.Symbol;
+import fatworm.indexing.data.Data;
+import fatworm.indexing.table.Record;
 
 public class BooleanPredicate extends Predicate {
 	
@@ -16,5 +18,11 @@ public class BooleanPredicate extends Predicate {
 	@Override
 	public String toString() {
 		return "(" + lhs.toString() + " )" + (oper == Symbol.OR ? " or " : " and ") + "( " + rhs.toString() + " )";
+	}
+
+	@Override
+	public Data calc(Record record) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

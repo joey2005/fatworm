@@ -1,38 +1,66 @@
 package fatworm.indexing.scan;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
 
 public class DistinctScan extends Scan {
+	
+	private Scan scan; 
+	private Record last, next;
+	
+	public DistinctScan(Scan scan) {
+		List<SortScan.Order> sorts = new ArrayList<SortScan.Order>(); 
+		Schema schema = scan.getSchema();
+		int size = schema.getAllFields().size();
+		for (int i = 0; i < size; ++i) {
+			sorts.add(new SortScan.Order(schema.getFields(i).getColumnName(), true));
+		}
+		
+		this.scan = new SortScan(scan, sorts);
+		this.beforeFirst();
+	}
 
 	@Override
 	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+		if (next == null) {
+			while (scan.hasNext()) {
+				next = scan.next();
+				if (last == null || !last.equals(next)) {
+					break;
+				}
+				next = null;
+			}
+			last = next;
+		}
+		return next != null;
 	}
 
 	@Override
 	public Record next() {
-		// TODO Auto-generated method stub
-		return null;
+		Record result = next;
+		next = null;
+		return result;
 	}
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return scan.getSchema();
 	}
 
 	@Override
 	public void beforeFirst() {
-		// TODO Auto-generated method stub
-
+		scan.beforeFirst();
+		last = next = null;
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
+		scan.close();
+		scan = null;
+		last = next = null;
 	}
 
 }

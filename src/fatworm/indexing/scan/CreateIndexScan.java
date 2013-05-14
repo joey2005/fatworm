@@ -3,36 +3,31 @@ package fatworm.indexing.scan;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
 
-public class CreateIndexScan extends Scan {
-
-	@Override
-	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+public class CreateIndexScan extends Operation {
+	
+	private String indexName;
+	private boolean isUnique;
+	private String tableName;
+	private String colName;
+	
+	public CreateIndexScan(String tableName, String indexName, String colName, boolean isUnique) {
+		this.tableName = this.tableName;
+		this.indexName = tableName + "_" + indexName;
+		this.colName = colName;
+		this.isUnique = isUnique;
 	}
 
 	@Override
-	public Record next() {
+	public void doit() {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void beforeFirst() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
+		indexName = null;
+		tableName = null;
+		colName = null;
 	}
 
 }

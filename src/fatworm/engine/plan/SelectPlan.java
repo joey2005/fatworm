@@ -1,6 +1,7 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.scan.SelectScan;
 import fatworm.indexing.schema.Schema;
 import fatworm.engine.predicate.*;
 
@@ -34,8 +35,11 @@ public class SelectPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		if (whereCondition == null) {
+			return subPlan.createScan();
+		} else {
+			return new SelectScan(subPlan.createScan(), whereCondition);
+		}
 	}
 
 	@Override

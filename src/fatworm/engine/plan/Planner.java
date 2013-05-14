@@ -80,8 +80,8 @@ public class Planner {
 		
 		boolean selectAll = false;
 		
-		List<Predicate> colName = new LinkedList<Predicate>();
-		List<String> alias = new LinkedList<String>();
+		List<Predicate> colName = new ArrayList<Predicate>();
+		List<String> alias = new ArrayList<String>();
 		
 		int i = 0;
 		while (i < t.getChildCount()) {

@@ -1,8 +1,10 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.scan.SortScan;
 import fatworm.indexing.schema.Schema;
 
+import java.util.LinkedList;
 import java.util.List;
 
 public class SortPlan extends Plan {
@@ -43,8 +45,11 @@ public class SortPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		List<SortScan.Order> sorts = new LinkedList<SortScan.Order>();
+		for (int i = 0; i < colNameList.size(); ++i) {
+			sorts.add(new SortScan.Order(colNameList.get(i), orderList.get(i)));
+		}
+		return new SortScan(tablePlan.createScan(), sorts);
 	}
 
 	@Override

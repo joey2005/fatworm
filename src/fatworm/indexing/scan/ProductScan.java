@@ -6,7 +6,7 @@ import fatworm.indexing.table.Record;
 public class ProductScan extends Scan {
 	
 	private Scan s1, s2;
-	private Record left, right;
+	private Record next, left, right;
 	private boolean start;
 	private Schema schema;
 	
@@ -19,34 +19,37 @@ public class ProductScan extends Scan {
 
 	@Override
 	public boolean hasNext() {
-		return s1.hasNext() || s2.hasNext();
+		if (next == null) {
+			if (!start) {
+				s1.beforeFirst();
+				s2.beforeFirst();
+				if (s1.hasNext()) {
+					left = s1.next();
+				}
+				right = null;
+				start = true;
+			}
+			if (s2.hasNext()) {
+				right = s2.next();
+				next = union(left, right);
+			} else {
+				if (s1.hasNext()) {
+					left = s1.next();
+					s2.beforeFirst();
+					if (s2.hasNext()) {
+						right = s2.next();
+						next = union(left, right);
+					}
+				}
+			}
+		}
+		return next != null;
 	}
 
 	@Override
 	public Record next() {
-		Record result = null;
-		if (!start) {
-			s1.beforeFirst();
-			s2.beforeFirst();
-			if (s1.hasNext()) {
-				left = s1.next();
-			}
-			right = null;
-			start = true;
-		}
-		if (s2.hasNext()) {
-			right = s2.next();
-			result = union(left, right);
-		} else {
-			if (s1.hasNext()) {
-				left = s1.next();
-				s2.beforeFirst();
-				if (s2.hasNext()) {
-					right = s2.next();
-					result = union(left, right);
-				}
-			}
-		}
+		Record result = next;
+		next = null;
 		return result;
 	}
 
@@ -64,7 +67,7 @@ public class ProductScan extends Scan {
 	public void beforeFirst() {
 		s1.beforeFirst();
 		s2.beforeFirst();
-		left = right = null;
+		left = right = next = null;
 		start = false;
 	}
 

@@ -1,38 +1,27 @@
 package fatworm.indexing.scan;
 
+import java.util.List;
+
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
 
-public class DropTableScan extends Scan {
-
-	@Override
-	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+public class DropTableScan extends Operation {
+	
+	private List<String> tableList;
+	
+	public DropTableScan(List<String> tableNameList) {
+		this.tableList = tableNameList;
 	}
 
 	@Override
-	public Record next() {
+	public void doit() {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void beforeFirst() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
+		tableList = null;
 	}
 
 }

@@ -1,5 +1,6 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.scan.CreateTableScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Attribute;
 import fatworm.indexing.schema.Schema;
@@ -40,8 +41,7 @@ public class CreateTablePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		return new CreateTableScan(schema, primaryKeys);
 	}
 
 	@Override

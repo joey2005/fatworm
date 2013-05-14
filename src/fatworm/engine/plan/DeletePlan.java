@@ -1,5 +1,7 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.metadata.InfoMgr;
+import fatworm.indexing.scan.DeleteScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
 import fatworm.engine.predicate.*;
@@ -31,8 +33,14 @@ public class DeletePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		Scan scan = null;
+		Schema schema = InfoMgr.getSchema(tableName);
+		if (whereCondition != null) {
+			scan = new SelectPlan(new TablePlan(tableName, schema), whereCondition).createScan();
+		} else {
+			scan = new TablePlan(tableName, schema).createScan();
+		}
+		return new DeleteScan(tableName, scan);
 	}
 
 	@Override

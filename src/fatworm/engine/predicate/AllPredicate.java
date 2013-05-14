@@ -2,6 +2,8 @@ package fatworm.engine.predicate;
 
 import fatworm.engine.plan.Plan;
 import fatworm.engine.symbol.Symbol;
+import fatworm.indexing.data.Data;
+import fatworm.indexing.table.Record;
 
 public class AllPredicate extends Predicate {
 
@@ -46,4 +48,11 @@ public class AllPredicate extends Predicate {
 		result += "all of ( " + subPlan.toString() + " )";
 		return result;
 	}
+
+	@Override
+	public Data calc(Record record) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

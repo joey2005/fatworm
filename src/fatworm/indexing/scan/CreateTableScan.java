@@ -1,38 +1,32 @@
 package fatworm.indexing.scan;
 
+import java.util.List;
+
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
 
-public class CreateTableScan extends Scan {
-
-	@Override
-	public boolean hasNext() {
-		// TODO Auto-generated method stub
-		return false;
+public class CreateTableScan extends Operation {
+	
+	private Schema schema;
+	private List<String> primaryKeys;
+	
+	public CreateTableScan(Schema schema, List<String> primaryKeys) {
+		this.schema = schema;
+		this.primaryKeys = primaryKeys;
 	}
 
+	/**
+	 * create table
+	 */
 	@Override
-	public Record next() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void beforeFirst() {
-		// TODO Auto-generated method stub
-
+	public void doit() {
+		
 	}
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-
+		schema = null;
+		primaryKeys = null;
 	}
 
 }
