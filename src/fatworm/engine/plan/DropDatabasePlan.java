@@ -5,8 +5,8 @@ import fatworm.indexing.schema.Schema;
 
 public class DropDatabasePlan extends Plan {
 	
-	private String dbName;
-	private int planID;
+	public String dbName;
+	public int planID;
 	
 	public DropDatabasePlan(String dbName) {
 		this.dbName = dbName;

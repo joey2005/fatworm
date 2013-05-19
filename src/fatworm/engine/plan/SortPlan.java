@@ -9,11 +9,11 @@ import java.util.List;
 
 public class SortPlan extends Plan {
 	
-	private Plan tablePlan;
-	private Schema schema;
-	private List<String> colNameList;
-	private List<Boolean> orderList;
-	private int planID;
+	public Plan tablePlan;
+	public Schema schema;
+	public List<String> colNameList;
+	public List<Boolean> orderList;
+	public int planID;
 	
 	public SortPlan(Plan tablePlan, List<String> colNameList, List<Boolean> orderList) {
 		this.tablePlan = tablePlan;

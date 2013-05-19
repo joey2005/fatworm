@@ -5,8 +5,8 @@ import fatworm.indexing.schema.Schema;
 
 public class CreateDatabasePlan extends Plan {
 	
-	private String dbName;
-	private int planID;
+	public String dbName;
+	public int planID;
 	
 	public CreateDatabasePlan(String dbName) {
 		this.dbName = dbName;

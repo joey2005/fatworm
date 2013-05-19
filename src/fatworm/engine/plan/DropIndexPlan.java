@@ -6,9 +6,9 @@ import fatworm.indexing.schema.Schema;
 
 public class DropIndexPlan extends Plan {
 
-	private String indexName;
-	private String tableName;
-	private int planID;
+	public String indexName;
+	public String tableName;
+	public int planID;
 	
 	public DropIndexPlan(String indexName, String tableName) {
 		this.indexName = indexName;

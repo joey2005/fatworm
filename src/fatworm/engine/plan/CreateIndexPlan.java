@@ -6,11 +6,11 @@ import fatworm.indexing.schema.Schema;
 
 public class CreateIndexPlan extends Plan {
 	
-	private String indexName;
-	private boolean isUnique;
-	private String tableName;
-	private String colName;
-	private int planID;
+	public String indexName;
+	public boolean isUnique;
+	public String tableName;
+	public String colName;
+	public int planID;
 	
 	public CreateIndexPlan(String indexName, boolean isUnique, String tableName, String colName) {
 		this.indexName = indexName;

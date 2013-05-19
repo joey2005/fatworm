@@ -1,20 +1,46 @@
 package fatworm.engine.plan;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import fatworm.indexing.data.DataType;
 import fatworm.indexing.scan.RenameScan;
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.AttributeField;
 import fatworm.indexing.schema.Schema;
 
 public class RenamePlan extends Plan {
 
-	private Plan subPlan;
-	private Schema schema;
-	private String alias;
-	private int planID;
+	public Plan subPlan;
+	public Schema schema;
+	public int planID;
+	public String alias;
 	
 	public RenamePlan(Plan subPlan, String alias) {
 		this.subPlan = subPlan;
 		this.alias = alias;
-		this.schema = subPlan.getSchema();
+		this.schema = translateSchema();
+	}
+	
+	public RenamePlan(Plan subPlan, Schema schema) {
+		this.subPlan = subPlan;
+		this.alias = null;
+		this.schema = schema;
+	}
+	
+	private Schema translateSchema() {
+		Schema s = subPlan.getSchema();
+		List<AttributeField> attrList = new ArrayList<AttributeField>();
+		for (int i = 0; i < s.getColumnCount(); ++i) {
+			AttributeField af = s.getFields(i);
+			String fieldName = af.getColumnName();
+			DataType type = af.getType();
+			int dotpos = fieldName.indexOf(".");
+			String colName = fieldName.substring(dotpos + 1);
+			fieldName = alias + "." + colName;
+			attrList.add(new AttributeField(fieldName, type, af.isNull, af.defaultValue, af.autoIncrement));
+		}
+		return new Schema(alias, attrList);
 	}
 	
 	@Override

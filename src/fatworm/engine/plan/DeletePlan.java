@@ -8,9 +8,9 @@ import fatworm.engine.predicate.*;
 
 public class DeletePlan extends Plan {
 	
-	private String tableName;
-	private Predicate whereCondition;
-	private int planID;
+	public String tableName;
+	public Predicate whereCondition;
+	public int planID;
 	
 	public DeletePlan(String tableName, Predicate whereCondition) {
 		this.tableName = tableName;

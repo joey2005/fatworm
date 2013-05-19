@@ -1,6 +1,7 @@
 package fatworm.engine.predicate;
 
 import fatworm.indexing.data.Data;
+import fatworm.indexing.data.DataType;
 import fatworm.indexing.table.Record;
 
 public class ConstantPredicate extends Predicate {
@@ -18,6 +19,12 @@ public class ConstantPredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataType getType() {
 		// TODO Auto-generated method stub
 		return null;
 	}

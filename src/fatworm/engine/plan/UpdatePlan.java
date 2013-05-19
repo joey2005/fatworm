@@ -9,11 +9,11 @@ import fatworm.engine.predicate.*;
 
 public class UpdatePlan extends Plan {
 	
-	private String tableName;
-	private List<String> colNameList;
-	private List<Predicate> valueList;
-	private Predicate whereCondition;
-	private int planID;
+	public String tableName;
+	public List<String> colNameList;
+	public List<Predicate> valueList;
+	public Predicate whereCondition;
+	public int planID;
 	
 	public UpdatePlan(String tableName, List<String> colNameList, List<Predicate> valueList, Predicate whereCondition2) {
 		this.tableName = tableName;

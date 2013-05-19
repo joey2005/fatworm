@@ -6,9 +6,9 @@ import fatworm.indexing.schema.Schema;
 
 public class InsertSubQueryPlan extends Plan {
 	
-	private String tableName;
-	private Plan subPlan;
-	private int planID;
+	public String tableName;
+	public Plan subPlan;
+	public int planID;
 	
 	public InsertSubQueryPlan(String tableName, Plan subPlan) {
 		this.tableName = tableName;

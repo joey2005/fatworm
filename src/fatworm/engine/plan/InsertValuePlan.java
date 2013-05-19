@@ -12,10 +12,10 @@ import fatworm.engine.predicate.*;
 
 public class InsertValuePlan extends Plan {
 	
-	private String tableName;
-	private Schema schema;
-	private List<Predicate> list;
-	private int planID;
+	public String tableName;
+	public Schema schema;
+	public List<Predicate> list;
+	public int planID;
 	
 	public InsertValuePlan(String tableName, List<Predicate> list, List<String> columns) {
 		this.tableName = tableName;

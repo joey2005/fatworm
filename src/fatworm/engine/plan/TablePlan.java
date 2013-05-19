@@ -5,9 +5,10 @@ import fatworm.indexing.schema.Schema;
 
 public class TablePlan extends Plan {
 
-	private String tableName;
-	private Schema schema;
-	private int planID;
+	public String tableName;
+	
+	public Schema schema;
+	public int planID;
 	
 	public TablePlan(String tableName, Schema schema) {
 		this.tableName = tableName;

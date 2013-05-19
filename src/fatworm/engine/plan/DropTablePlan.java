@@ -10,8 +10,8 @@ import org.antlr.runtime.tree.Tree;
 
 public class DropTablePlan extends Plan {
 	
-	private List<String> tableNameList;
-	private int planID;
+	public List<String> tableNameList;
+	public int planID;
 
 	public DropTablePlan(List<String> tableNameList) {
 		this.tableNameList = tableNameList;

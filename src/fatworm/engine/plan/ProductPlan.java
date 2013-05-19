@@ -6,9 +6,9 @@ import fatworm.indexing.schema.Schema;
 
 public class ProductPlan extends Plan {
 
-	private Plan lhs, rhs;
-	private Schema schema;
-	private int planID;
+	public Plan lhs, rhs;
+	public Schema schema;
+	public int planID;
 	
 	public ProductPlan(Plan lhs, Plan rhs) {
 		this.lhs = lhs;

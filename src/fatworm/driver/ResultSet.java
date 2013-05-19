@@ -383,8 +383,7 @@ public class ResultSet implements java.sql.ResultSet {
 
 	@Override
 	public Object getObject(int columnIndex) throws SQLException {
-		Object result = record.getFromColumn(columnIndex - 1);
-		return result;
+		return record.getFromColumn(columnIndex - 1).getValue();
 	}
 
 	@Override

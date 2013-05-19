@@ -9,11 +9,11 @@ import fatworm.indexing.table.Record;
 
 public class SubQueryPlan extends Plan {
 	
-	private Plan subPlan;
-	private Schema schema;
-	private Record record;
-	private Scan scan;
-	private int planID;
+	public Plan subPlan;
+	public Schema schema;
+	public Record record;
+	public Scan scan;
+	public int planID;
 	
 	public SubQueryPlan(Plan subPlan) {
 		this.subPlan = subPlan;

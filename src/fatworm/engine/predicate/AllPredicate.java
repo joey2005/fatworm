@@ -2,7 +2,11 @@ package fatworm.engine.predicate;
 
 import fatworm.engine.plan.Plan;
 import fatworm.engine.symbol.Symbol;
+import fatworm.indexing.data.BooleanData;
+import fatworm.indexing.data.BooleanType;
 import fatworm.indexing.data.Data;
+import fatworm.indexing.data.DataType;
+import fatworm.indexing.scan.Scan;
 import fatworm.indexing.table.Record;
 
 public class AllPredicate extends Predicate {
@@ -10,6 +14,7 @@ public class AllPredicate extends Predicate {
 	public Predicate value;
 	public int oper;
 	public Plan subPlan;
+	public DataType type;
 	
 	public AllPredicate(Predicate value, String oper, Plan subPlan) {
 		this.value = value;
@@ -27,6 +32,14 @@ public class AllPredicate extends Predicate {
 			this.oper = Symbol.EQ;
 		}
 		this.subPlan = subPlan;
+		type = new BooleanType();
+	}
+	
+	public AllPredicate(Predicate value, int oper, Plan subPlan) {
+		this.value = value;
+		this.oper = oper;
+		this.subPlan = subPlan;
+		type = new BooleanType();
 	}
 	
 	@Override
@@ -51,8 +64,33 @@ public class AllPredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
-		// TODO Auto-generated method stub
-		return null;
+		if (subPlan.getSchema().getColumnCount() != 1) {
+			try {
+				throw new Exception("different type in predicate");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		Data result = value.calc(record);
+		Scan s = subPlan.createScan();
+		for (s.beforeFirst(); s.hasNext(); ) {
+			Record now = s.next();
+			Data data = now.getFromColumn(0);
+			BooleanCompPredicate test = new BooleanCompPredicate(
+					new ConstantPredicate(result),
+					new ConstantPredicate(data),
+					oper);
+			if (!test.equals(BooleanData.TRUE)) {
+				return new BooleanData(false, new BooleanType());
+			}
+		}
+		return new BooleanData(true, new BooleanType());
+	}
+
+	@Override
+	public DataType getType() {
+		return type;
 	}
 
 }

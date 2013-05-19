@@ -7,10 +7,10 @@ import fatworm.engine.predicate.*;
 
 public class SelectPlan extends Plan {
 	
-	private Plan subPlan;
-	private Schema schema;
-	private Predicate whereCondition;
-	private int planID;
+	public Plan subPlan;
+	public Schema schema;
+	public Predicate whereCondition;
+	public int planID;
 	
 	public SelectPlan(Plan subPlan, Predicate whereCondition) {
 		this.subPlan = subPlan;

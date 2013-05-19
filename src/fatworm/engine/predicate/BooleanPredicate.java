@@ -2,6 +2,7 @@ package fatworm.engine.predicate;
 
 import fatworm.engine.symbol.Symbol;
 import fatworm.indexing.data.Data;
+import fatworm.indexing.data.DataType;
 import fatworm.indexing.table.Record;
 
 public class BooleanPredicate extends Predicate {
@@ -22,6 +23,12 @@ public class BooleanPredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataType getType() {
 		// TODO Auto-generated method stub
 		return null;
 	}

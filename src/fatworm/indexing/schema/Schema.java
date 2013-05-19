@@ -10,31 +10,18 @@ import fatworm.engine.predicate.*;
 
 public class Schema {
 
-	private List<Attribute> attributes;
+	private List<AttributeField> attributes;
 	private String tableName;
 	
-	public Schema() {
-		tableName = null;
-		attributes = new ArrayList<Attribute>();
-	}
-	
-	public Schema(String tblName, List<Attribute> attributes) {
+	public Schema(String tblName, List<AttributeField> attributes) {
 		this.tableName = tblName;
 		this.attributes = attributes;
 	}
 	
 	public Schema union(Schema right, String alias) {// need to change the name of columns?
-		List<Attribute> fields = attributes;
+		List<AttributeField> fields = attributes;
 		fields.addAll(right.getAllFields());
 		return new Schema(alias, fields);
-	}
-	
-	public void setTableName(String s) {
-		tableName = s;
-	}
-	
-	public void addColumn(Attribute att) {
-		attributes.add(att);
 	}
 	
 	public String getTableName() {
@@ -45,16 +32,16 @@ public class Schema {
 		return attributes.size();
 	}
 	
-	public List<Attribute> getAllFields() {
+	public List<AttributeField> getAllFields() {
 		return attributes;
 	}
 	
-	public Attribute getFields(int at) {
+	public AttributeField getFields(int at) {
 		return attributes.get(at);
 	}
 
-	public Attribute getFields(String colName) {
-		for (Attribute attr : attributes) {
+	public AttributeField getFields(String colName) {
+		for (AttributeField attr : attributes) {
 			if (attr.getColumnName().equals(colName)) {
 				return attr;
 			}

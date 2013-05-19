@@ -2,16 +2,16 @@ package fatworm.engine.plan;
 
 import fatworm.indexing.scan.CreateTableScan;
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.schema.Attribute;
+import fatworm.indexing.schema.AttributeField;
 import fatworm.indexing.schema.Schema;
 
 import java.util.List;
 
 public class CreateTablePlan extends Plan {
 	
-	private Schema schema;
-	private List<String> primaryKeys;
-	private int planID;
+	public Schema schema;
+	public List<String> primaryKeys;
+	public int planID;
 	
 	public CreateTablePlan(Schema schema, List<String> primaryKeys) {
 		this.schema = schema;
@@ -22,7 +22,7 @@ public class CreateTablePlan extends Plan {
 	public String toString() {
 		String result = "create table: " + schema.getTableName() + "\n(";
 		for (int i = 0; i < schema.getColumnCount(); ++i) {
-			Attribute at = schema.getFields(i);
+			AttributeField at = schema.getFields(i);
 			result += at.getColumnName() + ": " + at.getType().toString() + "\n";
 		}
 		result += "primary key: ";

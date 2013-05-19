@@ -7,9 +7,11 @@ import fatworm.indexing.table.Record;
 public class VariablePredicate extends Predicate {
 	
 	public String variableName;
+	public DataType type;
 
-	public VariablePredicate(String variableName) {
+	public VariablePredicate(String variableName, DataType type) {
 		this.variableName = variableName;
+		this.type = type;
 	}
 	
 	@Override
@@ -19,7 +21,11 @@ public class VariablePredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
-		// TODO Auto-generated method stub
-		return null;
+		return record.getFromVariableName(variableName);
+	}
+
+	@Override
+	public DataType getType() {
+		return type;
 	}
 }

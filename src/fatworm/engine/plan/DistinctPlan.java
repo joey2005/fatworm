@@ -5,9 +5,9 @@ import fatworm.indexing.schema.Schema;
 
 public class DistinctPlan extends Plan {
 	
-	private Plan subPlan;
-	private int planID;
-	private Schema schema;
+	public Plan subPlan;
+	public int planID;
+	public Schema schema;
 	
 	public DistinctPlan(Plan subPlan) {
 		this.subPlan = subPlan;

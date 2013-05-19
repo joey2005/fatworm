@@ -2,6 +2,7 @@ package fatworm.engine.predicate;
 
 import fatworm.engine.plan.Plan;
 import fatworm.indexing.data.Data;
+import fatworm.indexing.data.DataType;
 import fatworm.indexing.table.Record;
 
 public class SubQueryPredicate extends Predicate {
@@ -19,6 +20,12 @@ public class SubQueryPredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public DataType getType() {
 		// TODO Auto-generated method stub
 		return null;
 	}
