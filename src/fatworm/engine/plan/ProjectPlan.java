@@ -1,6 +1,7 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.data.DataType;
+import fatworm.indexing.scan.ProjectScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.AttributeField;
 import fatworm.indexing.schema.Schema;
@@ -31,12 +32,12 @@ public class ProjectPlan extends Plan {
 		for (Predicate p : projectList) {
 			if (p instanceof FuncPredicate) {
 				FuncPredicate fp = (FuncPredicate)p;
-				DataType type = subPlan.getSchema().getFields(fp.colName).getType();
-				fields.add(new AttributeField(tableName + "." + fp.colName, type, -1, null, false));
+				DataType type = subPlan.getSchema().getFields(fp.colName.toString()).getType();
+				fields.add(new AttributeField(tableName + "." + fp.toString(), type, -1, null, false));
 			} else if (p instanceof VariablePredicate) {
 				VariablePredicate vp = (VariablePredicate)p;
 				DataType type = subPlan.getSchema().getFields(vp.variableName).getType();
-				fields.add(new AttributeField(tableName + "." + vp.variableName, type, -1, null, false));			
+				fields.add(new AttributeField(tableName + "." + vp.toString(), type, -1, null, false));			
 			} else {
 				// impossible ? 
 			}
@@ -55,7 +56,6 @@ public class ProjectPlan extends Plan {
 		if (groupBy != null) {
 			result += " GROUP BY " + groupBy;
 		}
-		
 		return result;
 	}
 
@@ -66,8 +66,7 @@ public class ProjectPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ProjectScan(subPlan.createScan(), schema, projectList, groupBy);
 	}
 
 	@Override

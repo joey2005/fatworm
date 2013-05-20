@@ -5,6 +5,9 @@ import fatworm.indexing.schema.Schema;
 
 public abstract class Plan {
 	
+	@Override
+	public abstract String toString();
+	
 	public abstract int getPlanID();
 	
 	public abstract Scan createScan();

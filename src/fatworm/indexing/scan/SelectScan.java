@@ -19,6 +19,9 @@ public class SelectScan extends Scan {
 
 	@Override
 	public boolean hasNext() {
+		if (scan == null) {
+			return false;
+		}
 		if (next == null) {
 			while (true) {
 				if (scan.hasNext()) {
@@ -54,15 +57,25 @@ public class SelectScan extends Scan {
 
 	@Override
 	public void beforeFirst() {
-		scan.beforeFirst();
+		if (scan != null) {
+			scan.beforeFirst();
+		}
 		next = null;
 	}
 
 	@Override
 	public void close() {
-		scan.close();
+		if (scan != null) {
+			scan.close();
+			scan = null;
+		}
 		next = null;
 		whereCondition = null;
+	}
+
+	@Override
+	public String toString() {
+		return "select scan(" + scan.toString() + ")";
 	}
 
 }

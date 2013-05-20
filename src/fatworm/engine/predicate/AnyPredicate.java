@@ -82,10 +82,10 @@ public class AnyPredicate extends Predicate {
 					new ConstantPredicate(data),
 					oper);
 			if (test.equals(BooleanData.TRUE)) {
-				return new BooleanData(true, new BooleanType());
+				return BooleanData.TRUE;
 			}
 		}
-		return new BooleanData(false, new BooleanType());
+		return BooleanData.FALSE;
 	}
 
 	@Override

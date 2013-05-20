@@ -24,4 +24,9 @@ public class DropTableScan extends Operation {
 		tableList = null;
 	}
 
+	@Override
+	public String toString() {
+		return "drop table scan()";
+	}
+
 }

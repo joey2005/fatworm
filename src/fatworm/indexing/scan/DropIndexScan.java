@@ -25,4 +25,9 @@ public class DropIndexScan extends Operation {
 		tableName = null;
 	}
 
+	@Override
+	public String toString() {
+		return "drop index scan()";
+	}
+
 }

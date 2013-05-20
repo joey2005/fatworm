@@ -3,6 +3,8 @@ package fatworm.indexing.data;
 import java.sql.Timestamp;
 
 public class TimestampType extends DataType {
+
+	private TimestampData defaultValue = null;
 	
 	public TimestampType() {
 	}
@@ -39,5 +41,4 @@ public class TimestampType extends DataType {
 		return "Timestamp";
 	}
 
-	private TimestampData defaultValue = null;
 }

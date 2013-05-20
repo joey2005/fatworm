@@ -3,6 +3,8 @@ package fatworm.indexing.data;
 import java.sql.Date;
 
 public class DateTimeType extends DataType {
+
+	private DateTimeData defaultValue = null;
 	
 	public DateTimeType() {
 	}
@@ -38,5 +40,4 @@ public class DateTimeType extends DataType {
 		return "DateTime";
 	}
 
-	private DateTimeData defaultValue = null;
 }

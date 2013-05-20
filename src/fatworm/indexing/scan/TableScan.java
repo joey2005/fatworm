@@ -35,4 +35,10 @@ public class TableScan extends Scan {
 
 	}
 
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

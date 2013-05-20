@@ -29,4 +29,9 @@ public class CreateTableScan extends Operation {
 		primaryKeys = null;
 	}
 
+	@Override
+	public String toString() {
+		return "create table scan()";
+	}
+
 }

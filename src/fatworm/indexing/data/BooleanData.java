@@ -1,6 +1,9 @@
 package fatworm.indexing.data;
 
 public class BooleanData extends Data {
+	
+	private Boolean b;
+	private BooleanType type;
 
 	public BooleanData(Boolean b, BooleanType type) {
 		this.b = b;
@@ -8,14 +11,14 @@ public class BooleanData extends Data {
 	}
 	
 	public BooleanData(String s, BooleanType type) {
-		if (s != null) {
+		if (s == null || s.equals("null")) {
+			b = null;
+		} else {
 			if (s.length() > 0) {
 				b = Boolean.valueOf((s.charAt(0) != 0));
 			} else {
 				b = null;
 			}
-		} else {
-			b = null;
 		}
 		this.type = type;
 	}
@@ -70,21 +73,14 @@ public class BooleanData extends Data {
 			return BooleanData.NULL;
 		}
 		return new BooleanData(this.b || o.b, this.type);
-	}
-	
-	public BooleanData not() {
-		if (this.isNull()) {
-			return BooleanData.NULL;
-		}
-		return new BooleanData(!this.b, this.type);
-	}
-	
-	
-	private Boolean b;
-	private BooleanType type;
-	
-	
+	}	
+
 	public static final BooleanData TRUE = new BooleanData(true, new BooleanType());
 	public static final BooleanData FALSE = new BooleanData(false, new BooleanType());
 	public static final BooleanData NULL = new BooleanData((Boolean)null, new BooleanType());
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.compareTo((Data)obj) == 0;
+	}
 }

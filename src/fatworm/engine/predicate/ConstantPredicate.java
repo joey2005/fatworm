@@ -19,13 +19,11 @@ public class ConstantPredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
-		// TODO Auto-generated method stub
-		return null;
+		return data;
 	}
 
 	@Override
 	public DataType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return data.getType();
 	}
 }

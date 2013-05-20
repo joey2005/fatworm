@@ -1,7 +1,9 @@
 package fatworm.indexing.data;
 
 public class FloatType extends NumberType {
-
+	
+	private FloatData defaultValue = null;
+	
 	public FloatType() {
 	}
 
@@ -41,6 +43,5 @@ public class FloatType extends NumberType {
 	public Data valueOf(String value) {
 		return new FloatData(value, this);
 	}
-	
-	private FloatData defaultValue = null;
+
 }

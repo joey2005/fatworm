@@ -36,12 +36,14 @@ public class ExistsPredicate extends Predicate {
 		Scan s = subPlan.createScan();
 		s.beforeFirst();
 		boolean exists = s.hasNext();
+		if (neg) {
+			exists = !exists;
+		}
 		return new BooleanData(exists, new BooleanType());
 	}
 
 	@Override
 	public DataType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 }

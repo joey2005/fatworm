@@ -1,7 +1,10 @@
 package fatworm.indexing.data;
 
 public class VarcharData extends StringData {
-	
+
+	private String c;
+	private VarcharType type;
+		
 	public VarcharData(String c, VarcharType type) {
 		if (c == null)
 			this.c = null;
@@ -24,12 +27,14 @@ public class VarcharData extends StringData {
 		return new VarcharData(c + other.c, type);
 	}
 
-	private String c;
-	private VarcharType type;
-	
 	@Override
 	public String toString() {
 		return c;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return this.compareTo((Data)obj) == 0;
 	}
 	
 }

@@ -5,6 +5,9 @@ import java.math.BigInteger;
 
 public class DecimalData extends NumberData {
 
+	private BigDecimal d;
+	private DecimalType type;
+
 	public DecimalData(String s, DecimalType type) {
 		this.type = type;
 		if (s != null) {
@@ -16,12 +19,12 @@ public class DecimalData extends NumberData {
 
 	public DecimalData(String s, DecimalType type, int added) {
 		this.type = type;
-		if (s != null) {
+		if (s == null || s.equals("null")) {
+			this.d = null;
+		} else {
 			BigInteger b = new BigInteger(s);
 			this.d = new BigDecimal(b);
 			this.d = this.d.scaleByPowerOfTen(-type.getScale());
-		} else {
-			this.d = null;
 		}
 	}
 
@@ -94,6 +97,9 @@ public class DecimalData extends NumberData {
 		return d;
 	}
 
-	private BigDecimal d;
-	private DecimalType type;
+	@Override
+	public boolean equals(Object obj) {
+		return this.compareTo((Data)obj) == 0;
+	}
+
 }

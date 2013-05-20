@@ -10,17 +10,20 @@ public class CreateDatabaseScan extends Operation {
 	public CreateDatabaseScan(String dbName) {
 		this.dbName = dbName;
 	}
-	
-	/**
-	 * create a new database
-	 */
+
+	@Override
 	public void doit() {
+		// TODO Auto-generated method stub
 		
 	}
-
+	
 	@Override
 	public void close() {
 		dbName = null;
 	}
 
+	@Override
+	public String toString() {
+		return "create database scan()";
+	}
 }

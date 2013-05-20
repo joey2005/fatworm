@@ -220,13 +220,17 @@ public class Planner {
 					String tableName = result.getSchema().getTableName();
 					for (Predicate p : projectList) {
 						if (p instanceof ConstantPredicate) {
-							projectList3.add(new VariablePredicate(tableName + "." + p.toString(), p.getType()));
+							ConstantPredicate cp = (ConstantPredicate) p;
+							projectList3.add(new VariablePredicate(tableName + "." + cp.toString(), cp.getType()));
 						} else if (p instanceof FuncPredicate) {
-							projectList3.add(new VariablePredicate(tableName + "." + p.toString(), p.getType()));
+							FuncPredicate fp = (FuncPredicate) p;
+							projectList3.add(new VariablePredicate(tableName + "." + fp.toString(), fp.getType()));
 						} else if (p instanceof NumberCalcPredicate) {
-							projectList3.add(new VariablePredicate(tableName + "." + p.toString(), p.getType()));
+							NumberCalcPredicate np = (NumberCalcPredicate) p;
+							projectList3.add(new VariablePredicate(tableName + "." + np.toString(), np.getType()));
 						} else if (p instanceof VariablePredicate) {
-							projectList3.add(new VariablePredicate(tableName + "." + p.toString(), p.getType()));
+							VariablePredicate vp = (VariablePredicate) p;
+							projectList3.add(new VariablePredicate(tableName + "." + vp.toString(), vp.getType()));
 						}
 					}
 					result = new ProjectPlan(result, projectList3, null);
@@ -614,7 +618,7 @@ public class Planner {
 			Predicate left = translateMultiplicative(t.getChild(0));
 			Predicate right = translateMultiplicative(t.getChild(1));
 			int oper = t.getType();
-			DataType type = getOpType(left, right, oper);
+			NumberType type = (NumberType)getOpType(left, right, oper);
 			return new NumberCalcPredicate(left, right, oper, type);
 		} else {
 			return translateMultiplicative(t);
@@ -626,7 +630,7 @@ public class Planner {
 			Predicate left = translateAtom(t.getChild(0));
 			Predicate right = translateAtom(t.getChild(1));
 			int oper = t.getType();
-			DataType type = getOpType(left, right, oper);
+			NumberType type = (NumberType)getOpType(left, right, oper);
 			return new NumberCalcPredicate(left, right, oper, type);
 		} else {
 			return translateAtom(t);
@@ -655,7 +659,7 @@ public class Planner {
 			Predicate left = new ConstantPredicate(new IntegerData(0, new IntegerType()));
 			Predicate right = translateAtom(child.getChild(0));
 			int oper = Symbol.MINUS;
-			DataType type = getOpType(left, right, oper);
+			NumberType type = (NumberType)getOpType(left, right, oper);
 			return new NumberCalcPredicate(left, right, oper, type);
 		} else {
 			// const_value
@@ -680,10 +684,13 @@ public class Planner {
 
 	private Predicate getConstantValue(Tree child) throws Exception {
 		if (child.getType() == Symbol.INTEGER_LITERAL) {
-			if (child.toString().length() >= 10) {
-				return new ConstantPredicate(new DecimalType(0, 0).valueOf(child.toString()));
+			String number = child.toString();
+			Integer intValue = Integer.parseInt(number);
+			if (intValue.toString().equals(number)) {
+				return new ConstantPredicate(new IntegerType().valueOf(number));
+			} else {
+				return new ConstantPredicate(new DecimalType(0, 0).valueOf(number));
 			}
-			return new ConstantPredicate(new IntegerType().valueOf(child.toString()));
 		} else if (child.getType() == Symbol.STRING_LITERAL) {
 			String c = child.toString();
 			return new ConstantPredicate(new CharType(c.length()).valueOf(c));

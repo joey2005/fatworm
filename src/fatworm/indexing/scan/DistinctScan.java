@@ -25,6 +25,9 @@ public class DistinctScan extends Scan {
 
 	@Override
 	public boolean hasNext() {
+		if (scan == null) {
+			return false;
+		}
 		if (next == null) {
 			while (scan.hasNext()) {
 				next = scan.next();
@@ -52,15 +55,24 @@ public class DistinctScan extends Scan {
 
 	@Override
 	public void beforeFirst() {
-		scan.beforeFirst();
+		if (scan != null) {
+			scan.beforeFirst();
+		}
 		last = next = null;
 	}
 
 	@Override
 	public void close() {
-		scan.close();
-		scan = null;
+		if (scan != null) {
+			scan.close();
+			scan = null;
+		}
 		last = next = null;
+	}
+
+	@Override
+	public String toString() {
+		return "distinct scan(" + scan.toString() + ")";
 	}
 
 }

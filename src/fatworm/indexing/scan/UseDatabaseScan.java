@@ -24,4 +24,9 @@ public class UseDatabaseScan extends Operation {
 		
 	}
 
+	@Override
+	public String toString() {
+		return "use database scan()";
+	}
+
 }

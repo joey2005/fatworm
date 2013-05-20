@@ -3,6 +3,9 @@ package fatworm.indexing.data;
 import java.sql.Date;
 
 public class DateTimeData extends Data {
+
+	private Date d;
+	private DateTimeType type;
 	
 	public DateTimeData(Date d, DateTimeType type) {
 		this.d = d;
@@ -47,6 +50,9 @@ public class DateTimeData extends Data {
 		return d;
 	}
 
-	private Date d;
-	private DateTimeType type;
+	@Override
+	public boolean equals(Object obj) {
+		return this.compareTo((Data)obj) == 0;
+	}
+
 }

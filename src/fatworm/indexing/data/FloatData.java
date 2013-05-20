@@ -4,16 +4,19 @@ import java.math.BigDecimal;
 
 public class FloatData extends NumberData {
 
+	private Float f;
+	private FloatType type;
+	
 	public FloatData(Float f, FloatType type) {
 		this.f = f;
 		this.type = type;
 	}
 
 	public FloatData(String s, FloatType type) {
-		if (s != null) {
-			this.f = Float.parseFloat(s);
-		} else {
+		if (s == null || s.equals("null")) {
 			this.f = null;
+		} else {
+			this.f = Float.parseFloat(s);
 		}
 		this.type = type;
 	}
@@ -90,7 +93,8 @@ public class FloatData extends NumberData {
 		return f;
 	}
 
-	private Float f;
-	private FloatType type;
-
+	@Override
+	public boolean equals(Object obj) {
+		return this.compareTo((Data)obj) == 0;
+	}
 }

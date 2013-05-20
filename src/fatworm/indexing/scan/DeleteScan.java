@@ -26,4 +26,9 @@ public class DeleteScan extends Operation {
 		tableName = null;
 	}
 
+	@Override
+	public String toString() {
+		return "delete table scan()";
+	}
+
 }

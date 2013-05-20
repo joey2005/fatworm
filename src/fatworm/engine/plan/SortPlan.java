@@ -45,11 +45,11 @@ public class SortPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		List<SortScan.Order> sorts = new LinkedList<SortScan.Order>();
+		List<SortScan.Order> orders = new LinkedList<SortScan.Order>();
 		for (int i = 0; i < colNameList.size(); ++i) {
-			sorts.add(new SortScan.Order(colNameList.get(i), orderList.get(i)));
+			orders.add(new SortScan.Order(colNameList.get(i), orderList.get(i)));
 		}
-		return new SortScan(tablePlan.createScan(), sorts);
+		return new SortScan(tablePlan.createScan(), orders);
 	}
 
 	@Override

@@ -4,13 +4,16 @@ import java.math.BigDecimal;
 
 public class IntegerData extends NumberData {
 
+	private Integer i;
+	private IntegerType type;
+	
 	public IntegerData(Integer i, IntegerType type) {
 		this.i = i;
 		this.type = type;
 	}
 
 	public IntegerData(String s, IntegerType type) {
-		if (s == null) {
+		if (s == null || s.equals("null")) {
 			this.i = null;
 		} else {
 			this.i = Integer.parseInt(s);
@@ -90,6 +93,9 @@ public class IntegerData extends NumberData {
 		return i;
 	}
 
-	private Integer i;
-	private IntegerType type;
+	@Override
+	public boolean equals(Object obj) {
+		return this.compareTo((Data)obj) == 0;
+	}
+
 }

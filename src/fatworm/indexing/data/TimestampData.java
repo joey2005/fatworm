@@ -3,7 +3,10 @@ package fatworm.indexing.data;
 import java.sql.Timestamp;
 
 public class TimestampData extends Data {
-
+	
+	private Timestamp time;
+	private TimestampType type;
+	
 	public TimestampData(Timestamp time, TimestampType type) {
 		this.time = time;
 		this.type = type;
@@ -47,8 +50,8 @@ public class TimestampData extends Data {
 		return time;
 	}
 
-	
-	private Timestamp time;
-	private TimestampType type;
-	
+	@Override
+	public boolean equals(Object obj) {
+		return this.compareTo((Data)obj) == 0;
+	}
 }

@@ -30,4 +30,9 @@ public class CreateIndexScan extends Operation {
 		colName = null;
 	}
 
+	@Override
+	public String toString() {
+		return "create index scan()";
+	}
+
 }

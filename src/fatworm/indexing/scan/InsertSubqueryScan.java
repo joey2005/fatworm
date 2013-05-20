@@ -22,8 +22,16 @@ public class InsertSubQueryScan extends Operation {
 
 	@Override
 	public void close() {
-		scan.close();
+		if (scan != null) {
+			scan.close();
+			scan = null;
+		}
 		tableName = null;
+	}
+
+	@Override
+	public String toString() {
+		return "insert subquery scan(" + scan.toString() + ")";
 	}
 
 }

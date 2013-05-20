@@ -17,6 +17,9 @@ public class RenameScan extends Scan {
 
 	@Override
 	public boolean hasNext() {
+		if (scan == null) {
+			return false;
+		}
 		if (next == null) {
 			if (scan.hasNext()) {
 				next = scan.next();
@@ -39,16 +42,25 @@ public class RenameScan extends Scan {
 
 	@Override
 	public void beforeFirst() {
-		scan.beforeFirst();
+		if (scan != null) {
+			scan.beforeFirst();
+		}
 		next = null;
 	}
 
 	@Override
 	public void close() {
-		scan.close();
+		if (scan != null) {
+			scan.close();
+			scan = null;
+		}
 		schema = null;
 		next = null;
-		scan = null;
+	}
+
+	@Override
+	public String toString() {
+		return "rename scan(" + scan.toString() + ")";
 	}
 
 }

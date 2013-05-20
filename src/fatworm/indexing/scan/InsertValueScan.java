@@ -22,9 +22,12 @@ public class InsertValueScan extends Operation {
 
 	@Override
 	public void close() {
-		// TODO Auto-generated method stub
-		
+		tableName = null;
+		record = null;
 	}
 
-
+	@Override
+	public String toString() {
+		return "insert value scan()";
+	}
 }

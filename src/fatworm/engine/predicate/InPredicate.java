@@ -43,10 +43,10 @@ public class InPredicate extends Predicate {
 			Record now = s.next();
 			Data data = now.getFromColumn(0);
 			if (result.compareTo(data) == 0) {
-				return new BooleanData(true, new BooleanType());
+				return BooleanData.TRUE;
 			}
 		}
-		return new BooleanData(false, new BooleanType());
+		return BooleanData.FALSE;
 	}
 
 	@Override

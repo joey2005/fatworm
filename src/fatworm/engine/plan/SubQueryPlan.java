@@ -22,12 +22,6 @@ public class SubQueryPlan extends Plan {
 		scan = null;
 	}
 	
-	public void remove() {
-		if (scan != null) {
-			scan.close();
-		}
-	}
-
 	@Override
 	public int getPlanID() {
 		return planID;

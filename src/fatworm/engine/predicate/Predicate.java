@@ -4,6 +4,9 @@ import fatworm.indexing.data.*;
 import fatworm.indexing.table.Record;
 
 public abstract class Predicate {
+	
+	@Override
+	public abstract String toString();
 
 	public BooleanData test(Record record) throws Exception {
 		Data result = calc(record);

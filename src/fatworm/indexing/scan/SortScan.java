@@ -9,12 +9,12 @@ public class SortScan extends Scan {
 	
 	private Scan scan;
 	private Schema schema;
-	private List<Order> sorts;
+	private List<Order> orders;
 	
-	public SortScan(Scan scan, List<Order> sorts) {
+	public SortScan(Scan scan, List<Order> orders) {
 		this.scan = scan;
 		this.schema = scan.getSchema();
-		this.sorts = sorts;
+		this.orders = orders;
 	}
 
 	@Override
@@ -43,7 +43,11 @@ public class SortScan extends Scan {
 
 	@Override
 	public void close() {
-		scan.close();
+		if (scan != null) {
+			scan.close();
+			scan = null;
+		}
+		orders = null;
 	}
 
 	public static class Order {
@@ -55,5 +59,10 @@ public class SortScan extends Scan {
 			this.colName = colName;
 			this.ascending = ascending;
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "sort scan(" + scan.toString() + ")";
 	}
 }

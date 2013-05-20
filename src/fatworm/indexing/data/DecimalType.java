@@ -6,6 +6,11 @@ import java.math.BigInteger;
 
 public class DecimalType extends NumberType {
 
+	private int precision;
+	private int scale;
+	private int storageRequired;
+	private DecimalData defaultValue = null;
+	
 	public DecimalType(int precision, int scale) {
 		this.precision = precision;
 		this.scale = scale;
@@ -79,6 +84,4 @@ public class DecimalType extends NumberType {
 		return (result - 1) / 8 + 1;
 	}
 
-	private int precision, scale, storageRequired;
-	private DecimalData defaultValue = null;
 }

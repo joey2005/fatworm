@@ -14,4 +14,7 @@ public abstract class Scan {
 	public abstract void beforeFirst();
 	
 	public abstract void close();
+	
+	@Override
+	public abstract String toString();
 }

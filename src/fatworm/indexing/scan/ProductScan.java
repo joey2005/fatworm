@@ -19,6 +19,9 @@ public class ProductScan extends Scan {
 
 	@Override
 	public boolean hasNext() {
+		if (s1 == null || s2 == null) {
+			return false;
+		}
 		if (next == null) {
 			if (!start) {
 				s1.beforeFirst();
@@ -65,18 +68,32 @@ public class ProductScan extends Scan {
 
 	@Override
 	public void beforeFirst() {
-		s1.beforeFirst();
-		s2.beforeFirst();
+		if (s1 != null) {
+			s1.beforeFirst();
+		}
+		if (s2 != null) {
+			s2.beforeFirst();
+		}
 		left = right = next = null;
 		start = false;
 	}
 
 	@Override
 	public void close() {
-		s1.close();
-		s2.close();
+		if (s1 != null) {
+			s1.close();
+			s1 = null;
+		}
+		if (s2 != null) {
+			s2.close();
+			s2 = null;
+		}
 		left = right = null;
-		s1 = s2 = null;
+	}
+
+	@Override
+	public String toString() {
+		return "product scan(" + s1.toString() + ", " + s2.toString() + ")";
 	}
 
 }

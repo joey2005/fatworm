@@ -23,4 +23,9 @@ public class DropDatabaseScan extends Operation {
 		dbName = null;
 	}
 
+	@Override
+	public String toString() {
+		return "drop database scan()";
+	}
+
 }

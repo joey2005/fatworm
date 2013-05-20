@@ -17,4 +17,9 @@ public class UpdateScan extends Operation {
 		
 	}
 
+	@Override
+	public String toString() {
+		return "update table scan()";
+	}
+
 }

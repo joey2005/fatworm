@@ -2,6 +2,9 @@ package fatworm.indexing.data;
 
 public class CharData extends StringData {
 
+	private String c;
+	private CharType type;
+	
 	public CharData(String c, CharType type) {
 		if (c == null) {
 			this.c = null;
@@ -29,6 +32,9 @@ public class CharData extends StringData {
 		return c;
 	}
 
-	private String c;
-	private CharType type;
+	@Override
+	public boolean equals(Object obj) {
+		return this.compareTo((Data)obj) == 0;
+	}
+
 }
