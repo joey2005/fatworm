@@ -32,7 +32,7 @@ public class Record {
 	public Data getFromVariableName(String name) {
 		Data result = null;
 		for (int i = 0; i < schema.getColumnCount(); ++i) {
-			if (schema.getFields(i).getColumnName().equals(name)) {
+			if (schema.getFromColumn(i).getColumnName().equals(name)) {
 				result = datas.get(i);
 			}
 		}

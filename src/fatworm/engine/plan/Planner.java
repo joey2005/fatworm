@@ -3,6 +3,7 @@ package fatworm.engine.plan;
 import fatworm.indexing.data.*;
 import fatworm.indexing.schema.AttributeField;
 import fatworm.indexing.schema.Schema;
+import fatworm.util.Fatworm;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,10 +21,10 @@ import fatworm.engine.symbol.Symbol;
 
 public class Planner {
 	
-	Map<String, String> tableNameMap;
-	Map<String, Schema> tableSchemaMap;
-	Map<String, String> fieldMap;
-	Map<String, DataType> nameToTypeMap;
+	Map<String, String> tblnameToAlias;
+	Map<String, Schema> tblnameToSchema;
+	Map<String, String> AliasToColname;
+	Map<String, DataType> colnameToType;
 	CommonTree tree;
 	
 	/**
@@ -32,24 +33,67 @@ public class Planner {
 	 * @return
 	 */
 	private Schema getSchema(String tableName) {
-		return null;
+		if (tblnameToSchema.containsKey(tableName)) {
+			return tblnameToSchema.get(tableName);
+		}
+		return Fatworm.tx.infoMgr.getSchema(tableName);
 	}
 
 	/**
 	 * return then data type of give column name (may not have table name)
 	 * @param colName
 	 * @return
+	 * @throws Exception 
 	 */
-	private DataType getType(String colName) {
-		return null;
+	private DataType getType(String colName) throws Exception {
+		int dotpos = colName.indexOf(".");
+		String tableName = colName.substring(0, dotpos);
+		
+		DataType result = null;
+		
+		if (tableName == "") {
+			String fieldName = colName.substring(dotpos + 1);
+			if (colnameToType.containsKey(fieldName)) {
+				result = colnameToType.get(fieldName);
+			}
+		}
+		
+		if (result == null) {
+			if (tblnameToSchema.containsKey(tableName)) {
+				Schema s = tblnameToSchema.get(tableName);
+				result = s.getFromVariableName(colName).getType();
+			}
+		}
+		
+		if (result == null) {
+		
+			if (tblnameToAlias.containsKey(tableName)) {
+				tblnameToAlias.get(tableName);
+			}
+		
+			Schema s = Fatworm.tx.infoMgr.getSchema(tableName);
+			
+			if (AliasToColname.containsKey(colName)) {
+				colName = AliasToColname.get(colName);
+			}
+			dotpos = colName.indexOf(".");
+			colName = tableName + "." + colName.substring(dotpos + 1);
+			result = s.getFromVariableName(colName).getType();
+		}
+		
+		if (result == null) {
+			throw new Exception("cannot find type");
+		}
+		
+		return result;
 	}
 	
 	public Planner(CommonTree tree) {
 		this.tree = tree;
-		this.tableNameMap = new HashMap<String, String>();
-		this.tableSchemaMap = new HashMap<String, Schema>();
-		this.nameToTypeMap = new HashMap<String, DataType>();
-		this.fieldMap = new HashMap<String, String>();
+		this.tblnameToAlias = new HashMap<String, String>();
+		this.tblnameToSchema = new HashMap<String, Schema>();
+		this.colnameToType = new HashMap<String, DataType>();
+		this.AliasToColname = new HashMap<String, String>();
 	}
 
 	public Plan generatePlan() throws Exception {
@@ -150,14 +194,14 @@ public class Planner {
 							tableRefList.add(new RenamePlan(new TablePlan(tableName, getSchema(tableName)), cur.getChild(1).toString()));
 						}
 					} else {
-						String tableName = cur.getChild(0).toString();
+						String tableName = cur.toString();
 						tableRefList.add(new TablePlan(tableName, getSchema(tableName)));
 					}
 				}
 			} else if (child.getType() == Symbol.WHERE) {
 				whereCondition = getCondition(child.getChild(0));
 			} else if (child.getType() == Symbol.GROUP) {
-				groupBy = translateColName(child.getChild(0));
+				groupBy = translateColName("", child.getChild(0));
 			} else if (child.getType() == Symbol.HAVING) {
 				havingCondition = getCondition(child.getChild(0));
 			} else if (child.getType() == Symbol.ORDER) {
@@ -168,13 +212,13 @@ public class Planner {
 						Tree cur = child.getChild(pos);
 						
 						if (cur.getType() == Symbol.ASC) {
-							sortColumnList.add( translateColName(cur.getChild(0)) );
+							sortColumnList.add( translateColName("", cur.getChild(0)) );
 							sortOrderList.add( Boolean.TRUE );							
 						} else if (cur.getType() == Symbol.DESC) {
-							sortColumnList.add( translateColName(cur.getChild(0)) );
+							sortColumnList.add( translateColName("", cur.getChild(0)) );
 							sortOrderList.add( Boolean.FALSE );								
 						} else {
-							sortColumnList.add( translateColName(cur) );
+							sortColumnList.add( translateColName("", cur) );
 							sortOrderList.add( Boolean.TRUE );
 						}
 					}
@@ -266,7 +310,7 @@ public class Planner {
 		List<AttributeField> attrList = new ArrayList<AttributeField>();
 		boolean changed = false;
 		for (int i = 0; i < projectList.size(); ++i) {
-			AttributeField af = schema.getFields(i);
+			AttributeField af = schema.getFromColumn(i);
 			if (newAlias.get(i) != null) {
 				changed = true;
 				
@@ -275,8 +319,9 @@ public class Planner {
 				String tableName = fieldName.substring(0, dotpos);
 				fieldName = tableName + "." + newAlias.get(i);
 				attrList.add(new AttributeField(fieldName, af.type, af.isNull, af.defaultValue, af.autoIncrement));
-				
-				nameToTypeMap.put(newAlias.get(i), af.getType());
+			
+				colnameToType.put(newAlias.get(i), af.getType());
+				AliasToColname.put(tableName + "." + newAlias.get(i), af.getColumnName());
 			} else {
 				attrList.add(af);
 			}
@@ -356,15 +401,19 @@ public class Planner {
 				String alias = ((RenamePlan) tableRef).alias;
 				if (p instanceof TablePlan) {
 					if (alias != null) {
-						tableNameMap.put(((TablePlan) p).tableName, alias);
+						tblnameToAlias.put(((TablePlan) p).tableName, alias);
 					}
 				} else if (p instanceof SubQueryPlan) {
 					if (alias != null) {
-						tableSchemaMap.put(alias, p.getSchema());
+						tblnameToSchema.put(alias, p.getSchema());
 					}
 				}
 			}
-			result = new ProductPlan(result, tableRef);
+			if (result == null) {
+				result = tableRef;
+			} else {
+				result = new ProductPlan(result, tableRef);
+			}
 		}
 		return result;
 	}
@@ -397,7 +446,7 @@ public class Planner {
 	private Plan getCreateIndex(CommonTree t) {
 		String indexName = t.getChild(0).toString();
 		String tableName = t.getChild(1).toString();
-		String colName = translateColName(t.getChild(2));
+		String colName = translateColName("", t.getChild(2));
 		boolean isUnique = t.getType() == Symbol.CREATE_UNIQUE_INDEX;
 		return new CreateIndexPlan(indexName, isUnique, tableName, colName);
 	}
@@ -417,7 +466,7 @@ public class Planner {
 				values = getValueTuple(t.getChild(i));
 				break;
 			}
-			schema.add( translateColName(t.getChild(i)) );
+			schema.add(translateColName(tableName, t.getChild(i)));
 		}
 		return new InsertValuePlan(tableName, values, schema);
 	}
@@ -456,7 +505,7 @@ public class Planner {
 		for (int i = 1; i < t.getChildCount(); ++i) {//System.err.println(t.getChild(i).getType());
 			Tree cur = t.getChild(i);
 			if (cur.getType() == Symbol.CREATE_DEFINITION) {
-				String colName = translateColName(cur.getChild(0));
+				String colName = translateColName(tableName, cur.getChild(0));
 	
 				DataType type = null;
 				switch (cur.getChild(1).getType()) {
@@ -534,12 +583,12 @@ public class Planner {
 
 	private Plan getUpdate(CommonTree t) throws Exception {
 		String tableName = t.getChild(0).toString();
-		List<String> colNameList = new LinkedList<String>();
-		List<Predicate> valueList = new LinkedList<Predicate>();
+		List<String> colNameList = new ArrayList<String>();
+		List<Predicate> valueList = new ArrayList<Predicate>();
 		Predicate whereCondition = null;
 		for (int i = 1; i < t.getChildCount(); ++i) {
 			if (t.getChild(i).getType() == Symbol.UPDATE_PAIR) {
-				colNameList.add( translateColName( t.getChild(i).getChild(0) ) );
+				colNameList.add(translateColName(tableName, t.getChild(i).getChild(0)));
 				valueList.add(translateValue( t.getChild(i).getChild(1) ));
 			} else {
 				whereCondition = getCondition( t.getChild(i).getChild(0) );
@@ -640,7 +689,7 @@ public class Planner {
 	private Predicate translateAtom(Tree child) throws Exception {//System.out.println(child.toStringTree());
 		if (child.getType() == Symbol.DOT || child.getType() == Symbol.ID) {
 			//col_name
-			String colName = translateColName(child);
+			String colName = translateColName("", child);
 			return new VariablePredicate(colName, getType(colName));// where to get the table_name?
 		} else if (child.getType() == Symbol.SELECT || child.getType() == Symbol.SELECT_DISTINCT) {
 			//subquery
@@ -651,7 +700,7 @@ public class Planner {
 				child.getType() == Symbol.MAX ||
 				child.getType() == Symbol.SUM) {
 			// func^ (! colName )!
-			String colName = translateColName(child.getChild(0));
+			String colName = translateColName("", child.getChild(0));
 			DataType type = getType(colName);
 			return new FuncPredicate(child.getType(), new VariablePredicate(colName, type));
 		} else if (child.getType() == Symbol.MINUS) {
@@ -674,11 +723,13 @@ public class Planner {
 		}
 	}
 
-	private String translateColName(Tree child) {
+	private String translateColName(String tableName, Tree child) {
 		if (child.getType() == Symbol.DOT) {
 			return child.getChild(0).toString() + "." + child.getChild(1).toString();
+		} else if (tableName != null && tableName.length() > 0) {
+			return tableName + "." + child.toString();
 		} else {
-			return "." + child.toString();
+			return child.toString();
 		}
 	}
 

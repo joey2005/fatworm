@@ -4,24 +4,24 @@ import java.util.List;
 
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.util.Fatworm;
 
 public class DropTableScan extends Operation {
 	
-	private List<String> tableList;
+	private List<String> tableNameList;
 	
 	public DropTableScan(List<String> tableNameList) {
-		this.tableList = tableNameList;
+		this.tableNameList = tableNameList;
 	}
 
 	@Override
 	public void doit() {
-		// TODO Auto-generated method stub
-		
+		Fatworm.tx.tableMgr.dropTable(tableNameList);
 	}
 
 	@Override
 	public void close() {
-		tableList = null;
+		tableNameList = null;
 	}
 
 	@Override

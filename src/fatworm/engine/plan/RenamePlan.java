@@ -32,7 +32,7 @@ public class RenamePlan extends Plan {
 		Schema s = subPlan.getSchema();
 		List<AttributeField> attrList = new ArrayList<AttributeField>();
 		for (int i = 0; i < s.getColumnCount(); ++i) {
-			AttributeField af = s.getFields(i);
+			AttributeField af = s.getFromColumn(i);
 			String fieldName = af.getColumnName();
 			DataType type = af.getType();
 			int dotpos = fieldName.indexOf(".");

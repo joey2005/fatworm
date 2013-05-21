@@ -4,6 +4,7 @@ import fatworm.indexing.metadata.InfoMgr;
 import fatworm.indexing.scan.DeleteScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
+import fatworm.util.Fatworm;
 import fatworm.engine.predicate.*;
 
 public class DeletePlan extends Plan {
@@ -34,7 +35,7 @@ public class DeletePlan extends Plan {
 	@Override
 	public Scan createScan() {
 		Scan scan = null;
-		Schema schema = InfoMgr.getSchema(tableName);
+		Schema schema = Fatworm.tx.infoMgr.getSchema(tableName);
 		if (whereCondition != null) {
 			scan = new SelectPlan(new TablePlan(tableName, schema), whereCondition).createScan();
 		} else {

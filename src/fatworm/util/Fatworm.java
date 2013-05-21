@@ -1,4 +1,4 @@
-package fatworm.driver;
+package fatworm.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -13,9 +13,12 @@ import fatworm.engine.parser.FatwormParser;
 import fatworm.engine.plan.Planner;
 import fatworm.engine.plan.Plan;
 import fatworm.indexing.scan.Scan;
+import fatworm.storage.transection.Transection;
 import fatworm.test.DriverTest;
 
 public class Fatworm {
+	
+	public static Transection tx = null;
 
 	public static void main(String[] args) {
 		new DriverTest().test();
@@ -39,7 +42,7 @@ public class Fatworm {
 		Scan result = null;
 		try {
 			plan = planner.generatePlan();
-			System.out.println(plan.toString());
+			//System.out.println(plan.toString());
 			result = plan.createScan();
 		} catch (Exception ex) {
 			ex.printStackTrace();

@@ -2,6 +2,8 @@ package fatworm.indexing.scan;
 
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.storage.transection.Transection;
+import fatworm.util.Fatworm;
 
 public class CreateDatabaseScan extends Operation {
 	
@@ -13,8 +15,7 @@ public class CreateDatabaseScan extends Operation {
 
 	@Override
 	public void doit() {
-		// TODO Auto-generated method stub
-		
+
 	}
 	
 	@Override

@@ -36,11 +36,11 @@ public class Schema {
 		return attributes;
 	}
 	
-	public AttributeField getFields(int at) {
+	public AttributeField getFromColumn(int at) {
 		return attributes.get(at);
 	}
 
-	public AttributeField getFields(String colName) {
+	public AttributeField getFromVariableName(String colName) {
 		for (AttributeField attr : attributes) {
 			if (attr.getColumnName().equals(colName)) {
 				return attr;
@@ -49,4 +49,12 @@ public class Schema {
 		return null;
 	}
 	
+	public int indexOf(String colName) {
+		for (int i = 0; i < attributes.size(); ++i) {
+			if (attributes.get(i).getColumnName().equals(colName)) {
+				return i;
+			}
+		}
+		return -1;
+	}
 }

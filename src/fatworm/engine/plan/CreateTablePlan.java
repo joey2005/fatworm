@@ -22,7 +22,7 @@ public class CreateTablePlan extends Plan {
 	public String toString() {
 		String result = "create table: " + schema.getTableName() + "\n(";
 		for (int i = 0; i < schema.getColumnCount(); ++i) {
-			AttributeField at = schema.getFields(i);
+			AttributeField at = schema.getFromColumn(i);
 			result += at.getColumnName() + ": " + at.getType().toString() + "\n";
 		}
 		result += "primary key: ";

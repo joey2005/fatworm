@@ -3,6 +3,7 @@ package fatworm.indexing.scan;
 import fatworm.engine.plan.Plan;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.util.Fatworm;
 
 public class InsertSubQueryScan extends Operation {
 	
@@ -16,8 +17,11 @@ public class InsertSubQueryScan extends Operation {
 
 	@Override
 	public void doit() {
-		// TODO Auto-generated method stub
-		
+		scan.beforeFirst();
+		while (scan.hasNext()) {
+			Record next = scan.next();
+			Fatworm.tx.tableMgr.addRecord(tableName, next);
+		}
 	}
 
 	@Override

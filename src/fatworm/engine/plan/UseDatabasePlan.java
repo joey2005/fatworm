@@ -1,6 +1,7 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.scan.UseDatabaseScan;
 import fatworm.indexing.schema.Schema;
 
 public class UseDatabasePlan extends Plan {
@@ -24,8 +25,7 @@ public class UseDatabasePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		return new UseDatabaseScan(dbName);
 	}
 
 	@Override

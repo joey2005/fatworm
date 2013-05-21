@@ -64,7 +64,6 @@ public class FuncPredicate extends Predicate {
 	}
 	
 	public void prepare(List<Record> sublists) {
-		
 		result = null;
 		
 		if (func == Symbol.AVG) {

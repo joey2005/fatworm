@@ -1,5 +1,6 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.scan.DistinctScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
 
@@ -28,8 +29,7 @@ public class DistinctPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DistinctScan(subPlan.createScan());
 	}
 
 	@Override

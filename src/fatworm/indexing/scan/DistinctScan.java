@@ -16,7 +16,7 @@ public class DistinctScan extends Scan {
 		Schema schema = scan.getSchema();
 		int size = schema.getAllFields().size();
 		for (int i = 0; i < size; ++i) {
-			sorts.add(new SortScan.Order(schema.getFields(i).getColumnName(), true));
+			sorts.add(new SortScan.Order(schema.getFromColumn(i).getColumnName(), true));
 		}
 		
 		this.scan = new SortScan(scan, sorts);

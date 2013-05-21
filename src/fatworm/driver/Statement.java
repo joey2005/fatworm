@@ -7,7 +7,8 @@ import java.sql.SQLWarning;
 
 import org.antlr.runtime.tree.CommonTree;
 
-import fatworm.indexing.scan.Scan;
+import fatworm.indexing.scan.*;
+import fatworm.util.Fatworm;
 
 public class Statement implements java.sql.Statement {
 	
@@ -72,6 +73,7 @@ public class Statement implements java.sql.Statement {
 		if (lastResult != null) {
 			lastResult.close();
 		}
+		
 		CommonTree tree = null;
 		try {
 			tree = Fatworm.parseQuery(sql);
@@ -79,10 +81,17 @@ public class Statement implements java.sql.Statement {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ResultSet result = null;
+		
 		Scan scan = Fatworm.translateQuery(tree);
-		result = new fatworm.driver.ResultSet(scan, connection);
+		
+		if (scan instanceof Operation) {System.out.println("Is operation");
+			Operation operation = (Operation) scan;
+			operation.doit();
+		}
+		
+		ResultSet result = new fatworm.driver.ResultSet(scan, connection);
 		lastResult = result;
+		
 		return true;
 	}
 

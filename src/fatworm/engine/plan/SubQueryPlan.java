@@ -11,15 +11,11 @@ public class SubQueryPlan extends Plan {
 	
 	public Plan subPlan;
 	public Schema schema;
-	public Record record;
-	public Scan scan;
 	public int planID;
 	
 	public SubQueryPlan(Plan subPlan) {
 		this.subPlan = subPlan;
-		schema = subPlan.getSchema();
-		record = null;
-		scan = null;
+		this.schema = subPlan.getSchema();
 	}
 	
 	@Override
@@ -29,7 +25,7 @@ public class SubQueryPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
+		//rebuild of SubQueryScan
 		return null;
 	}
 

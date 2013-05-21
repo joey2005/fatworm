@@ -1,5 +1,6 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.scan.DropDatabaseScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
 
@@ -24,8 +25,7 @@ public class DropDatabasePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		// TODO Auto-generated method stub
-		return null;
+		return new DropDatabaseScan(dbName);
 	}
 
 	@Override

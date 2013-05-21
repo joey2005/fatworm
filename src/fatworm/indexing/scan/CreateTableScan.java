@@ -4,6 +4,7 @@ import java.util.List;
 
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.util.Fatworm;
 
 public class CreateTableScan extends Operation {
 	
@@ -20,7 +21,9 @@ public class CreateTableScan extends Operation {
 	 */
 	@Override
 	public void doit() {
-		
+		System.out.println(schema.getTableName() + " " + schema.getColumnCount());
+		Fatworm.tx.tableMgr.addTable(schema.getTableName());
+		Fatworm.tx.infoMgr.addSchema(schema.getTableName(), schema);
 	}
 
 	@Override
