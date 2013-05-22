@@ -16,7 +16,7 @@ public class IntegerType extends NumberType {
 	
 	@Override
 	public Data getDefaultValue() {
-		return defaultValue;
+		return IntegerType.ZERO;
 	}
 	
 	@Override
@@ -39,5 +39,6 @@ public class IntegerType extends NumberType {
 		return new IntegerData(value, this);
 	}
 
-	private final static IntegerData defaultValue = new IntegerData(0, new IntegerType()); 
+	public final static IntegerData ZERO = new IntegerData(0, new IntegerType()); 
+	public final static IntegerData ONE = new IntegerData(1, new IntegerType());
 }

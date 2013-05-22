@@ -7,12 +7,14 @@ import fatworm.indexing.schema.Schema;
 public class InsertSubQueryPlan extends Plan {
 	
 	public String tableName;
+	public Schema schema;
 	public Plan subPlan;
 	public int planID;
 	
 	public InsertSubQueryPlan(String tableName, Plan subPlan) {
 		this.tableName = tableName;
 		this.subPlan = subPlan;
+		this.schema = subPlan.getSchema();
 	}
 	
 	@Override

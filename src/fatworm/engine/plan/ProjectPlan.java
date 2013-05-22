@@ -1,5 +1,6 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.data.Data;
 import fatworm.indexing.data.DataType;
 import fatworm.indexing.scan.ProjectScan;
 import fatworm.indexing.scan.Scan;
@@ -31,15 +32,22 @@ public class ProjectPlan extends Plan {
 		String tableName = subPlan == null ? "" : subPlan.getSchema().getTableName();
 		for (Predicate p : projectList) {
 			if (p instanceof FuncPredicate) {
-				FuncPredicate fp = (FuncPredicate)p;
+				FuncPredicate fp = (FuncPredicate) p;
 				DataType type = subPlan.getSchema().getFromVariableName(fp.colName.toString()).getType();
-				fields.add(new AttributeField(tableName + "." + fp.toString(), type, -1, null, false));
+				fields.add(new AttributeField(tableName + "." + fp.toString(), type));
 			} else if (p instanceof VariablePredicate) {
-				VariablePredicate vp = (VariablePredicate)p;
+				VariablePredicate vp = (VariablePredicate) p;
 				DataType type = subPlan.getSchema().getFromVariableName(vp.variableName).getType();
-				fields.add(new AttributeField(tableName + "." + vp.toString(), type, -1, null, false));			
-			} else {
-				// impossible ? 
+				fields.add(new AttributeField(tableName + "." + vp.toString(), type));			
+			} else if (p instanceof BooleanCompPredicate) {
+				BooleanCompPredicate bp = (BooleanCompPredicate) p;
+				fields.add(new AttributeField(tableName + "." + bp.toString(), bp.getType()));
+			} else if (p instanceof BooleanPredicate) {
+				BooleanPredicate bp = (BooleanPredicate) p;
+				fields.add(new AttributeField(tableName + "." + bp.toString(), bp.getType()));				
+			} else if (p instanceof NumberCalcPredicate) {
+				NumberCalcPredicate np = (NumberCalcPredicate) p;
+				fields.add(new AttributeField(tableName + "." + np.toString(), np.getType()));
 			}
 		}
 		return new Schema(tableName, fields);

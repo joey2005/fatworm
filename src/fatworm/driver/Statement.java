@@ -58,8 +58,10 @@ public class Statement implements java.sql.Statement {
 
 	@Override
 	public void close() throws SQLException {
-		// TODO Auto-generated method stub
-		
+		if (lastResult != null) {
+			lastResult.close();
+			lastResult = null;
+		}
 	}
 
 	@Override
@@ -84,9 +86,28 @@ public class Statement implements java.sql.Statement {
 		
 		Scan scan = Fatworm.translateQuery(tree);
 		
-		if (scan instanceof Operation) {System.out.println("Is operation");
-			Operation operation = (Operation) scan;
-			operation.doit();
+		if (scan instanceof CreateDatabaseScan) {
+			((CreateDatabaseScan) scan).doit();
+		} else if (scan instanceof CreateIndexScan) {
+			((CreateIndexScan) scan).doit();
+		} else if (scan instanceof CreateTableScan) {
+			((CreateTableScan) scan).doit();
+		} else if (scan instanceof DeleteScan) {
+			((DeleteScan) scan).doit();
+		} else if (scan instanceof DropDatabaseScan) {
+			((DropDatabaseScan) scan).doit();
+		} else if (scan instanceof DropIndexScan) {
+			((DropIndexScan) scan).doit();
+		} else if (scan instanceof DropTableScan) {
+			((DropTableScan) scan).doit();
+		} else if (scan instanceof InsertSubQueryScan) {
+			((InsertSubQueryScan) scan).doit();
+		} else if (scan instanceof InsertValueScan) {
+			((InsertValueScan) scan).doit();
+		} else if (scan instanceof UpdateScan) {
+			((UpdateScan) scan).doit();
+		} else if (scan instanceof UseDatabaseScan) {
+			((UseDatabaseScan) scan).doit();
 		}
 		
 		ResultSet result = new fatworm.driver.ResultSet(scan, connection);

@@ -35,7 +35,7 @@ public class ResultSet implements java.sql.ResultSet {
 
 	public ResultSet(Scan scan, Connection connection) {
 		this.scan = scan;
-		//this.schema = scan.getSchema();
+		this.schema = scan.getSchema();
 		this.connection = connection;
 		this.record = null;
 	}

@@ -8,8 +8,8 @@ import fatworm.indexing.table.Record;
 
 public class TableMgr {
 
-	private static ArrayList<ArrayList<Record>> recordTable;
-	private static HashMap<String, Integer> tableMap;
+	private ArrayList<ArrayList<Record>> recordTable;
+	private HashMap<String, Integer> tableMap;
 	
 	public TableMgr() {
 		recordTable = new ArrayList<ArrayList<Record>>();

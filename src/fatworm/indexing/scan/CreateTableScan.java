@@ -21,7 +21,7 @@ public class CreateTableScan extends Operation {
 	 */
 	@Override
 	public void doit() {
-		System.out.println(schema.getTableName() + " " + schema.getColumnCount());
+		//System.out.println(schema.getTableName() + " " + schema.getColumnCount());
 		Fatworm.tx.tableMgr.addTable(schema.getTableName());
 		Fatworm.tx.infoMgr.addSchema(schema.getTableName(), schema);
 	}

@@ -50,7 +50,7 @@ public class Schema {
 	}
 	
 	public int indexOf(String colName) {
-		for (int i = 0; i < attributes.size(); ++i) {
+		for (int i = 0; i < attributes.size(); ++i) {//System.out.println(attributes.get(i).getColumnName());
 			if (attributes.get(i).getColumnName().equals(colName)) {
 				return i;
 			}

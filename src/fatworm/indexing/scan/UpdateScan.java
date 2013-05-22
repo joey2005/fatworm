@@ -20,6 +20,7 @@ public class UpdateScan extends Operation {
 	
 	public UpdateScan(Scan scan, Schema schema, List<String> colNameList, List<Predicate> valueList, Predicate whereCondition) {
 		this.scan = scan;
+		this.schema = schema;
 		this.colNameList = colNameList;
 		this.valueList = valueList;
 		this.whereCondition = whereCondition;

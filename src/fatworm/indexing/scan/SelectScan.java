@@ -37,6 +37,8 @@ public class SelectScan extends Scan {
 						e.printStackTrace();
 					}
 					next = null;
+				} else {
+					break;
 				}
 			}
 		}

@@ -25,8 +25,7 @@ public class SubQueryPlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		//rebuild of SubQueryScan
-		return null;
+		return subPlan.createScan();
 	}
 
 	@Override

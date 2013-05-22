@@ -21,10 +21,10 @@ import fatworm.engine.symbol.Symbol;
 
 public class Planner {
 	
-	Map<String, String> tblnameToAlias;
-	Map<String, Schema> tblnameToSchema;
+	Map<String, String> AliasToTblname;
+	Map<String, Schema> AliasToSchema;
 	Map<String, String> AliasToColname;
-	Map<String, DataType> colnameToType;
+	Map<String, DataType> ColnameToType;
 	CommonTree tree;
 	
 	/**
@@ -33,8 +33,8 @@ public class Planner {
 	 * @return
 	 */
 	private Schema getSchema(String tableName) {
-		if (tblnameToSchema.containsKey(tableName)) {
-			return tblnameToSchema.get(tableName);
+		if (AliasToSchema.containsKey(tableName)) {
+			return AliasToSchema.get(tableName);
 		}
 		return Fatworm.tx.infoMgr.getSchema(tableName);
 	}
@@ -51,24 +51,24 @@ public class Planner {
 		
 		DataType result = null;
 		
-		if (tableName == "") {
+		if (tableName.equals("")) {
 			String fieldName = colName.substring(dotpos + 1);
-			if (colnameToType.containsKey(fieldName)) {
-				result = colnameToType.get(fieldName);
+			if (ColnameToType.containsKey(fieldName)) {
+				result = ColnameToType.get(fieldName);
 			}
 		}
 		
 		if (result == null) {
-			if (tblnameToSchema.containsKey(tableName)) {
-				Schema s = tblnameToSchema.get(tableName);
+			if (AliasToSchema.containsKey(tableName)) {
+				Schema s = AliasToSchema.get(tableName);
 				result = s.getFromVariableName(colName).getType();
 			}
 		}
 		
 		if (result == null) {
 		
-			if (tblnameToAlias.containsKey(tableName)) {
-				tblnameToAlias.get(tableName);
+			if (AliasToTblname.containsKey(tableName)) {
+				tableName = AliasToTblname.get(tableName);
 			}
 		
 			Schema s = Fatworm.tx.infoMgr.getSchema(tableName);
@@ -90,9 +90,9 @@ public class Planner {
 	
 	public Planner(CommonTree tree) {
 		this.tree = tree;
-		this.tblnameToAlias = new HashMap<String, String>();
-		this.tblnameToSchema = new HashMap<String, Schema>();
-		this.colnameToType = new HashMap<String, DataType>();
+		this.AliasToTblname = new HashMap<String, String>();
+		this.AliasToSchema = new HashMap<String, Schema>();
+		this.ColnameToType = new HashMap<String, DataType>();
 		this.AliasToColname = new HashMap<String, String>();
 	}
 
@@ -130,13 +130,13 @@ public class Planner {
 		return null;
 	}
 
-	private Plan getSelect(CommonTree t) throws Exception {//System.out.println(t.toStringTree());
+	private Plan getSelect(CommonTree t) throws Exception {
 		// work with select_expr
 		Plan result = null;
 		
 		boolean selectAll = false;
 		
-		List<Predicate> projectList = new ArrayList<Predicate>();
+		List<Tree> selectExprList = new ArrayList<Tree>();
 		List<String> newAlias = new ArrayList<String>();
 		
 		int i = 0;
@@ -154,26 +154,27 @@ public class Planner {
 				selectAll = true;
 			} else if (cur.getType() == Symbol.AS) {
 				// value (AS^ alias)
-				projectList.add(translateValue(cur.getChild(0)));
+				selectExprList.add(cur.getChild(0));
 				newAlias.add(cur.getChild(1).toString());
 			} else {
-				projectList.add(translateValue(cur));
+				selectExprList.add(cur);
 				newAlias.add(null);
 			}
 				
 			++i;
 		}
 		
-		if (selectAll && projectList.size() > 0) {
+		if (selectAll && selectExprList.size() > 0) {
 			throw new Exception("Select Content Wrong!");
 		}
 		
 		List<Plan> tableRefList = new ArrayList<Plan>();
-		Predicate whereCondition = null;
+		Tree whereConditionTree = null;
 		String groupBy = null;
-		Predicate havingCondition = null;
+		Tree havingConditionTree = null;
 		List<String> sortColumnList = null;
 		List<Boolean> sortOrderList = null;
+		String tableName = "";
 		
 		while (i < t.getChildCount()) {
 			Tree child = t.getChild(i);
@@ -185,25 +186,25 @@ public class Planner {
 					Plan tmp = null;
 					Tree cur = child.getChild(pos);
 					
-					if (cur.getType() == Symbol.AS) {//System.out.println(cur.toStringTree());
+					if (cur.getType() == Symbol.AS) {
 						if (cur.getChild(0).getType() == Symbol.SELECT || cur.getChild(0).getType() == Symbol.SELECT_DISTINCT) {
 							// subquery as alias
 							tableRefList.add(new RenamePlan(getSubQuery(cur.getChild(0)), cur.getChild(1).toString()));
 						} else {
-							String tableName = cur.getChild(0).toString();
+							tableName = cur.getChild(0).toString();
 							tableRefList.add(new RenamePlan(new TablePlan(tableName, getSchema(tableName)), cur.getChild(1).toString()));
 						}
 					} else {
-						String tableName = cur.toString();
+						tableName = cur.toString();
 						tableRefList.add(new TablePlan(tableName, getSchema(tableName)));
 					}
 				}
 			} else if (child.getType() == Symbol.WHERE) {
-				whereCondition = getCondition(child.getChild(0));
+				whereConditionTree = child.getChild(0);
 			} else if (child.getType() == Symbol.GROUP) {
 				groupBy = translateColName("", child.getChild(0));
 			} else if (child.getType() == Symbol.HAVING) {
-				havingCondition = getCondition(child.getChild(0));
+				havingConditionTree = child.getChild(0);
 			} else if (child.getType() == Symbol.ORDER) {
 				if (sortColumnList == null) {
 					sortColumnList = new LinkedList<String>();
@@ -231,11 +232,28 @@ public class Planner {
 		//table_ref
 		result = translateTableRef(tableRefList);
 		
+		List<Predicate> projectList = new ArrayList<Predicate>();
+		for (Tree tree : selectExprList) {
+			projectList.add(translateValue(tree, tableName));
+		}
+		
 		//where_condition
+		Predicate whereCondition = whereConditionTree == null ? null : 
+			getCondition(whereConditionTree, tableName);
 		result = new SelectPlan(result, whereCondition);
+		
+		/*
+		Schema mySchema = result.getSchema();
+		System.out.println(mySchema.getTableName() + "{");
+		for (int it = 0; it < mySchema.getColumnCount(); ++it) {
+			System.out.println("\t" + mySchema.getFromColumn(it).colName + ": " + mySchema.getFromColumn(it).type);
+		}
+		*/
 		
 		//group_by_clause
 		if (groupBy != null) {
+			Predicate havingCondition = havingConditionTree == null ? null :
+				getCondition(havingConditionTree, tableName);
 			if (havingCondition != null) {
 				Set<FuncPredicate> allfs = getAllFunc(havingCondition);
 				List<Predicate> projectList2 = new ArrayList<Predicate>(projectList);
@@ -261,7 +279,7 @@ public class Planner {
 				
 				if (changed) {
 					List<Predicate> projectList3 = new ArrayList<Predicate>();
-					String tableName = result.getSchema().getTableName();
+					tableName = result.getSchema().getTableName();
 					for (Predicate p : projectList) {
 						if (p instanceof ConstantPredicate) {
 							ConstantPredicate cp = (ConstantPredicate) p;
@@ -320,7 +338,7 @@ public class Planner {
 				fieldName = tableName + "." + newAlias.get(i);
 				attrList.add(new AttributeField(fieldName, af.type, af.isNull, af.defaultValue, af.autoIncrement));
 			
-				colnameToType.put(newAlias.get(i), af.getType());
+				ColnameToType.put(newAlias.get(i), af.getType());
 				AliasToColname.put(tableName + "." + newAlias.get(i), af.getColumnName());
 			} else {
 				attrList.add(af);
@@ -397,15 +415,17 @@ public class Planner {
 		Plan result = null;
 		for (Plan tableRef : tableRefList) {
 			if (tableRef instanceof RenamePlan) {
-				Plan p = (RenamePlan) tableRef.subPlan();
-				String alias = ((RenamePlan) tableRef).alias;
+				RenamePlan rplan = (RenamePlan) tableRef;
+				Plan p = rplan.subPlan();
+				String alias = rplan.alias;
 				if (p instanceof TablePlan) {
+					TablePlan tplan = (TablePlan) p;
 					if (alias != null) {
-						tblnameToAlias.put(((TablePlan) p).tableName, alias);
+						AliasToTblname.put(alias, tplan.tableName);
 					}
 				} else if (p instanceof SubQueryPlan) {
 					if (alias != null) {
-						tblnameToSchema.put(alias, p.getSchema());
+						AliasToSchema.put(alias, p.getSchema());
 					}
 				}
 			}
@@ -438,7 +458,7 @@ public class Planner {
 		String tableName = t.getChild(0).toString();
 		Predicate whereCondition = null;
 		if (t.getChildCount() == 2) {
-			whereCondition = getCondition( t.getChild(1).getChild(0) );
+			whereCondition = getCondition( t.getChild(1).getChild(0), tableName );
 		}
 		return new DeletePlan(tableName, whereCondition);
 	}
@@ -478,7 +498,8 @@ public class Planner {
 	}
 
 	private Plan getSubQuery(Tree child) throws Exception {// may need to change
-		return new SubQueryPlan(getSelect((CommonTree)child));
+		//return new SubQueryPlan(getSelect((CommonTree)child));
+		return getSelect((CommonTree)child);
 	}
 
 	private Plan getInsertValues(CommonTree t) throws Exception {
@@ -488,10 +509,9 @@ public class Planner {
 	}
 
 	private List<Predicate> getValueTuple(Tree child) throws Exception {
-		List<Predicate> result = new LinkedList<Predicate>();
+		List<Predicate> result = new ArrayList<Predicate>();
 		for (int i = 0; i < child.getChildCount(); ++i) {
-			System.out.println(child.getChild(i).toStringTree());
-			result.add(translateValue(child.getChild(i)));
+			result.add(translateValue(child.getChild(i), ""));
 		}
 		return result;
 	}
@@ -589,38 +609,38 @@ public class Planner {
 		for (int i = 1; i < t.getChildCount(); ++i) {
 			if (t.getChild(i).getType() == Symbol.UPDATE_PAIR) {
 				colNameList.add(translateColName(tableName, t.getChild(i).getChild(0)));
-				valueList.add(translateValue( t.getChild(i).getChild(1) ));
+				valueList.add(translateValue( t.getChild(i).getChild(1), tableName ));
 			} else {
-				whereCondition = getCondition( t.getChild(i).getChild(0) );
+				whereCondition = getCondition( t.getChild(i).getChild(0), tableName );
 				break;
 			}
 		}
 		return new UpdatePlan(tableName, colNameList, valueList, whereCondition);
 	}
 
-	private Predicate getCondition(Tree t) throws Exception {
-		return translateOR(t);
+	private Predicate getCondition(Tree t, String tableName) throws Exception {
+		return translateOR(t, tableName);
 	}
 
-	private Predicate translatePrimary(Tree t) throws Exception {
+	private Predicate translatePrimary(Tree t, String tableName) throws Exception {
 		if (t.getType() == Symbol.NOT_EXISTS) {
 			return new ExistsPredicate(true, getSubQuery(t.getChild(0)));
 		} else if (t.getType() == Symbol.EXISTS) {
 			return new ExistsPredicate(false, getSubQuery(t.getChild(0)));
 		} else if (t.getType() == Symbol.IN) {
-			return new InPredicate(translateValue(t.getChild(0)), 
+			return new InPredicate(translateValue(t.getChild(0), tableName), 
 					getSubQuery(t.getChild(1)));
 		} else if (t.getType() == Symbol.ANY) {
-			return new AnyPredicate(translateValue(t.getChild(0)),
+			return new AnyPredicate(translateValue(t.getChild(0), tableName),
 					t.getChild(1).toString(),
 					getSubQuery(t.getChild(2)));
 		} else if (t.getType() == Symbol.ALL) {
-			return new AllPredicate(translateValue(t.getChild(0)),
+			return new AllPredicate(translateValue(t.getChild(0), tableName),
 					t.getChild(1).toString(),
 					getSubQuery(t.getChild(2)));			
-		} else if (t.getChildCount() == 1) {//System.out.println(t.getType());
+		} else if (t.getChildCount() == 1) {
 			// primary : bool_expr
-			return translateOR(t);
+			return translateOR(t, tableName);
 		} else if (t.getType() == Symbol.LESS ||
 				t.getType() == Symbol.LESS_EQ ||
 				t.getType() == Symbol.GTR ||
@@ -628,68 +648,68 @@ public class Planner {
 				t.getType() == Symbol.EQ ||
 				t.getType() == Symbol.NEQ) {
 			// primary : value cop value
-			return new BooleanCompPredicate(translateValue(t.getChild(0)),
-					translateValue(t.getChild(1)),
+			return new BooleanCompPredicate(translateValue(t.getChild(0), tableName),
+					translateValue(t.getChild(1), tableName),
 					t.getType());
 		} else {
-			return translateOR(t);
+			return translateOR(t, tableName);
 		}
 	}
 	
-	private Predicate translateOR(Tree t) throws Exception {
+	private Predicate translateOR(Tree t, String tableName) throws Exception {
 		if (t.getType() == Symbol.OR) {
 			Predicate[] child = new Predicate[2];
 			for (int i = 0; i < 2; ++i) {
 				Tree tree = t.getChild(i);
-				child[i] = translateOR(tree);		
+				child[i] = translateOR(tree, tableName);		
 			}
 			return new BooleanPredicate(child[0], child[1], t.getType() );
 		} else {
-			return translateAND(t);
+			return translateAND(t, tableName);
 		}
 	}
 
-	private Predicate translateAND(Tree t) throws Exception {
+	private Predicate translateAND(Tree t, String tableName) throws Exception {
 		if (t.getType() == Symbol.AND) {
 			Predicate[] child = new Predicate[2];
 			for (int i = 0; i < 2; ++i) {
 				Tree tree = t.getChild(i);
-				child[i] = translateAND(tree);		
+				child[i] = translateAND(tree, tableName);		
 			}
 			return new BooleanPredicate(child[0], child[1], t.getType() );
 		} else {
-			return translatePrimary(t);
+			return translatePrimary(t, tableName);
 		}
 	}
 
-	private Predicate translateValue(Tree t) throws Exception {
+	private Predicate translateValue(Tree t, String tableName) throws Exception {
 		if (t.getChildCount() == 2 && (t.getType() == Symbol.PLUS || t.getType() == Symbol.MINUS)) {
-			Predicate left = translateMultiplicative(t.getChild(0));
-			Predicate right = translateMultiplicative(t.getChild(1));
+			Predicate left = translateMultiplicative(t.getChild(0), tableName);
+			Predicate right = translateMultiplicative(t.getChild(1), tableName);
 			int oper = t.getType();
 			NumberType type = (NumberType)getOpType(left, right, oper);
 			return new NumberCalcPredicate(left, right, oper, type);
 		} else {
-			return translateMultiplicative(t);
+			return translateMultiplicative(t, tableName);
 		}			
 	}
 	
-	private Predicate translateMultiplicative(Tree t) throws Exception {
+	private Predicate translateMultiplicative(Tree t, String tableName) throws Exception {
 		if (t.getChildCount() == 2 && (t.getType() == Symbol.MUL || t.getType() == Symbol.DIV || t.getType() == Symbol.MOD)) {
-			Predicate left = translateAtom(t.getChild(0));
-			Predicate right = translateAtom(t.getChild(1));
+			Predicate left = translateAtom(t.getChild(0), tableName);
+			Predicate right = translateAtom(t.getChild(1), tableName);
 			int oper = t.getType();
 			NumberType type = (NumberType)getOpType(left, right, oper);
 			return new NumberCalcPredicate(left, right, oper, type);
 		} else {
-			return translateAtom(t);
+			return translateAtom(t, tableName);
 		}
 	}
 
-	private Predicate translateAtom(Tree child) throws Exception {//System.out.println(child.toStringTree());
+	private Predicate translateAtom(Tree child, String tableName) throws Exception {
 		if (child.getType() == Symbol.DOT || child.getType() == Symbol.ID) {
 			//col_name
-			String colName = translateColName("", child);
+			String colName = translateColName(tableName, child);
 			return new VariablePredicate(colName, getType(colName));// where to get the table_name?
 		} else if (child.getType() == Symbol.SELECT || child.getType() == Symbol.SELECT_DISTINCT) {
 			//subquery
@@ -700,13 +720,13 @@ public class Planner {
 				child.getType() == Symbol.MAX ||
 				child.getType() == Symbol.SUM) {
 			// func^ (! colName )!
-			String colName = translateColName("", child.getChild(0));
+			String colName = translateColName(tableName, child.getChild(0));
 			DataType type = getType(colName);
 			return new FuncPredicate(child.getType(), new VariablePredicate(colName, type));
 		} else if (child.getType() == Symbol.MINUS) {
 			// -^ atom
 			Predicate left = new ConstantPredicate(new IntegerData(0, new IntegerType()));
-			Predicate right = translateAtom(child.getChild(0));
+			Predicate right = translateAtom(child.getChild(0), tableName);
 			int oper = Symbol.MINUS;
 			NumberType type = (NumberType)getOpType(left, right, oper);
 			return new NumberCalcPredicate(left, right, oper, type);
@@ -717,7 +737,7 @@ public class Planner {
 				result = getConstantValue(child);
 			} catch (Exception ex) {
 				// value
-				return translateValue(child);
+				return translateValue(child, tableName);
 			}
 			return result;
 		}
@@ -729,7 +749,7 @@ public class Planner {
 		} else if (tableName != null && tableName.length() > 0) {
 			return tableName + "." + child.toString();
 		} else {
-			return child.toString();
+			return "." + child.toString();
 		}
 	}
 

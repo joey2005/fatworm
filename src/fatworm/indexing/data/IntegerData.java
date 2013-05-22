@@ -18,6 +18,7 @@ public class IntegerData extends NumberData {
 		} else {
 			this.i = Integer.parseInt(s);
 		}
+		this.type = type;
 	}
 
 	@Override
