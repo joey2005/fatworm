@@ -55,7 +55,10 @@ public class SortScan extends Scan {
 			tmpList.add(record);
 		}
 		
-		list = (Record[])tmpList.toArray();
+		list = new Record[tmpList.size()];
+		for (int i = 0; i < list.length; ++i) {
+			list[i] = tmpList.get(i);
+		}
 		tmp = new Record[list.length];
 		
 		qsort(0, list.length);

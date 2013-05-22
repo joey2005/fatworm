@@ -33,7 +33,7 @@ public class ProjectPlan extends Plan {
 		for (Predicate p : projectList) {
 			if (p instanceof FuncPredicate) {
 				FuncPredicate fp = (FuncPredicate) p;
-				DataType type = subPlan.getSchema().getFromVariableName(fp.colName.toString()).getType();
+				DataType type = subPlan.getSchema().getFromVariableName(fp.colName.variableName).getType();
 				fields.add(new AttributeField(tableName + "." + fp.toString(), type));
 			} else if (p instanceof VariablePredicate) {
 				VariablePredicate vp = (VariablePredicate) p;

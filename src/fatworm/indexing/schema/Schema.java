@@ -41,17 +41,19 @@ public class Schema {
 	}
 
 	public AttributeField getFromVariableName(String colName) {
-		for (AttributeField attr : attributes) {
-			if (attr.getColumnName().equals(colName)) {
-				return attr;
-			}
+		int index = indexOf(colName);
+		if (index >= 0 && index < attributes.size()) {
+			return getFromColumn(index);
 		}
 		return null;
 	}
 	
 	public int indexOf(String colName) {
-		for (int i = 0; i < attributes.size(); ++i) {//System.out.println(attributes.get(i).getColumnName());
-			if (attributes.get(i).getColumnName().equals(colName)) {
+		int dotpos = colName.indexOf(".");
+		String fieldName = colName.substring(dotpos + 1);
+		for (int i = 0; i < attributes.size(); ++i) {
+			if (dotpos <= 0 && attributes.get(i).getColumnName().endsWith(fieldName) || 
+					attributes.get(i).getColumnName().equals(colName)) {
 				return i;
 			}
 		}

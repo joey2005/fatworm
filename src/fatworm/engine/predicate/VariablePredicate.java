@@ -16,6 +16,9 @@ public class VariablePredicate extends Predicate {
 	
 	@Override
 	public String toString() {
+		if (variableName.startsWith(".")) {
+			return variableName.substring(1);
+		}
 		return variableName;
 	}
 
