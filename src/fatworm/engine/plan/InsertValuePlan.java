@@ -25,31 +25,38 @@ public class InsertValuePlan extends Plan {
 		this.schema = Fatworm.tx.infoMgr.getSchema(tableName);
 		this.datas = new ArrayList<Data>();
 		
+		int count = schema.getColumnCount(), pos = 0;
+		Data[] tmp = new Data[count];
+		
 		if (columns == null) {
 			for (Predicate p : list) {
-				datas.add(p.calc(null));
+				if (p != null) {
+					datas.add(p.calc(null));
+				}
+				pos++;
 			}
 		} else {
-			int count = schema.getColumnCount(), pos = 0;
-			Data[] tmp = new Data[count];
 			for (String col : columns) {
 				int dotpos = col.indexOf(".");
 				String fieldName = tableName + "." + col.substring(dotpos + 1);
 				int index = schema.indexOf(fieldName);
-				tmp[index] = list.get(pos++).calc(null);
-			}
-			for (int i = 0; i < count; ++i) {
-				AttributeField af = schema.getFromColumn(i);
-				if (af.autoIncrement) {
-					tmp[i] = af.getAutoIncrement();
+				if (list.get(pos) != null) {
+					tmp[index] = list.get(pos).calc(null);
 				}
-				if (af.defaultValue != null) {
-					tmp[i] = af.getDefault();
-				}
+				pos++;
 			}
-			for (int i = 0; i < count; ++i) {
-				datas.add(tmp[i]);
+		}
+		for (int i = 0; i < count; ++i) {
+			AttributeField af = schema.getFromColumn(i);
+			if (af.autoIncrement) {
+				tmp[i] = af.getAutoIncrement();
 			}
+			if (af.defaultValue != null) {
+				tmp[i] = af.getDefault();
+			}
+		}
+		for (int i = 0; i < count; ++i) {
+			datas.add(tmp[i]);
 		}
 	}
 	

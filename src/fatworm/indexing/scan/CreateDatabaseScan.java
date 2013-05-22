@@ -2,7 +2,7 @@ package fatworm.indexing.scan;
 
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
-import fatworm.storage.transection.Transection;
+import fatworm.storage.transaction.Transaction;
 import fatworm.util.Fatworm;
 
 public class CreateDatabaseScan extends Operation {
@@ -15,7 +15,7 @@ public class CreateDatabaseScan extends Operation {
 
 	@Override
 	public void doit() {
-
+		Fatworm.txMap.put(dbName, new Transaction(dbName));
 	}
 	
 	@Override
