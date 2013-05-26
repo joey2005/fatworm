@@ -67,4 +67,7 @@ public class AttributeField {
 	public Data defaultValue = null;
 	public DataType type = null;
 
+	public static int ONLY_NULL = 1;
+	public static int ONLY_NOT_NULL = 0;
+	public static int CAN_BE_EVERYTHING = -1;
 }

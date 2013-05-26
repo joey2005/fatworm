@@ -55,4 +55,12 @@ public class DateTimeData extends Data {
 		return this.compareTo((Data)obj) == 0;
 	}
 
+	@Override
+	public String storageValue() {
+		if (d == null) {
+			return type.getDefaultValue().storageValue();
+		}
+		return d.toString();
+	}
+
 }

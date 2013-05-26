@@ -83,4 +83,18 @@ public class BooleanData extends Data {
 	public boolean equals(Object obj) {
 		return this.compareTo((Data)obj) == 0;
 	}
+
+	@Override
+	public String storageValue() {
+		if (b == null) {
+			return type.getDefaultValue().storageValue();
+		}
+		byte[] buf = new byte[1];
+		if (b) {
+			buf[0] = 1;
+		} else {
+			buf[0] = 0;
+		}
+		return new String(buf);
+	}
 }

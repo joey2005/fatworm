@@ -11,6 +11,8 @@ public abstract class Data implements Comparable<Data> {
 	
 	public abstract Object getValue();
 	
+	public abstract String storageValue();
+	
 	@Override
 	public abstract int compareTo(Data o);
 	

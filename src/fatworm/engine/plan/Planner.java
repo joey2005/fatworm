@@ -599,10 +599,10 @@ public class Planner {
 						autoIncrement = true;
 					} else if (suffix.getChildCount() == 0) {
 						// null
-						isNull = 1;
+						isNull = AttributeField.ONLY_NULL;
 					} else {
 						// null not
-						isNull = 0;					
+						isNull = AttributeField.ONLY_NOT_NULL;					
 					}
 				}
 				
@@ -782,7 +782,7 @@ public class Planner {
 			if (intValue.toString().equals(number)) {
 				return new ConstantPredicate(new IntegerType().valueOf(number));
 			} else {
-				return new ConstantPredicate(new DecimalType(0, 0).valueOf(number));
+				return new ConstantPredicate(new DecimalType(30, 0).valueOf(number));
 			}
 		} else if (child.getType() == Symbol.STRING_LITERAL) {
 			String c = child.toString();

@@ -2,6 +2,8 @@ package fatworm.indexing.data;
 
 import java.math.BigDecimal;
 
+import fatworm.util.Lib;
+
 public class FloatData extends NumberData {
 
 	private Float f;
@@ -96,5 +98,14 @@ public class FloatData extends NumberData {
 	@Override
 	public boolean equals(Object obj) {
 		return this.compareTo((Data)obj) == 0;
+	}
+
+	@Override
+	public String storageValue() {
+		if (f == null) {
+			return type.getDefaultValue().storageValue();
+		}
+		byte[] buf = Lib.bytesFromInt(Float.floatToIntBits(f));
+		return new String(buf);
 	}
 }

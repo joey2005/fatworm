@@ -54,4 +54,12 @@ public class TimestampData extends Data {
 	public boolean equals(Object obj) {
 		return this.compareTo((Data)obj) == 0;
 	}
+
+	@Override
+	public String storageValue() {
+		if (time == null) {
+			return type.getDefaultValue().storageValue();
+		}
+		return time.toString();
+	}
 }

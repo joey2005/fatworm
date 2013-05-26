@@ -102,4 +102,33 @@ public class DecimalData extends NumberData {
 		return this.compareTo((Data)obj) == 0;
 	}
 
+	@Override
+	public String storageValue() {
+		if (d == null) {
+			return type.getDefaultValue().storageValue();
+		}
+		String s = d.scaleByPowerOfTen(type.getScale()).toBigInteger().toString();
+		int len = s.length();
+		boolean neg = len > 1 && s.charAt(0) == '-';
+		
+		if (neg && len > type.getPrecision() + 1) {
+			s = "-" + s.substring(len - type.getPrecision(), len);
+		}
+		if (!neg && len > type.getPrecision()) {
+			s = s.substring(len - type.getPrecision(), len);
+		}
+		
+		byte[] tmp = new BigInteger(s).toByteArray();
+		byte[] buf = new byte[type.storageRequired()];
+		
+		for (int i = 0; i < buf.length - tmp.length; ++i) {
+			buf[i] = neg ? (byte)0xff : (byte)0;
+		}
+		for (int i = 0; i < tmp.length; ++i) {
+			buf[i - tmp.length + buf.length] = tmp[i];
+		}
+		
+		return new String(buf);
+	}
+
 }

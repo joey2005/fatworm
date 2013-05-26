@@ -36,5 +36,20 @@ public class VarcharData extends StringData {
 	public boolean equals(Object obj) {
 		return this.compareTo((Data)obj) == 0;
 	}
+
+	@Override
+	public String storageValue() {
+		if (c == null) {
+			return type.getDefaultValue().toString();
+		}
+		if (c.length() > type.storageRequired()) {
+			return c.substring(0, type.storageRequired());
+		}
+		String result = c;
+		while (result.length() < type.storageRequired()) {
+			result += '\0';
+		}
+		return result;
+	}
 	
 }
