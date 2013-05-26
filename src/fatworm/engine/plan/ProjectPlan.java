@@ -4,11 +4,9 @@ import fatworm.indexing.data.Data;
 import fatworm.indexing.data.DataType;
 import fatworm.indexing.scan.ProjectScan;
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.schema.AttributeField;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import fatworm.engine.predicate.*;
 

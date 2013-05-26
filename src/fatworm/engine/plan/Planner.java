@@ -1,17 +1,11 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.data.*;
-import fatworm.indexing.schema.AttributeField;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 import fatworm.util.Fatworm;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
@@ -37,7 +31,7 @@ public class Planner {
 		if (AliasToSchema.containsKey(tableName)) {
 			return AliasToSchema.get(tableName);
 		}
-		return Fatworm.tx.infoMgr.getSchema(tableName);
+		return LogicalFileMgr.getSchema(tableName);
 	}
 
 	/**
@@ -61,7 +55,7 @@ public class Planner {
 				for (String name : AllTableNameList) {
 					String variableName = name + "." + fieldName;
 					try {
-						Schema s = Fatworm.tx.infoMgr.getSchema(name);
+						Schema s = LogicalFileMgr.getSchema(name);
 						result = s.getFromVariableName(variableName).getType();
 					} catch (Exception ex) {
 						result = null;
@@ -86,7 +80,7 @@ public class Planner {
 				tableName = AliasToTblname.get(tableName);
 			}
 		
-			Schema s = Fatworm.tx.infoMgr.getSchema(tableName);
+			Schema s = LogicalFileMgr.getSchema(tableName);
 			
 			if (AliasToColname.containsKey(colName)) {
 				colName = AliasToColname.get(colName);

@@ -2,9 +2,9 @@ package fatworm.engine.plan;
 
 import fatworm.indexing.scan.DropTableScan;
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 
-import java.util.List;
+import java.util.*;
 
 import org.antlr.runtime.tree.Tree;
 

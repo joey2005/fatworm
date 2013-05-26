@@ -1,15 +1,14 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.data.Data;
 import fatworm.indexing.scan.InsertValueScan;
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.schema.AttributeField;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 import fatworm.indexing.table.Record;
 import fatworm.util.Fatworm;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import fatworm.engine.predicate.*;
 
@@ -22,7 +21,7 @@ public class InsertValuePlan extends Plan {
 	
 	public InsertValuePlan(String tableName, List<Predicate> list, List<String> columns) {
 		this.tableName = tableName;
-		this.schema = Fatworm.tx.infoMgr.getSchema(tableName);
+		this.schema = LogicalFileMgr.getSchema(tableName);
 		this.datas = new ArrayList<Data>();
 		
 		int count = schema.getColumnCount(), pos = 0;

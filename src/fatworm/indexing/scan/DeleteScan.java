@@ -1,8 +1,9 @@
 package fatworm.indexing.scan;
 
-import java.util.ArrayList;
+import java.util.*;
 
 import fatworm.engine.predicate.Predicate;
+import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
 import fatworm.util.Fatworm;
@@ -25,7 +26,7 @@ public class DeleteScan extends Operation {
 		scan.beforeFirst();
 		while (scan.hasNext()) {
 			Record next = scan.next();
-			Fatworm.tx.tableMgr.deleteRecord(tableName, next);
+			LogicalFileMgr.deleteRecord(tableName, next);
 		}
 	}
 

@@ -1,6 +1,7 @@
 package fatworm.util;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
@@ -13,17 +14,40 @@ import fatworm.engine.parser.FatwormLexer;
 import fatworm.engine.parser.FatwormParser;
 import fatworm.engine.plan.Planner;
 import fatworm.engine.plan.Plan;
+import fatworm.indexing.metadata.MetadataMgr;
 import fatworm.indexing.scan.Scan;
-import fatworm.storage.transaction.Transaction;
+import fatworm.storage.StorageMgr;
+import fatworm.storage.buffer.BufferMgr;
+import fatworm.storage.file.FileMgr;
 import fatworm.test.DriverTest;
 
 public class Fatworm {
+	public static int BUFFER_SIZE = 128;
+	public static int txnum = 1;
+	public static String homedir = null;
 	
-	public static Transaction tx = null;
-	public static HashMap<String, Transaction> txMap = new HashMap<String, Transaction>();
+	private static FileMgr fm;
+	private static BufferMgr bm;
+	private static MetadataMgr mdm;
+	private static StorageMgr stm;
 
 	public static void main(String[] args) {
-		new DriverTest().test();
+		Fatworm.init(args[0]);
+	}
+	
+	public static void init(String dirname) {
+		homedir = dirname;
+		stm = new StorageMgr();
+	}
+	
+	public static void openDataBase(String dbName, boolean create) {
+		File dbDirectory = new File(homedir, dbName);
+		if (!dbDirectory.exists() && !create) {
+			throw new RuntimeException("no database " + dbName + " found");
+		}
+		fm = new FileMgr(dbName);
+		bm = new BufferMgr(BUFFER_SIZE);
+		mdm = new MetadataMgr(fm.isNew());
 	}
 	
 	public static CommonTree parseQuery(String query) throws Exception {
@@ -51,4 +75,9 @@ public class Fatworm {
 		}
 		return result;
 	}
+	
+	public static FileMgr fileMgr() { return fm; }
+	public static BufferMgr bufferMgr() { return bm; }
+	public static MetadataMgr metadataMgr() { return mdm; }
+	public static StorageMgr storageMgr() { return stm; }
 }

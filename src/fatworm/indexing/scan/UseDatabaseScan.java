@@ -1,8 +1,9 @@
 package fatworm.indexing.scan;
 
+import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
-import fatworm.storage.transaction.Transaction;
+import fatworm.storage.file.FileMgr;
 import fatworm.util.Fatworm;
 
 public class UseDatabaseScan extends Operation {
@@ -17,7 +18,7 @@ public class UseDatabaseScan extends Operation {
 	 * use a database
 	 */
 	public void doit() {
-		Fatworm.tx = Fatworm.txMap.get(dbName);
+		LogicalFileMgr.useDataBase(dbName);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package fatworm.indexing.scan;
 
+import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
 import fatworm.util.Fatworm;
@@ -20,8 +21,8 @@ public class TableScan extends Scan {
 	@Override
 	public boolean hasNext() {
 		if (next == null) {
-			if (pointer < Fatworm.tx.tableMgr.getTable(tableName).size()) {
-				next = Fatworm.tx.tableMgr.getRecordFromTable(tableName, pointer++);
+			if (pointer < LogicalFileMgr.recordTable(tableName).size()) {
+				next = LogicalFileMgr.getRecordFromTable(tableName, pointer++);
 			}
 		}
 		return next != null;
@@ -37,7 +38,7 @@ public class TableScan extends Scan {
 	@Override
 	public Schema getSchema() {
 		if (schema == null) {
-			schema = Fatworm.tx.infoMgr.getSchema(tableName);
+			schema = LogicalFileMgr.getSchema(tableName);
 		}
 		return schema;
 	}

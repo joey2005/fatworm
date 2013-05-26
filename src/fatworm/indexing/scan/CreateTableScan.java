@@ -1,6 +1,6 @@
 package fatworm.indexing.scan;
 
-import java.util.List;
+import java.util.*;
 
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
@@ -22,8 +22,8 @@ public class CreateTableScan extends Operation {
 	@Override
 	public void doit() {
 		//System.out.println(schema.getTableName() + " " + schema.getColumnCount());
-		Fatworm.tx.tableMgr.addTable(schema.getTableName());
-		Fatworm.tx.infoMgr.addSchema(schema.getTableName(), schema);
+		String tableName = schema.getTableName();
+		Fatworm.metadataMgr().createTable(tableName, schema);
 	}
 
 	@Override

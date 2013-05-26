@@ -1,9 +1,10 @@
 package fatworm.engine.plan;
 
-import fatworm.indexing.metadata.InfoMgr;
+import fatworm.indexing.LogicalFileMgr;
+import fatworm.indexing.metadata.*;
 import fatworm.indexing.scan.DeleteScan;
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 import fatworm.util.Fatworm;
 import fatworm.engine.predicate.*;
 
@@ -11,11 +12,13 @@ public class DeletePlan extends Plan {
 	
 	public String tableName;
 	public Predicate whereCondition;
+	public Schema schema;
 	public int planID;
 	
 	public DeletePlan(String tableName, Predicate whereCondition) {
 		this.tableName = tableName;
 		this.whereCondition = whereCondition;
+		this.schema = LogicalFileMgr.getSchema(tableName);
 	}
 	
 	@Override
@@ -35,7 +38,6 @@ public class DeletePlan extends Plan {
 	@Override
 	public Scan createScan() {
 		Scan scan = null;
-		Schema schema = Fatworm.tx.infoMgr.getSchema(tableName);
 		if (whereCondition != null) {
 			scan = new SelectPlan(new TablePlan(tableName, schema), whereCondition).createScan();
 		} else {
@@ -52,7 +54,6 @@ public class DeletePlan extends Plan {
 
 	@Override
 	public Schema getSchema() {
-		// TODO Auto-generated method stub
-		return null;
+		return schema;
 	}
 }

@@ -2,10 +2,9 @@ package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.scan.SortScan;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class SortPlan extends Plan {
 	

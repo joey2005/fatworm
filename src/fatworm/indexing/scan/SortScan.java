@@ -1,7 +1,6 @@
 package fatworm.indexing.scan;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;

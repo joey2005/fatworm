@@ -1,7 +1,8 @@
 package fatworm.indexing.scan;
 
-import java.util.List;
+import java.util.*;
 
+import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
 import fatworm.util.Fatworm;
@@ -16,7 +17,7 @@ public class DropTableScan extends Operation {
 
 	@Override
 	public void doit() {
-		Fatworm.tx.tableMgr.dropTable(tableNameList);
+		LogicalFileMgr.dropTable(tableNameList);
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package fatworm.engine.plan;
 
-import fatworm.indexing.scan.*;
+import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
 
 public abstract class Plan {

@@ -1,10 +1,9 @@
 package fatworm.engine.plan;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 import fatworm.indexing.table.Record;
 
 public class SubQueryPlan extends Plan {

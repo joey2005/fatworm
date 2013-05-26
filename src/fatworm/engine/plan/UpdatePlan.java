@@ -1,12 +1,13 @@
 package fatworm.engine.plan;
 
+import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.scan.TableScan;
 import fatworm.indexing.scan.UpdateScan;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 import fatworm.util.Fatworm;
 
-import java.util.List;
+import java.util.*;
 
 import fatworm.engine.predicate.*;
 
@@ -24,7 +25,7 @@ public class UpdatePlan extends Plan {
 		this.colNameList = colNameList;
 		this.valueList = valueList;
 		this.whereCondition = whereCondition2;
-		this.schema = Fatworm.tx.infoMgr.getSchema(tableName);
+		this.schema = LogicalFileMgr.getSchema(tableName);
 	}
 	
 	@Override

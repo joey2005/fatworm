@@ -7,6 +7,8 @@ import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
+import fatworm.util.Fatworm;
+
 public class Driver implements java.sql.Driver {
 	
 	private static Driver driverInstance;
@@ -22,7 +24,7 @@ public class Driver implements java.sql.Driver {
 
 	@Override
 	public boolean acceptsURL(String url) throws SQLException {
-		if (url.startsWith("jdbc:fatworm:")) {
+		if (url.startsWith("jdbc:fatworm:/")) {
 			return true;
 		}
 		return false;
@@ -33,6 +35,8 @@ public class Driver implements java.sql.Driver {
 		if (!acceptsURL(url)) {
 			return null;
 		}
+		String dir = url.replace("jdbc:fatworm:/", "");
+		Fatworm.init(dir);
 		return new fatworm.driver.Connection();
 	}
 

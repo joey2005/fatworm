@@ -1,9 +1,9 @@
 package fatworm.indexing.scan;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import fatworm.engine.predicate.Predicate;
+import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.data.BooleanData;
 import fatworm.indexing.data.Data;
 import fatworm.indexing.schema.Schema;
@@ -61,7 +61,7 @@ public class UpdateScan extends Operation {
 				for (int i = 0; i < count; ++i) {
 					datas.add(tmp[i]);
 				}
-				Fatworm.tx.tableMgr.updateRecord(tableName, pointer, new Record(datas, schema));
+				LogicalFileMgr.updateRecord(tableName, pointer, new Record(datas, schema));
 			}
 			pointer++;
 		}

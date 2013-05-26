@@ -2,7 +2,7 @@ package fatworm.engine.plan;
 
 import fatworm.indexing.scan.DropDatabaseScan;
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 
 public class DropDatabasePlan extends Plan {
 	

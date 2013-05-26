@@ -2,7 +2,7 @@ package fatworm.engine.plan;
 
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.scan.UseDatabaseScan;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.schema.*;
 
 public class UseDatabasePlan extends Plan {
 
