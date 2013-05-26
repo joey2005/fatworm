@@ -32,7 +32,8 @@ public class Fatworm {
 	private static StorageMgr stm;
 
 	public static void main(String[] args) {
-		Fatworm.init(args[0]);
+		//Fatworm.init(args[0]);
+		//new DriverTest().test();
 	}
 	
 	public static void init(String dirname) {
@@ -44,6 +45,11 @@ public class Fatworm {
 		File dbDirectory = new File(homedir, dbName);
 		if (!dbDirectory.exists() && !create) {
 			throw new RuntimeException("no database " + dbName + " found");
+		}
+		if (bm != null) {
+			if (!(create && fm.dbname().equals(dbName))) {
+				bm.flushAll(txnum);
+			}
 		}
 		fm = new FileMgr(dbName);
 		bm = new BufferMgr(BUFFER_SIZE);

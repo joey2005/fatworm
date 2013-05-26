@@ -633,11 +633,9 @@ public class ResultSet implements java.sql.ResultSet {
 
 	@Override
 	public boolean next() throws SQLException {
+		boolean result = scan.hasNext();
 		record = scan.next();
-		if (record == null) {
-			return false;
-		}
-		return true;
+		return result;
 	}
 
 	@Override

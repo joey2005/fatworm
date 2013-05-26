@@ -1,7 +1,11 @@
 package fatworm.indexing.scan;
 
+import fatworm.indexing.data.Data;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+
+import java.util.*;
+
 
 public class ProductScan extends Scan {
 	
@@ -57,8 +61,9 @@ public class ProductScan extends Scan {
 	}
 
 	private Record union(Record left, Record right) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Data> datas = left.getData();
+		datas.addAll(right.getData());
+		return new Record(datas, schema);
 	}
 
 	@Override

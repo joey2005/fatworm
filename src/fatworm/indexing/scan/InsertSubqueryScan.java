@@ -4,25 +4,33 @@ import fatworm.engine.plan.Plan;
 import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
+
+import java.util.*;
 
 public class InsertSubQueryScan extends Operation {
 	
-	private String tableName;
+	private TableFile tf;
 	private Scan scan;
 	
 	public InsertSubQueryScan(String tableName, Scan scan) {
-		this.tableName = tableName;
+		this.tf = Fatworm.metadataMgr().getTableAccess(tableName);
 		this.scan = scan;
 	}
 
 	@Override
 	public void doit() {
+		List<Record> records = new ArrayList<Record>();
 		scan.beforeFirst();
 		while (scan.hasNext()) {
 			Record next = scan.next();
-			LogicalFileMgr.addRecord(tableName, next);
+			records.add(next);
 		}
+		for (Record record : records) {
+			tf.insertRecord(record);
+		}
+		tf.close();
 	}
 
 	@Override
@@ -31,7 +39,6 @@ public class InsertSubQueryScan extends Operation {
 			scan.close();
 			scan = null;
 		}
-		tableName = null;
 	}
 
 	@Override

@@ -83,5 +83,10 @@ public class DecimalType extends NumberType {
 		}
 		return (result - 1) / 8 + 1;
 	}
-
+	
+	@Override
+	public int encode() {
+		return setSecondArg(setFirstArg(DECIMAL, precision), scale);
+	}
+	
 }

@@ -2,6 +2,8 @@ package fatworm.indexing.metadata;
 
 import java.util.*;
 
+import fatworm.indexing.data.DataType;
+import fatworm.indexing.data.IntegerType;
 import fatworm.indexing.schema.*;
 
 public class TableInfo {
@@ -26,7 +28,11 @@ public class TableInfo {
 	   int offset = 0;
 	   for (AttributeField af : schema.getAllFields()) {
 		   offsets.put(af.getColumnName(), offset);
-		   offset += af.getType().storageRequired();
+		   DataType type = af.getType();
+		   offset += type.storageRequired();
+		   if (!(type instanceof IntegerType)) {
+			   offset += 4;
+		   }
 	   }
 	   recordLen = offset;
    }

@@ -1,6 +1,7 @@
 package fatworm.indexing.metadata;
 
 import fatworm.indexing.schema.*;
+import fatworm.indexing.table.TableFile;
 
 import java.util.*;
 
@@ -20,6 +21,14 @@ public class MetadataMgr {
 	
 	public TableInfo getTableInfo(String tableName) {
 		return tableMgr.getTableInfo(tableName);
+	}
+	
+	public TableFile getTableAccess(String tableName) {
+		return tableMgr.getTableFileAccess(tableName);
+	}
+	
+	public void dropTable(List<String> tableNameList) {
+		tableMgr.dropTable(tableNameList);
 	}
 	
 	public void createIndex(String indexName, String tableName, String fieldName) {

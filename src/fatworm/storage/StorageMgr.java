@@ -29,11 +29,12 @@ public class StorageMgr {
     public void dropDataBase(String dbName) {
     	File dbDirectory = new File(Fatworm.homedir, dbName);
     	if (dbDirectory.exists()) {
-    		for (String fileName : dbDirectory.list()) {
-    			new File(dbDirectory, fileName).delete();
-    		}
-    		dbDirectory.delete();
+			for (String filename : dbDirectory.list()) {
+				new File(dbDirectory, filename).delete();
+			}
+			dbDirectory.delete();
     	}
+    	myBuffers.unpinAll();
     }
 
     /**

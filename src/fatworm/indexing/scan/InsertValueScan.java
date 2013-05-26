@@ -2,14 +2,16 @@ package fatworm.indexing.scan;
 
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.indexing.table.TableFile;
+import fatworm.util.Fatworm;
 
 public class InsertValueScan extends Operation {
 	
-	private String tableName;
+	private TableFile tf;
 	private Record record;
 	
 	public InsertValueScan(String tableName, Record record) {
-		this.tableName = tableName;
+		this.tf = Fatworm.metadataMgr().getTableAccess(tableName);
 		this.record = record;
 	}
 	
@@ -17,12 +19,12 @@ public class InsertValueScan extends Operation {
 	 * insert a record into table
 	 */
 	public void doit() {
-		
+		tf.insertRecord(record);
+		tf.close();
 	}
 
 	@Override
 	public void close() {
-		tableName = null;
 		record = null;
 	}
 

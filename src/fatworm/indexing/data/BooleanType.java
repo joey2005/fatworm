@@ -31,4 +31,9 @@ public class BooleanType extends DataType {
 		throw new Exception("Data Format Wrong");
 	}
 
+	@Override
+	public int encode() {
+		return BOOLEAN;
+	}
+
 }

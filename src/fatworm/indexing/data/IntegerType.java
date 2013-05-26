@@ -38,7 +38,13 @@ public class IntegerType extends NumberType {
 	public Data valueOf(String value) {
 		return new IntegerData(value, this);
 	}
+	
+	@Override
+	public int encode() {
+		return INTEGER;
+	}
 
 	public final static IntegerData ZERO = new IntegerData(0, new IntegerType()); 
 	public final static IntegerData ONE = new IntegerData(1, new IntegerType());
+
 }

@@ -1,28 +1,30 @@
 package fatworm.indexing.scan;
 
 import fatworm.indexing.LogicalFileMgr;
+import fatworm.indexing.metadata.TableInfo;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.indexing.table.RecordFile;
+import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
 
 public class TableScan extends Scan {
 	
-	private String tableName;
-	private Schema schema;
-	private int pointer;
+	private TableInfo ti;
+	private TableFile tf;
 	private Record next;
 	
 	public TableScan(String tableName) {
-		this.tableName = tableName;
-		this.schema = null;
+		this.ti = Fatworm.metadataMgr().getTableInfo(tableName);
+		this.tf = Fatworm.metadataMgr().getTableAccess(tableName);
 		beforeFirst();
 	}
 
 	@Override
 	public boolean hasNext() {
 		if (next == null) {
-			if (pointer < LogicalFileMgr.recordTable(tableName).size()) {
-				next = LogicalFileMgr.getRecordFromTable(tableName, pointer++);
+			if (tf.hasNext()) {
+				next = tf.next();
 			}
 		}
 		return next != null;
@@ -37,28 +39,24 @@ public class TableScan extends Scan {
 
 	@Override
 	public Schema getSchema() {
-		if (schema == null) {
-			schema = LogicalFileMgr.getSchema(tableName);
-		}
-		return schema;
+		return ti.schema();
 	}
 
 	@Override
 	public void beforeFirst() {
+		tf.beforeFirst();
 		next = null;
-		pointer = 0;
 	}
 
 	@Override
 	public void close() {
 		next = null;
-		tableName = null;
+		tf.close();
 	}
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return "table scan()";
 	}
 
 }

@@ -13,11 +13,11 @@ import fatworm.util.Fatworm;
 public class Statement implements java.sql.Statement {
 	
 	private Connection connection;
-	private ResultSet lastResult;
+	private ResultSet resultSet;
 	
 	public Statement(Connection connection) {
 		this.connection = connection;
-		this.lastResult = null;
+		this.resultSet = null;
 	}
 
 	@Override
@@ -58,9 +58,9 @@ public class Statement implements java.sql.Statement {
 
 	@Override
 	public void close() throws SQLException {
-		if (lastResult != null) {
-			lastResult.close();
-			lastResult = null;
+		if (resultSet != null) {
+			resultSet.close();
+			resultSet = null;
 		}
 	}
 
@@ -72,8 +72,9 @@ public class Statement implements java.sql.Statement {
 
 	@Override
 	public boolean execute(String sql) throws SQLException {
-		if (lastResult != null) {
-			lastResult.close();
+		if (resultSet != null) {
+			resultSet.close();
+			resultSet = null;
 		}
 		
 		CommonTree tree = null;
@@ -108,10 +109,10 @@ public class Statement implements java.sql.Statement {
 			((UpdateScan) scan).doit();
 		} else if (scan instanceof UseDatabaseScan) {
 			((UseDatabaseScan) scan).doit();
+		} else {
+			Fatworm.bufferMgr().flushAll(Fatworm.txnum);
+			resultSet = new fatworm.driver.ResultSet(scan, connection);
 		}
-		
-		ResultSet result = new fatworm.driver.ResultSet(scan, connection);
-		lastResult = result;
 		
 		return true;
 	}
@@ -231,8 +232,7 @@ public class Statement implements java.sql.Statement {
 
 	@Override
 	public ResultSet getResultSet() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		return resultSet;
 	}
 
 	@Override

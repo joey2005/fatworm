@@ -97,7 +97,9 @@ public class RecordPage {
      */
     public void delete() {
     	int pos = currentpos();
-    	Fatworm.storageMgr().setInt(block, pos, EMPTY);
+    	if (pos >= 0 && pos + INT_SIZE <= BLOCK_SIZE) {
+    		Fatworm.storageMgr().setInt(block, pos, EMPTY);
+    	}
     }
 
     /**
@@ -109,10 +111,11 @@ public class RecordPage {
     	// insert to the bottom of the record page
     	boolean found = false;
     	lastSlot++;
-    	while (isValidSlot()) {
-    		int pos = currentpos();
+    	while (lastSlot * slotSize + slotSize <= BLOCK_SIZE) {
+    		int pos = lastSlot * slotSize;
     		if (Fatworm.storageMgr().getInt(block, pos) == EMPTY) {
     			found = true;
+    			break;
     		}
     		lastSlot++;
     	}

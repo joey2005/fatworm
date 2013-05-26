@@ -2,8 +2,10 @@ package fatworm.indexing;
 
 import java.util.*;
 
+import fatworm.indexing.metadata.TableInfo;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
 
 public class LogicalFileMgr {
@@ -22,43 +24,17 @@ public class LogicalFileMgr {
 		Fatworm.storageMgr().openDataBase(dbName, false);
 	}
 	
-	public static void createTable(String tableName) {
-		
+	public static TableFile createTable(String tableName, Schema schema) {
+		Fatworm.metadataMgr().createTable(tableName, schema);
+		TableFile result = Fatworm.metadataMgr().getTableAccess(tableName);
+		return result;
 	}
 	
 	public static void dropTable(List<String> tableNameList) {
-
+		Fatworm.metadataMgr().dropTable(tableNameList);
 	}
 	
-	public static void addRecord(String tableName, Record record) {
-
-	}
-	
-	public static void deleteRecord(String tableName) {
-
-	}
-	
-	public static void deleteRecord(String tableName, Record record) {
-
-	}
-	
-	public static void updateRecord(String tableName, int index, Record record) {
-
-	}
-	
-	public static ArrayList<Record> recordTable(String tableName) {
-
-	}
-	
-	public static Record getRecordFromTable(String tableName, int index) {
-
-	}
-	
-	public static void addSchema(String tableName, Schema schema) {
-
-	}
-
 	public static Schema getSchema(String tableName) {
-
+		return Fatworm.metadataMgr().getTableInfo(tableName).schema();
 	}
 }

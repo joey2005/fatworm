@@ -41,4 +41,9 @@ public class TimestampType extends DataType {
 		return "Timestamp";
 	}
 
+	@Override
+	public int encode() {
+		return TIMESTAMP;
+	}
+
 }

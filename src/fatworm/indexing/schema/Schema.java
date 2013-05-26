@@ -19,7 +19,8 @@ public class Schema {
 	}
 	
 	public Schema union(Schema right, String alias) {// need to change the name of columns?
-		List<AttributeField> fields = attributes;
+		List<AttributeField> fields = new ArrayList<AttributeField>();
+		fields.addAll(attributes);
 		fields.addAll(right.getAllFields());
 		return new Schema(alias, fields);
 	}

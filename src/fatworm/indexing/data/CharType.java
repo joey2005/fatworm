@@ -43,5 +43,10 @@ public class CharType extends DataType {
 		throw new Exception("Data Format Wrong");
 	}
 
-	private CharData defaultValue = null; 
+	private CharData defaultValue = null;
+
+	@Override
+	public int encode() {
+		return setFirstArg(CHAR, length);
+	} 
 }

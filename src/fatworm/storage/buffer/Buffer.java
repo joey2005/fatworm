@@ -108,7 +108,7 @@ public class Buffer {
     * @return true if the buffer is pinned
     */
    boolean isPinned() {
-	   return pins == 0;
+	   return pins != 0;
    }
    
    /**

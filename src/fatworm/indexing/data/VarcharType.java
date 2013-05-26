@@ -45,7 +45,13 @@ public class VarcharType extends DataType {
 	public int getLength() {
 		return length;
 	}
+	
+	@Override
+	public int encode() {
+		return setFirstArg(VARCHAR, length);
+	}
 
 	private int length;
 	private VarcharData defaultValue = null;
+
 }

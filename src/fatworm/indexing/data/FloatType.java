@@ -44,4 +44,9 @@ public class FloatType extends NumberType {
 		return new FloatData(value, this);
 	}
 
+	@Override
+	public int encode() {
+		return FLOAT;
+	}
+
 }

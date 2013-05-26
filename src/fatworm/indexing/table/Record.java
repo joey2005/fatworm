@@ -1,6 +1,6 @@
 package fatworm.indexing.table;
 
-import java.util.List;
+import java.util.*;
 
 import fatworm.indexing.data.Data;
 import fatworm.indexing.schema.Schema;
@@ -13,6 +13,14 @@ public class Record {
 	public Record(List<Data> datas, Schema schema) {
 		this.datas = datas;
 		this.schema = schema;
+	}
+	
+	public Schema schema() {
+		return schema;
+	}
+	
+	public List<Data> getData() {
+		return datas;
 	}
 
 	/**

@@ -5,8 +5,8 @@ import java.sql.SQLException;
 
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.Enumeration;
 
+import java.sql.ResultSet;
 
 public class DriverTest {
 
@@ -14,13 +14,27 @@ public class DriverTest {
 		
 		try {
 			Class.forName("fatworm.driver.Driver");
-			Connection connection = DriverManager.getConnection("jdbc:fatworm://localhost");
-			Statement statement = connection.createStatement();
+			Connection connection = DriverManager.getConnection("jdbc:fatworm:/D:\\workspace\\fatworm-sister\\db");
+			Statement stmt = connection.createStatement();
 			
-			statement.execute("insert into test1 values(1,111111111111111)");
-//			statement.execute("SELECT MODEL306.IS_MUTAGEN, COUNT( MODEL306.MODEL_ID ) FROM MODEL AS MODEL306, BOND AS T1008290441960  WHERE MODEL306.MODEL_ID=T1008290441960.MODEL_ID AND MODEL306.LOGP='0' GROUP BY MODEL306.IS_MUTAGEN ORDER BY MODEL306.IS_MUTAGEN ASC");
-			//statement.execute("delete from test1 where (a=1 and b=9) or (a=2 or b=8)");
-			//statement.close();
+			stmt.execute("drop database tmp");
+			stmt.execute("create database tmp");
+			stmt.execute("use tmp");
+			stmt.execute("create table test1 ( a int )");
+			stmt.execute("insert into test1 values(1)");
+			stmt.execute("drop database tmp");
+			stmt.execute("create database tmp");
+			stmt.execute("use tmp");
+			stmt.execute("create table test1 ( a int )");
+			stmt.execute("insert into test1 values(1)");			
+			stmt.execute("select * from test1");
+			ResultSet rs = stmt.getResultSet();
+			rs.beforeFirst();
+			while (rs.next()) {
+				System.out.println(rs.getObject(1));
+			}
+			
+			stmt.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

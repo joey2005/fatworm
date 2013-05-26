@@ -22,7 +22,6 @@ public class InsertValuePlan extends Plan {
 	public InsertValuePlan(String tableName, List<Predicate> list, List<String> columns) {
 		this.tableName = tableName;
 		this.schema = LogicalFileMgr.getSchema(tableName);
-		this.datas = new ArrayList<Data>();
 		
 		int count = schema.getColumnCount(), pos = 0;
 		Data[] tmp = new Data[count];
@@ -30,7 +29,7 @@ public class InsertValuePlan extends Plan {
 		if (columns == null) {
 			for (Predicate p : list) {
 				if (p != null) {
-					datas.add(p.calc(null));
+					tmp[pos] = p.calc(null);
 				}
 				pos++;
 			}
@@ -54,6 +53,8 @@ public class InsertValuePlan extends Plan {
 				tmp[i] = af.getDefault();
 			}
 		}
+		
+		datas = new ArrayList<Data>();
 		for (int i = 0; i < count; ++i) {
 			datas.add(tmp[i]);
 		}

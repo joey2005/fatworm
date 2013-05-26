@@ -40,4 +40,9 @@ public class DateTimeType extends DataType {
 		return "DateTime";
 	}
 
+	@Override
+	public int encode() {
+		return DATETIME;
+	}
+
 }

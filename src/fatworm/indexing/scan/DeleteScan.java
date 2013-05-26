@@ -6,15 +6,16 @@ import fatworm.engine.predicate.Predicate;
 import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
 
 public class DeleteScan extends Operation {
 	
-	private String tableName;
+	private TableFile tf;
 	private Scan scan;
 	
 	public DeleteScan(String tableName, Scan scan) {
-		this.tableName = tableName;
+		this.tf = Fatworm.metadataMgr().getTableAccess(tableName);
 		this.scan = scan;
 	}
 
@@ -23,11 +24,13 @@ public class DeleteScan extends Operation {
 		if (scan == null) {
 			return;
 		}
+		List<Record> records = new ArrayList<Record>();
 		scan.beforeFirst();
 		while (scan.hasNext()) {
 			Record next = scan.next();
-			LogicalFileMgr.deleteRecord(tableName, next);
+			records.add(next);
 		}
+		tf.deleteRecord(records);
 	}
 
 	@Override
@@ -36,7 +39,6 @@ public class DeleteScan extends Operation {
 			scan.close();
 			scan = null;
 		}
-		tableName = null;
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class UpdatePlan extends Plan {
 
 	@Override
 	public Scan createScan() {
-		return new UpdateScan(new TableScan(tableName), schema, colNameList, valueList, whereCondition);
+		return new UpdateScan(tableName, schema, colNameList, valueList, whereCondition);
 	}
 
 	@Override

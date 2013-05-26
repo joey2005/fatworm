@@ -8,18 +8,19 @@ import fatworm.indexing.data.BooleanData;
 import fatworm.indexing.data.Data;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
+import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
 
 public class UpdateScan extends Operation {
 	
-	private Scan scan;
+	private TableFile tf;
 	private Schema schema;
 	private List<String> colNameList;
 	private List<Predicate> valueList;
 	private Predicate whereCondition;
 	
-	public UpdateScan(Scan scan, Schema schema, List<String> colNameList, List<Predicate> valueList, Predicate whereCondition) {
-		this.scan = scan;
+	public UpdateScan(String tableName, Schema schema, List<String> colNameList, List<Predicate> valueList, Predicate whereCondition) {
+		this.tf = Fatworm.metadataMgr().getTableAccess(tableName);
 		this.schema = schema;
 		this.colNameList = colNameList;
 		this.valueList = valueList;
@@ -28,19 +29,13 @@ public class UpdateScan extends Operation {
 
 	@Override
 	public void doit() {
-		if (scan == null) {
-			return;
-		}
 
 		int count = schema.getColumnCount();
 		Data[] tmp = new Data[count];
 		
-		int pointer = 0;
-		String tableName = schema.getTableName();
-		
-		scan.beforeFirst();
-		while (scan.hasNext()) {
-			Record record = scan.next();
+		tf.beforeFirst();
+		while (tf.hasNext()) {
+			Record record = tf.next();
 			
 			BooleanData ok = null;
 			try {
@@ -61,18 +56,15 @@ public class UpdateScan extends Operation {
 				for (int i = 0; i < count; ++i) {
 					datas.add(tmp[i]);
 				}
-				LogicalFileMgr.updateRecord(tableName, pointer, new Record(datas, schema));
+				tf.updateRecord(new Record(datas, schema));
 			}
-			pointer++;
 		}
+		
+		tf.close();
 	}
 
 	@Override
 	public void close() {
-		if (scan != null) {
-			scan.close();
-			scan = null;
-		}
 		colNameList = null;
 		valueList = null;
 		whereCondition = null;

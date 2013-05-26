@@ -15,7 +15,7 @@ public class BufferMgr {
 		}
 	}
 	
-	public synchronized void flushAll(int txnum) {
+	public void flushAll(int txnum) {
 		for (Buffer buffer : bufferPool) {
 			if (buffer.isModifiedBy(txnum)) {
 				buffer.flush();
@@ -23,7 +23,7 @@ public class BufferMgr {
 		}
 	}
 	
-	public synchronized Buffer pin(Block blk) {
+	public Buffer pin(Block blk) {
 		Buffer buffer = findExistingBuffer(blk);
 		if (buffer == null) {
 			buffer = chooseUnpinnedBuffer();
@@ -39,7 +39,7 @@ public class BufferMgr {
 		return buffer;
 	}
 	
-	public synchronized Buffer pinNew(String filename, PageFormatter fmtr) {
+	public Buffer pinNew(String filename, PageFormatter fmtr) {
 		Buffer buffer = chooseUnpinnedBuffer();
 		if (buffer == null) {
 			return null;
@@ -50,7 +50,7 @@ public class BufferMgr {
 		return buffer;
 	}
 	
-	public synchronized void unpin(Buffer buff) {
+	public void unpin(Buffer buff) {
 		buff.unpin();
 		if (!buff.isPinned()) {
 			availableCount++;
