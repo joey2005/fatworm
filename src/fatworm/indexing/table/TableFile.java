@@ -76,7 +76,9 @@ public class TableFile {
 		return new Record(datas, s);
 	}
 	
-	public void close() { }
+	public void close() { 
+		rf.close();
+	}
 	
 	public void createIndex(String indexName, String fieldName) {
 		

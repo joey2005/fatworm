@@ -61,7 +61,8 @@ public class ProductScan extends Scan {
 	}
 
 	private Record union(Record left, Record right) {
-		List<Data> datas = left.getData();
+		List<Data> datas = new ArrayList<Data>();
+		datas.addAll(left.getData());
 		datas.addAll(right.getData());
 		return new Record(datas, schema);
 	}

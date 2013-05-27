@@ -30,7 +30,11 @@ public class StorageMgr {
     	File dbDirectory = new File(Fatworm.homedir, dbName);
     	if (dbDirectory.exists()) {
 			for (String filename : dbDirectory.list()) {
-				new File(dbDirectory, filename).delete();
+				File f = new File(dbDirectory, filename);
+				if (f.exists() && f.isFile()) {
+					//System.gc();
+					f.delete();
+				}
 			}
 			dbDirectory.delete();
     	}

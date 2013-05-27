@@ -107,6 +107,17 @@ public class TableMgr {
     }
 
     public void dropTable(List<String> tableNameList) {
+        RecordFile fcatfile = new RecordFile(fcatInfo);
+        fcatfile.beforeFirst();
+        while (fcatfile.hasNext()) {
+        	String tableName = fcatfile.getString("tblname");
+        	int pos = tableNameList.indexOf(tableName);
+        	if (pos >= 0 && pos < tableNameList.size()) {
+        		fcatfile.delete();
+        	}
+        }
+        fcatfile.close();
+        
         for (String tableName : tableNameList) {
             tableInfos.remove(tableName);
         }
