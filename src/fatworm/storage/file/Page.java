@@ -37,10 +37,13 @@ public class Page {
         return INT_SIZE + (n * (int)bytesPerChar);
     }
 
-    private ByteBuffer contents = ByteBuffer.allocateDirect(BLOCK_SIZE);
-    private FileMgr fileMgr = Fatworm.fileMgr();
+    private ByteBuffer contents;
+    private FileMgr fileMgr;
 
-    public Page() {}
+    public Page() {
+    	contents = ByteBuffer.allocateDirect(BLOCK_SIZE);
+    	fileMgr = Fatworm.fileMgr();
+    }
 
     /**
      * Populates the page with the contents of the specified disk block. 

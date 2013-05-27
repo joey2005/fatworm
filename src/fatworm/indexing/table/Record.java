@@ -38,12 +38,11 @@ public class Record {
 	 * @return
 	 */
 	public Data getFromVariableName(String name) {
-		Data result = null;
-		for (int i = 0; i < schema.getColumnCount(); ++i) {
-			if (schema.getFromColumn(i).getColumnName().equals(name)) {
-				result = datas.get(i);
-			}
+		int index = schema.indexOf(name);
+		if (index < 0 || index >= datas.size()) {
+			return null;
+		} else {
+			return datas.get(index);
 		}
-		return result;
 	}
 }

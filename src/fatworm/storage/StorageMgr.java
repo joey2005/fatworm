@@ -27,6 +27,9 @@ public class StorageMgr {
     }
     
     public void dropDataBase(String dbName) {
+    	if (dbName.equals(Fatworm.dbname)) {
+    		Fatworm.dropAll();
+    	}
     	File dbDirectory = new File(Fatworm.homedir, dbName);
     	if (dbDirectory.exists()) {
 			for (String filename : dbDirectory.list()) {
@@ -96,6 +99,7 @@ public class StorageMgr {
      * @param val the value to be stored
      */
     public void setInt(Block blk, int offset, int val) {
+    	//System.out.println(blk + " " + offset + " " + val);
         Buffer buff = myBuffers.getBuffer(blk);
         buff.setInt(offset, val, txnum);
     }

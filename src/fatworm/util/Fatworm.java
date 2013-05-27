@@ -16,6 +16,7 @@ import fatworm.engine.plan.Planner;
 import fatworm.engine.plan.Plan;
 import fatworm.indexing.metadata.MetadataMgr;
 import fatworm.indexing.scan.Scan;
+import fatworm.indexing.schema.Schema;
 import fatworm.storage.StorageMgr;
 import fatworm.storage.buffer.BufferMgr;
 import fatworm.storage.file.FileMgr;
@@ -25,6 +26,7 @@ public class Fatworm {
 	public static int BUFFER_SIZE = 128;
 	public static int txnum = 1;
 	public static String homedir = null;
+	public static String dbname = null;
 	
 	private static FileMgr fm;
 	private static BufferMgr bm;
@@ -54,6 +56,16 @@ public class Fatworm {
 		fm = new FileMgr(dbName);
 		bm = new BufferMgr(BUFFER_SIZE);
 		mdm = new MetadataMgr(fm.isNew());
+		dbname = dbName;
+	}
+	
+	public static void dropAll() {
+		mdm.dropAll();
+		bm.flushAll(txnum);
+		bm = null;
+		mdm = null;
+		fm = null;
+		dbname = null;
 	}
 	
 	public static CommonTree parseQuery(String query) throws Exception {

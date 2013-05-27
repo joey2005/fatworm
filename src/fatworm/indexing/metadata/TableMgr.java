@@ -20,7 +20,7 @@ public class TableMgr {
 
     private static final int MAXLEN = 20;
 
-    private TableInfo fcatInfo;
+    private TableInfo fcatInfo, fakeInfo;
 
     public TableMgr(boolean isnew) {		
         tableInfos = new HashMap<String, TableInfo>();
@@ -34,9 +34,24 @@ public class TableMgr {
         fields.add(new AttributeField("autoinc", new IntegerType()));
         Schema fcatSchema = new Schema("fldcat", fields);
         fcatInfo = new TableInfo("fldcat", fcatSchema);
+        
+        List<AttributeField> fields2 = new ArrayList<AttributeField>();
+        fields2.add(new AttributeField("fake", new IntegerType()));
+        Schema fakeSchema = new Schema("fakeTable", fields2);
+        fakeInfo = new TableInfo("fakeTable", fakeSchema);
 
         if (isnew) {
             createTable("fldcat", fcatSchema);
+            
+            createTable("fakeTable", fakeSchema);
+            RecordFile fakefile = new RecordFile(fakeInfo);
+            for (AttributeField af : fakeSchema.getAllFields()) {
+                String fldname = af.getColumnName();
+                fakefile.insert();
+                fakefile.setInt("fake", 0);
+            }
+            fakefile.close();
+            
         } else {
             RecordFile fcatfile = new RecordFile(fcatInfo);
             Map<String, List<AttributeField>> mapping = new HashMap<String, List<AttributeField>>();
@@ -119,7 +134,32 @@ public class TableMgr {
         fcatfile.close();
         
         for (String tableName : tableNameList) {
+        	TableInfo ti = tableInfos.get(tableName);
+        	if (ti != null) {
+        		TableFile tf = new TableFile(ti);
+        		tf.delete();
+            	tf.close();
+        	}
             tableInfos.remove(tableName);
         }
+    }
+    
+    public void dropAll() {
+        RecordFile fcatfile = new RecordFile(fcatInfo);
+        fcatfile.beforeFirst();
+        while (fcatfile.hasNext()) {
+        	fcatfile.delete();
+        }
+        fcatfile.close();
+        
+        for (String tableName : tableInfos.keySet()) {
+        	TableInfo ti = tableInfos.get(tableName);
+        	if (ti != null) {
+        		TableFile tf = new TableFile(ti);
+        		tf.delete();
+            	tf.close();
+        	}
+        }	
+        tableInfos.clear();
     }
 }

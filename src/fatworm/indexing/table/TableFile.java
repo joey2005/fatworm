@@ -89,6 +89,10 @@ public class TableFile {
 	}
 	
 	public void delete() {
+		rf.beforeFirst();
+		while (rf.hasNext()) {
+			rf.delete();
+		}
 	}
 	
 	public void deleteRecord(List<Record> records) {

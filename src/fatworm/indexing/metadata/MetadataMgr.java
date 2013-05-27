@@ -31,6 +31,10 @@ public class MetadataMgr {
 		tableMgr.dropTable(tableNameList);
 	}
 	
+	public void dropAll() {
+		tableMgr.dropAll();
+	}
+	
 	public void createIndex(String indexName, String tableName, String fieldName) {
 		indexMgr.createIndex(indexName, tableName, fieldName);
 	}

@@ -4,12 +4,17 @@ import fatworm.storage.file.*;
 
 public class Buffer {
 	
-	private Page contents = new Page();
-	private Block block = null;
-	private int pins = 0;
-	private int modifiedBy = -1; // negative means not modified
+	private Page contents;
+	private Block block;
+	private int pins;
+	private int modifiedBy;
 	
-	public Buffer() { }
+	public Buffer() { 
+		contents = new Page();
+		block = null;
+		pins = 0;
+		modifiedBy = -1; // negative means not modified
+	}
 	
 	/**
     * Returns the integer value at the specified offset of the

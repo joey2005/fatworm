@@ -125,6 +125,14 @@ public class RecordPage {
     		Fatworm.storageMgr().setInt(block, pos, INUSE);
     	}
     	return found;
+    	/*
+    	boolean found = searchFor(EMPTY);
+    	if (found) {
+    		moveToId(currentSlot);
+    		int pos = currentpos();
+    		Fatworm.storageMgr().setInt(block, pos, INUSE);
+    	}
+    	return found;*/
     }
 
     /**

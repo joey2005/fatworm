@@ -24,9 +24,6 @@ public class VariablePredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
-		if (variableName.startsWith(".")) {
-			return record.getFromVariableName(record.schema().getTableName() + variableName);
-		}
 		return record.getFromVariableName(variableName);
 	}
 

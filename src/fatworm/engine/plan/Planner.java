@@ -425,8 +425,8 @@ public class Planner {
 
 
 	private Plan translateTableRef(List<Plan> tableRefList) {
-		if (tableRefList == null) {
-			return null;
+		if (tableRefList == null || tableRefList.isEmpty()) {
+			return new TablePlan("fakeTable", getSchema("fakeTable"));
 		}
 		Plan result = null;
 		for (Plan tableRef : tableRefList) {

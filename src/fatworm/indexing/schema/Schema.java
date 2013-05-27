@@ -50,12 +50,24 @@ public class Schema {
 	}
 	
 	public int indexOf(String colName) {
-		int dotpos = colName.indexOf(".");
-		String fieldName = colName.substring(dotpos + 1);
+		int posi = colName.indexOf(".");
 		for (int i = 0; i < attributes.size(); ++i) {
-			if (dotpos <= 0 && attributes.get(i).getColumnName().endsWith(fieldName) || 
-					attributes.get(i).getColumnName().equals(colName)) {
-				return i;
+			String name = attributes.get(i).getColumnName();
+			int posj = name.indexOf(".");
+			if (posi <= 0) {
+				if (posj <= 0) {
+					if (name.substring(posj + 1).equals(colName.substring(posi + 1))) {
+						return i;
+					}
+				} else {
+					if (name.endsWith(colName.substring(posi + 1))) {
+						return i;
+					}
+				}
+			} else {
+				if (name.equals(colName)) {
+					return i;
+				}
 			}
 		}
 		return -1;
