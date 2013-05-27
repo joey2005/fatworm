@@ -41,7 +41,6 @@ public class StorageMgr {
 			}
 			dbDirectory.delete();
     	}
-    	myBuffers.unpinAll();
     }
 
     /**
