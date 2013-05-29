@@ -41,17 +41,16 @@ public class UpdateScan extends Operation {
 			try {
 				ok = whereCondition.test(record);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new RuntimeException("WhereCondition test error in UpdateScan()");
 			}
 			if (!ok.isNull() && (Boolean)ok.getValue()) {
-				Record result = record;
+				Record uptodate = record;
 				int ptr = 0;
 				for (Predicate p : valueList) {
 					int pos = schema.indexOf(colNameList.get(ptr));
-					Data value = p.calc(result);
-					result.setValue(pos, value);
-					tf.updateRecord(result);
+					Data value = p.calc(uptodate);
+					uptodate.setValue(pos, value);
+					tf.updateRecord(uptodate);
 					ptr++;
 				}
 			}

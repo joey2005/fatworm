@@ -26,15 +26,14 @@ public class SelectScan extends Scan {
 				if (scan.hasNext()) {
 					Record tmp = scan.next();
 					next = new Record(tmp.getData(), getSchema());
-					BooleanData ok;
+					BooleanData ok = null;
 					try {
 						ok = whereCondition.test(next);
-						if (!ok.isNull() && (Boolean)ok.getValue()) {
-							break;
-						}
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+						throw new RuntimeException("WhereCondition test error in SelectScan()");
+					}
+					if (!ok.isNull() && (Boolean)ok.getValue()) {
+						break;
 					}
 					next = null;
 				} else {
