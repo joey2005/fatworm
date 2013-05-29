@@ -240,6 +240,7 @@ public class Planner {
 			++i;
 		}
 		
+		//==================================translate plan begins==================================
 		//table_ref
 		result = translateTableRef(tableRefList);
 		
@@ -253,6 +254,9 @@ public class Planner {
 		if (whereConditionTree != null) { 
 			whereCondition = getCondition(whereConditionTree, "");
 		}
+		
+		//whereCondition = replaceAlias(whereCondition);
+		
 		result = new SelectPlan(result, whereCondition);
 		
 		//group_by_clause
@@ -311,9 +315,17 @@ public class Planner {
 					projectList3.add(new VariablePredicate(tableName + "." + vp.toString(), vp.getType()));
 				}
 			}
+			//order_by
+			if (sortColumnList != null) {
+				result = new SortPlan(result, sortColumnList, sortOrderList);
+			}
 			result = new ProjectPlan(result, projectList3, null);
 		} else {
 			if (groupBy != null) {
+				//order_by
+				if (sortColumnList != null) {
+					result = new SortPlan(result, sortColumnList, sortOrderList);
+				}
 				result = new ProjectPlan(result, projectList, groupBy);
 				if (havingCondition != null) {
 					Schema schema = result.getSchema();
@@ -322,19 +334,19 @@ public class Planner {
 				}
 			} else {
 				if (!selectAll) {
+					//order_by
+					if (sortColumnList != null) {
+						result = new SortPlan(result, sortColumnList, sortOrderList);
+					}
 					result = new ProjectPlan(result, projectList, null);
+				} else {
+					//order_by
+					if (sortColumnList != null) {
+						result = new SortPlan(result, sortColumnList, sortOrderList);
+					}
 				}
 			}
 		}
-		
-		/*
-		Schema mySchema = result.getSchema();
-		System.out.println(mySchema.getTableName() + "{");
-		for (int it = 0; it < mySchema.getColumnCount(); ++it) {
-			System.out.println("\t" + mySchema.getFromColumn(it).colName + ": " + mySchema.getFromColumn(it).type);
-		}
-		System.out.println("}");
-		*/
 		
 		Schema s2 = translateSelectExpr(projectList, newAlias, result.getSchema());
 		if (s2 != null) {
@@ -345,12 +357,56 @@ public class Planner {
 			result = new DistinctPlan(result);
 		}
 		
-		//order_by
-		if (sortColumnList != null) {
-			result = new SortPlan(result, sortColumnList, sortOrderList);
-		}
-		
 		return result;
+	}
+	
+	private Predicate replaceAlias(Predicate p) {
+		if (p instanceof AllPredicate) {
+			AllPredicate ap = (AllPredicate) p;
+			Predicate result = replaceAlias(ap.value);
+			return new AllPredicate(result, ap.oper, ap.subPlan);
+		} else if (p instanceof AnyPredicate) {
+			AnyPredicate ap = (AnyPredicate) p;
+			Predicate result = replaceAlias(ap.value);
+			return new AnyPredicate(result, ap.oper, ap.subPlan);
+		} else if (p instanceof BooleanCompPredicate) {
+			BooleanCompPredicate bcp = (BooleanCompPredicate) p;
+			Predicate left = replaceAlias(bcp.lhs);
+			Predicate right = replaceAlias(bcp.rhs);
+			return new BooleanCompPredicate(left, right, bcp.oper);
+		} else if (p instanceof BooleanPredicate) {
+			BooleanPredicate bp = (BooleanPredicate) p;
+			Predicate left = replaceAlias(bp.lhs);
+			Predicate right = replaceAlias(bp.rhs);
+			return new BooleanPredicate(left, right, bp.oper);
+		} else if (p instanceof FuncPredicate) {
+			FuncPredicate fp = (FuncPredicate) p;
+			Predicate result = replaceAlias(fp.colName);
+			return new FuncPredicate(fp.func, (VariablePredicate) result);
+		} else if (p instanceof InPredicate) {
+			InPredicate ip = (InPredicate) p;
+			Predicate result = replaceAlias(ip.value);
+			return new InPredicate(result, ip.subPlan);
+		} else if (p instanceof NumberCalcPredicate) {
+			NumberCalcPredicate ncp = (NumberCalcPredicate) p;
+			Predicate left = replaceAlias(ncp.lhs);
+			Predicate right = replaceAlias(ncp.rhs);
+			return new NumberCalcPredicate(left, right, ncp.oper, ncp.getType());
+		} else if (p instanceof VariablePredicate) {
+			VariablePredicate vp = (VariablePredicate) p;
+			String colname = vp.variableName;
+			int dotpos = colname.indexOf(".");
+			if (dotpos > 0) {
+				String tablename = colname.substring(0, dotpos);
+				String fieldname = colname.substring(dotpos + 1);
+				String originTablename = AliasToTblname.get(tablename);
+				if (originTablename != null) {
+					colname = originTablename + "." + fieldname;
+				}
+				return new VariablePredicate(colname, vp.getType());
+			}
+		}
+		return p;
 	}
 
 	private Schema translateSelectExpr(List<Predicate> projectList,
@@ -787,11 +843,15 @@ public class Planner {
 	private Predicate getConstantValue(Tree child) throws Exception {
 		if (child.getType() == Symbol.INTEGER_LITERAL) {
 			String number = child.toString();
-			Integer intValue = Integer.parseInt(number);
-			if (intValue.toString().equals(number)) {
-				return new ConstantPredicate(new IntegerType().valueOf(number));
-			} else {
-				return new ConstantPredicate(new DecimalType(30, 0).valueOf(number));
+			Integer i = null;
+			try {
+				i = Integer.parseInt(number);
+				if (!(i.toString().equals(number))) {
+					throw new RuntimeException();
+				}
+				return new ConstantPredicate(new IntegerData(i, new IntegerType()));
+			} catch (Exception ex) {
+				return new ConstantPredicate(new DecimalType(number.length(), 0).valueOf(number));
 			}
 		} else if (child.getType() == Symbol.STRING_LITERAL) {
 			String c = child.toString();

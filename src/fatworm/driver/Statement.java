@@ -77,9 +77,10 @@ public class Statement implements java.sql.Statement {
 			resultSet = null;
 		}
 		
-		if (sql.equals("select name, number as n, score from Classes as c where c.number > ANY(select number from Classes)")) {
-			System.out.println("STOP");
-		}
+		//System.out.println(sql);
+		//if (sql.equals("insert into test1 values(1,1234567891011121314)")) {
+		//	System.out.println("");
+		//}
 		
 		CommonTree tree = null;
 		try {

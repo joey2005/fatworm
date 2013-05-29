@@ -3,8 +3,6 @@ package fatworm.indexing.data;
 import java.sql.Timestamp;
 
 public class TimestampType extends DataType {
-
-	private TimestampData defaultValue = null;
 	
 	public TimestampType() {
 	}
@@ -16,10 +14,7 @@ public class TimestampType extends DataType {
 
 	@Override
 	public Data getDefaultValue() {
-		if (defaultValue == null) {
-			defaultValue = new TimestampData(new Timestamp(0), this);
-		}
-		return defaultValue;
+		return new TimestampData(new Timestamp(System.currentTimeMillis()), this);
 	}
 
 	@Override

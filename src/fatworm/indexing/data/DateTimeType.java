@@ -4,8 +4,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 public class DateTimeType extends DataType {
-
-	private DateTimeData defaultValue = null;
 	
 	public DateTimeType() {
 	}
@@ -17,10 +15,7 @@ public class DateTimeType extends DataType {
 
 	@Override
 	public Data getDefaultValue() {
-		if (defaultValue == null) {
-			defaultValue = new DateTimeData(new Timestamp(0), this);
-		}
-		return defaultValue;
+		return new DateTimeData(new Timestamp(System.currentTimeMillis()), this);
 	}
 
 	@Override

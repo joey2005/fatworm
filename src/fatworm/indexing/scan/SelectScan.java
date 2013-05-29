@@ -24,7 +24,8 @@ public class SelectScan extends Scan {
 		if (next == null) {
 			while (true) {
 				if (scan.hasNext()) {
-					next = scan.next();
+					Record tmp = scan.next();
+					next = new Record(tmp.getData(), getSchema());
 					BooleanData ok;
 					try {
 						ok = whereCondition.test(next);

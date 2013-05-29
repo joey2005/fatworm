@@ -53,11 +53,19 @@ public class InsertValuePlan extends Plan {
 			if (af.autoIncrement) {
 				tmp[i] = af.getAutoIncrement();
 			}
+			if (tmp[i] == null) {
+				if ((af.getType() instanceof TimestampType) || (af.getType() instanceof DateTimeType)) {
+					tmp[i] = af.getType().getDefaultValue();
+				}
+			}
 			if (af.isNull == af.ONLY_NOT_NULL && tmp[i].getValue() == null) {
 				//ERROR
 			}
 			if (af.isNull == af.ONLY_NULL && tmp[i].getValue() != null) {
 				//ERROR
+			}
+			if ((tmp[i] instanceof StringData) && !(tmp[i].getType().equals(af.getType()))) {
+				tmp[i] = af.getType().valueOf(tmp[i].toString());
 			}
 		}
 		
