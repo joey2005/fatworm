@@ -31,7 +31,7 @@ public class InsertValuePlan extends Plan {
 				if (p != null) {
 					tmp[pos] = p.calc(null);
 				} else {
-					tmp[pos] = schema.getFromColumn(pos).defaultValue;
+					tmp[pos] = schema.getFromColumn(pos).getDefault();
 				}
 				pos++;
 			}
@@ -43,7 +43,7 @@ public class InsertValuePlan extends Plan {
 				if (list.get(pos) != null) {
 					tmp[index] = list.get(pos).calc(null);
 				} else {
-					tmp[index] = schema.getFromColumn(index).defaultValue;
+					tmp[index] = schema.getFromColumn(index).getDefault();
 				}
 				pos++;
 			}
@@ -54,8 +54,10 @@ public class InsertValuePlan extends Plan {
 				tmp[i] = af.getAutoIncrement();
 			}
 			if (tmp[i] == null) {
-				if ((af.getType() instanceof TimestampType) || (af.getType() instanceof DateTimeType)) {
-					tmp[i] = af.getType().getDefaultValue();
+				if (af.getDefault() != null) {
+					tmp[i] = af.getDefault();
+				} else {
+					tmp[i] = af.getType().valueOf((String)null);
 				}
 			}
 			if (af.isNull == af.ONLY_NOT_NULL && tmp[i].getValue() == null) {

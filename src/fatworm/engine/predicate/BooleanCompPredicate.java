@@ -1,12 +1,7 @@
 package fatworm.engine.predicate;
 
 import fatworm.engine.symbol.Symbol;
-import fatworm.indexing.data.BooleanData;
-import fatworm.indexing.data.BooleanType;
-import fatworm.indexing.data.Data;
-import fatworm.indexing.data.DataType;
-import fatworm.indexing.data.NumberData;
-import fatworm.indexing.data.StringData;
+import fatworm.indexing.data.*;
 import fatworm.indexing.table.Record;
 
 public class BooleanCompPredicate extends Predicate {
@@ -47,9 +42,6 @@ public class BooleanCompPredicate extends Predicate {
 	public Data calc(Record record) {
 		Data d1 = lhs.calc(record);
 		Data d2 = rhs.calc(record);
-		if (d1.isNull() || d2.isNull()) {
-			return BooleanData.NULL;
-		}
 		boolean n1 = (d1 instanceof NumberData);
 		boolean n2 = (d2 instanceof NumberData);
 		if (n1 != n2) {
@@ -65,12 +57,15 @@ public class BooleanCompPredicate extends Predicate {
 			if ((d1 instanceof StringData) && (d2 instanceof StringData)) {
 				compKey = d1.toString().compareTo(d2.toString());
 			} else {
-				java.sql.Timestamp left = java.sql.Timestamp.valueOf(d1.toString());
-				java.sql.Timestamp right = java.sql.Timestamp.valueOf(d2.toString());
-				compKey = left.compareTo(right);
+				TimestampData t1 = (TimestampData)(new TimestampType().valueOf(d1.toString()));
+				TimestampData t2 = (TimestampData)(new TimestampType().valueOf(d2.toString()));
+				compKey = t1.compareTo(t2);
 			}
 		} else {
 			compKey = ((NumberData)d1).compareTo((NumberData)d2);
+		}
+		if (compKey == 0x0fffffff || compKey == 0x7f7f7f7f) {
+			return BooleanData.FALSE;
 		}
 		if (oper == Symbol.GTR) {
 			return new BooleanData(compKey > 0, new BooleanType());

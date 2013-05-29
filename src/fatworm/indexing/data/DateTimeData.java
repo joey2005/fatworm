@@ -16,8 +16,11 @@ public class DateTimeData extends Data {
 	public int compareTo(Data args0) {
 		if (args0 instanceof DateTimeData) {
 			DateTimeData o = (DateTimeData)args0;
+			if (isNull() && o.isNull()) {
+				return 0;
+			}
 			if (isNull() || o.isNull()) {
-				return 1;
+				return 0x7f7f7f7f;
 			}
 			return d.compareTo(o.d);
 		}
@@ -55,7 +58,7 @@ public class DateTimeData extends Data {
 	@Override
 	public String storageValue() {
 		if (d == null) {
-			return type.getDefaultValue().storageValue();
+			return "null";
 		}
 		return d.toString();
 	}

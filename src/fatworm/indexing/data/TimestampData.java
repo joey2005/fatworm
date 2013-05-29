@@ -16,8 +16,11 @@ public class TimestampData extends Data {
 	public int compareTo(Data arg0) {
 		if (arg0 instanceof TimestampData) {
 			TimestampData o = (TimestampData)arg0;
+			if (isNull() && o.isNull()) {
+				return 0;
+			}
 			if (isNull() || o.isNull()) {
-				return 1;
+				return 0x7f7f7f7f;
 			}
 			return time.compareTo(o.time);
 		}
@@ -55,7 +58,7 @@ public class TimestampData extends Data {
 	@Override
 	public String storageValue() {
 		if (time == null) {
-			return type.getDefaultValue().storageValue();
+			return "null";
 		}
 		return time.toString();
 	}

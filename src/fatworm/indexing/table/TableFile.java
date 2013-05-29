@@ -154,12 +154,6 @@ public class TableFile {
 			if (data == null) {
 				rf.setString(fieldName, "null");
 			} else {
-				/*
-				DataType type = ti.schema().getFromColumn(pos).getType();
-				if (type instanceof IntegerType) {
-					System.out.println(data.storageValue().length());
-				}
-				*/
 				rf.setString(fieldName, data.storageValue());
 			}
 			pos++;

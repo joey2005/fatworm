@@ -19,6 +19,9 @@ public class TimestampType extends DataType {
 
 	@Override
 	public Data valueOf(String c) {
+		if (c == null || c.equals("null")) {
+			return new TimestampData(null, this);
+		}
 		return new TimestampData(Timestamp.valueOf(c), this);
 	}
 

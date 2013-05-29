@@ -29,21 +29,26 @@ public class IntegerData extends NumberData {
 	}
 
 	public int compareTo(Data o) {
-		if (isNull() || o.isNull()) {
-			return 1;
-		}
-		if (o instanceof IntegerData) {
-			IntegerData data = (IntegerData) o;
-			return i.compareTo(data.i);
-		}
-		if (o instanceof FloatData) {
-			FloatData data = (FloatData) o;
-			return -data.compareTo(this);
-		}
-		if (o instanceof DecimalData) {
-			DecimalData data = (DecimalData) o;
-			return -data.compareTo(this);
-		}
+		if (o instanceof NumberData) {
+			if (isNull() && o.isNull()) {
+				return 0;
+			}
+			if (isNull() || o.isNull()) {
+				return 0x7f7f7f7f;
+			}
+			if (o instanceof IntegerData) {
+				IntegerData data = (IntegerData) o;
+				return i.compareTo(data.i);
+			}
+			if (o instanceof FloatData) {
+				FloatData data = (FloatData) o;
+				return -data.compareTo(this);
+			}
+			if (o instanceof DecimalData) {
+				DecimalData data = (DecimalData) o;
+				return -data.compareTo(this);
+			}
+		}	
 		return 0x0fffffff;
 	}
 
@@ -101,7 +106,7 @@ public class IntegerData extends NumberData {
 	@Override
 	public String storageValue() {
 		if (i == null) {
-			return type.getDefaultValue().storageValue();
+			return "null";
 		}
 		return i.toString();
 	}

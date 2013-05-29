@@ -39,9 +39,6 @@ public class InPredicate extends Predicate {
 			}
 		}
 		Data result = value.calc(record);
-		if (result.isNull()) {
-			return BooleanData.NULL;
-		}
 		Scan s = subPlan.createScan();
 		for (s.beforeFirst(); s.hasNext(); ) {
 			Record now = s.next();

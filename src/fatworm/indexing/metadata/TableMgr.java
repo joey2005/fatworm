@@ -18,7 +18,7 @@ public class TableMgr {
 
     private Map<String, TableInfo> tableInfos;
 
-    private static final int MAXLEN = 20;
+    private static final int MAXLEN = 200;
 
     private TableInfo fcatInfo, fakeInfo;
 
@@ -30,7 +30,7 @@ public class TableMgr {
         fields.add(new AttributeField("fldname", new CharType(MAXLEN)));
         fields.add(new AttributeField("type", new IntegerType()));
         fields.add(new AttributeField("null", new IntegerType()));
-        fields.add(new AttributeField("default", new CharType(200)));
+        fields.add(new AttributeField("default", new CharType(MAXLEN)));
         fields.add(new AttributeField("autoinc", new IntegerType()));
         Schema fcatSchema = new Schema("fldcat", fields);
         fcatInfo = new TableInfo("fldcat", fcatSchema);
@@ -40,17 +40,7 @@ public class TableMgr {
         Schema fakeSchema = new Schema("fakeTable", fields2);
         fakeInfo = new TableInfo("fakeTable", fakeSchema);
         
-        createTable("fldcat", fcatSchema);
         
-        createTable("fakeTable", fakeSchema);
-        RecordFile fakefile = new RecordFile(fakeInfo);
-        for (AttributeField af : fakeSchema.getAllFields()) {
-            String fldname = af.getColumnName();
-            fakefile.insert();
-            fakefile.setString("fake", "0");
-        }
-        fakefile.close();
-  
         if (!isnew) {
             RecordFile fcatfile = new RecordFile(fcatInfo);
             Map<String, List<AttributeField>> mapping = new HashMap<String, List<AttributeField>>();
@@ -83,6 +73,22 @@ public class TableMgr {
             	TableInfo ti = new TableInfo(tblname, schema);
                 tableInfos.put(tblname, ti);
             }
+        }
+        
+        if (!tableInfos.containsKey("fldcat")) {
+        	createTable("fldcat", fcatSchema);
+        }
+        
+        if (!tableInfos.containsKey("fakeTable")) {
+        	createTable("fakeTable", fakeSchema);
+        	
+		    RecordFile fakefile = new RecordFile(fakeInfo);
+		    for (AttributeField af : fakeSchema.getAllFields()) {
+		        String fldname = af.getColumnName();
+		        fakefile.insert();
+		        fakefile.setString("fake", "0");
+		    }
+		    fakefile.close();
         }
     }
 
@@ -145,10 +151,7 @@ public class TableMgr {
     
     public void dropAll() {
         RecordFile fcatfile = new RecordFile(fcatInfo);
-        fcatfile.beforeFirst();
-        while (fcatfile.hasNext()) {
-        	fcatfile.delete();
-        }
+        fcatfile.clear();
         fcatfile.close();
         
         for (String tableName : tableInfos.keySet()) {

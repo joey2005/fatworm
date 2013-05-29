@@ -37,9 +37,6 @@ public class AttributeField {
 	}
 	
 	public Data getDefault() {
-		if (defaultValue == null) {
-			return type.getDefaultValue();
-		}
 		return defaultValue;
 	}
 	

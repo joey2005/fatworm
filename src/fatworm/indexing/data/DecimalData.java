@@ -10,7 +10,7 @@ public class DecimalData extends NumberData {
 
 	public DecimalData(String s, DecimalType type) {
 		this.type = type;
-		if (s != null) {
+		if (s != null || s.equals("null")) {
 			this.d = new BigDecimal(s);
 		} else {
 			this.d = null;
@@ -35,8 +35,11 @@ public class DecimalData extends NumberData {
 
 	public int compareTo(Data o) {
 		if (o instanceof NumberData) {
+			if (isNull() && o.isNull()) {
+				return 0;
+			}
 			if (isNull() || o.isNull()) {
-				return 1;
+				return 0x7f7f7f7f;
 			}
 			return this.d.compareTo(((NumberData) o).DecimalValue());
 		}
@@ -102,7 +105,7 @@ public class DecimalData extends NumberData {
 	@Override
 	public String storageValue() {
 		if (d == null) {
-			return type.getDefaultValue().storageValue();
+			return "null";
 		}
 		return d.toString();
 	}

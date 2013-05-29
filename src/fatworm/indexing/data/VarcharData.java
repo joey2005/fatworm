@@ -6,7 +6,7 @@ public class VarcharData extends StringData {
 	private VarcharType type;
 		
 	public VarcharData(String c, VarcharType type) {
-		if (c == null)
+		if (c == null || c.equals("null"))
 			this.c = null;
 		else {
 			this.c = c;
@@ -40,7 +40,7 @@ public class VarcharData extends StringData {
 	@Override
 	public String storageValue() {
 		if (c == null) {
-			return type.getDefaultValue().toString();
+			return "null";
 		}
 		if (c.length() > type.storageRequired()) {
 			return c.substring(0, type.storageRequired());

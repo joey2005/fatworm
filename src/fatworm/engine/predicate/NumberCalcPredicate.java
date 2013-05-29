@@ -43,8 +43,9 @@ public class NumberCalcPredicate extends Predicate {
 	public Data calc(Record record) {
 		Data d1 = lhs.calc(record);
 		Data d2 = rhs.calc(record);
-		if (d1.isNull() || d2.isNull()) {
-			return d1;
+		if (d1.isNull()) return d1;
+		if (d2.isNull()) {
+			return d2;
 		}
 		if (!(d1 instanceof NumberData) || !(d2 instanceof NumberData)) {
 			try {

@@ -27,8 +27,11 @@ public class BooleanData extends Data {
 	public int compareTo(Data args0) {
 		if (args0 instanceof BooleanData) {
 			BooleanData o = (BooleanData)args0;
+			if (isNull() && o.isNull()) {
+				return 0;
+			}
 			if (isNull() || o.isNull()) {
-				return 1;
+				return 0x7f7f7f7f;
 			}
 			return b.compareTo(o.b);
 		}
@@ -84,7 +87,7 @@ public class BooleanData extends Data {
 	@Override
 	public String storageValue() {
 		if (b == null) {
-			return type.getDefaultValue().storageValue();
+			return "null";
 		}
 		return b.toString();
 	}

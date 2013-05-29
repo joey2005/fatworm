@@ -165,7 +165,7 @@ public class Planner {
 			} else if (cur.getType() == Symbol.AS) {
 				// value (AS^ alias)
 				selectExprList.add(cur.getChild(0));
-				newAlias.add(cur.getChild(1).toString());
+				newAlias.add(cur.getChild(1).toString().toLowerCase());
 			} else {
 				selectExprList.add(cur);
 				newAlias.add(null);
@@ -198,14 +198,14 @@ public class Planner {
 					if (cur.getType() == Symbol.AS) {
 						if (cur.getChild(0).getType() == Symbol.SELECT || cur.getChild(0).getType() == Symbol.SELECT_DISTINCT) {
 							// subquery as alias
-							tableRefList.add(new RenamePlan(getSubQuery(cur.getChild(0)), cur.getChild(1).toString()));
+							tableRefList.add(new RenamePlan(getSubQuery(cur.getChild(0)), cur.getChild(1).toString().toLowerCase()));
 						} else {
-							String tableName = cur.getChild(0).toString();
-							tableRefList.add(new RenamePlan(new TablePlan(tableName, getSchema(tableName)), cur.getChild(1).toString()));
+							String tableName = cur.getChild(0).toString().toLowerCase();
+							tableRefList.add(new RenamePlan(new TablePlan(tableName, getSchema(tableName)), cur.getChild(1).toString().toLowerCase()));
 							AllTableNameList.add(tableName);
 						}
 					} else {
-						String tableName = cur.toString();
+						String tableName = cur.toString().toLowerCase();
 						tableRefList.add(new TablePlan(tableName, getSchema(tableName)));
 						AllTableNameList.add(tableName);
 					}
@@ -527,22 +527,22 @@ public class Planner {
 
 
 	private Plan getCreateDatabase(CommonTree t) {
-		String databaseName = t.getChild(0).toString();
+		String databaseName = t.getChild(0).toString().toLowerCase();
 		return new CreateDatabasePlan(databaseName);
 	}
 
 	private Plan getUseDatabase(CommonTree t) {
-		String databaseName = t.getChild(0).toString();
+		String databaseName = t.getChild(0).toString().toLowerCase();
 		return new UseDatabasePlan(databaseName);
 	}
 
 	private Plan getDropDatabase(CommonTree t) {
-		String databaseName = t.getChild(0).toString();
+		String databaseName = t.getChild(0).toString().toLowerCase();
 		return new DropDatabasePlan(databaseName);
 	}
 
 	private Plan getDelete(CommonTree t) throws Exception {
-		String tableName = t.getChild(0).toString();
+		String tableName = t.getChild(0).toString().toLowerCase();
 		Predicate whereCondition = null;
 		if (t.getChildCount() == 2) {
 			whereCondition = getCondition(t.getChild(1).getChild(0), tableName);
@@ -551,21 +551,21 @@ public class Planner {
 	}
 
 	private Plan getCreateIndex(CommonTree t) {
-		String indexName = t.getChild(0).toString();
-		String tableName = t.getChild(1).toString();
+		String indexName = t.getChild(0).toString().toLowerCase();
+		String tableName = t.getChild(1).toString().toLowerCase();
 		String colName = translateColName("", t.getChild(2));
 		boolean isUnique = t.getType() == Symbol.CREATE_UNIQUE_INDEX;
 		return new CreateIndexPlan(indexName, isUnique, tableName, colName);
 	}
 
 	private Plan getDropIndex(CommonTree t) {
-		String indexName = t.getChild(0).toString();
-		String tableName = t.getChild(1).toString();
+		String indexName = t.getChild(0).toString().toLowerCase();
+		String tableName = t.getChild(1).toString().toLowerCase();
 		return new DropIndexPlan(indexName, tableName);
 	}
 
 	private Plan getInsertColumns(CommonTree t) throws Exception {
-		String tableName = t.getChild(0).toString();
+		String tableName = t.getChild(0).toString().toLowerCase();
 		List<String> schema = new LinkedList<String>();
 		List<Predicate> values = null;
 		for (int i = 1; i < t.getChildCount(); ++i) {
@@ -579,7 +579,7 @@ public class Planner {
 	}
 
 	private Plan getInsertSubquery(CommonTree t) throws Exception {
-		String tableName = t.getChild(0).toString();
+		String tableName = t.getChild(0).toString().toLowerCase();
 		Plan subPlan = getSubQuery(t.getChild(1));
 		return new InsertSubQueryPlan(tableName, subPlan);
 	}
@@ -590,7 +590,7 @@ public class Planner {
 	}
 
 	private Plan getInsertValues(CommonTree t) throws Exception {
-		String tableName = t.getChild(0).toString();
+		String tableName = t.getChild(0).toString().toLowerCase();
 		List<Predicate> values = getValueTuple(t.getChild(1), tableName);
 		return new InsertValuePlan(tableName, values, null);
 	}
@@ -607,7 +607,7 @@ public class Planner {
 		List<String> primaryKeys = new ArrayList<String>();
 		List<AttributeField> attrList = new ArrayList<AttributeField>();
 		
-		String tableName = t.getChild(0).toString();
+		String tableName = t.getChild(0).toString().toLowerCase();
 		//System.err.println(t.getChildCount());
 		for (int i = 1; i < t.getChildCount(); ++i) {//System.err.println(t.getChild(i).getType());
 			Tree cur = t.getChild(i);
@@ -674,7 +674,7 @@ public class Planner {
 				//insert columns into schema
 				attrList.add(new AttributeField(colName, type, isNull, defaultValue, autoIncrement));
 			} else if (cur.getType() == Symbol.PRIMARY_KEY) {
-				primaryKeys.add(cur.getChild(0).toString());
+				primaryKeys.add(cur.getChild(0).toString().toLowerCase());
 			}
 		}
 		return new CreateTablePlan(new Schema(tableName, attrList), primaryKeys);
@@ -683,13 +683,13 @@ public class Planner {
 	private Plan getDropTable(CommonTree t) {
 		List<String> tableNameList = new ArrayList<String>();
 		for (int i = 0; i < t.getChildCount(); ++i) {
-			tableNameList.add(t.getChild(i).toString());
+			tableNameList.add(t.getChild(i).toString().toLowerCase());
 		}
 		return new DropTablePlan(tableNameList);
 	}
 
 	private Plan getUpdate(CommonTree t) throws Exception {
-		String tableName = t.getChild(0).toString();
+		String tableName = t.getChild(0).toString().toLowerCase();
 		List<String> colNameList = new ArrayList<String>();
 		List<Predicate> valueList = new ArrayList<Predicate>();
 		Predicate whereCondition = null;
@@ -832,11 +832,11 @@ public class Planner {
 
 	private String translateColName(String tableName, Tree child) {
 		if (child.getType() == Symbol.DOT) {
-			return child.getChild(0).toString() + "." + child.getChild(1).toString();
+			return child.getChild(0).toString().toLowerCase() + "." + child.getChild(1).toString().toLowerCase();
 		} else if (tableName != null && tableName.length() > 0) {
-			return tableName + "." + child.toString();
+			return tableName + "." + child.toString().toLowerCase();
 		} else {
-			return "." + child.toString();
+			return "." + child.toString().toLowerCase();
 		}
 	}
 

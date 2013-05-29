@@ -25,8 +25,11 @@ public class FloatData extends NumberData {
 
 	public int compareTo(Data o) {
 		if (o instanceof NumberData) {
+			if (isNull() && o.isNull()) {
+				return 0;
+			}
 			if (isNull() || o.isNull()) {
-				return 1;
+				return 0x7f7f7f7f;
 			}
 			if (o instanceof FloatData) {
 				FloatData data = (FloatData) o;
@@ -100,7 +103,7 @@ public class FloatData extends NumberData {
 	@Override
 	public String storageValue() {
 		if (f == null) {
-			return type.getDefaultValue().storageValue();
+			return "null";
 		}
 		return f.toString();
 	}

@@ -77,10 +77,17 @@ public class Statement implements java.sql.Statement {
 			resultSet = null;
 		}
 		
-		//System.out.println(sql);
-		//if (sql.equals("insert into test1 values(1,1234567891011121314)")) {
-		//	System.out.println("");
-		//}
+		/*
+		System.out.println(sql);
+		String cmd = "select customer_name\n" +
+				"from borrower\n" +
+				"where exists (select *\n" +
+				"from depositor\n" +
+				"where depositor.customer_name = borrower.customer_name)";
+		if (sql.equals(cmd)) {
+			System.out.println("STOP");
+		}
+		*/
 		
 		CommonTree tree = null;
 		try {

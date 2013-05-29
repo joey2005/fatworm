@@ -20,6 +20,9 @@ public class DateTimeType extends DataType {
 
 	@Override
 	public Data valueOf(String c) {
+		if (c == null || c.equals("null")) {
+			return new DateTimeData(null, this);
+		}
 		return new DateTimeData(Timestamp.valueOf(c), this);
 	}
 	@Override
