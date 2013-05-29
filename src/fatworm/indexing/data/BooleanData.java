@@ -15,7 +15,7 @@ public class BooleanData extends Data {
 			b = null;
 		} else {
 			if (s.length() > 0) {
-				b = Boolean.valueOf((s.charAt(0) != 0));
+				b = Boolean.valueOf(s.equalsIgnoreCase("true"));
 			} else {
 				b = null;
 			}
@@ -27,10 +27,7 @@ public class BooleanData extends Data {
 	public int compareTo(Data args0) {
 		if (args0 instanceof BooleanData) {
 			BooleanData o = (BooleanData)args0;
-			if (this.isNull()) {
-				return o.isNull() ? 0 : -1;
-			}
-			if (o.isNull()) {
+			if (isNull() || o.isNull()) {
 				return 1;
 			}
 			return b.compareTo(o.b);
@@ -89,12 +86,6 @@ public class BooleanData extends Data {
 		if (b == null) {
 			return type.getDefaultValue().storageValue();
 		}
-		byte[] buf = new byte[1];
-		if (b) {
-			buf[0] = 1;
-		} else {
-			buf[0] = 0;
-		}
-		return new String(buf);
+		return b.toString();
 	}
 }

@@ -1,13 +1,13 @@
 package fatworm.indexing.data;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 
 public class DateTimeData extends Data {
 
-	private Date d;
+	private Timestamp d;
 	private DateTimeType type;
 	
-	public DateTimeData(Date d, DateTimeType type) {
+	public DateTimeData(Timestamp d, DateTimeType type) {
 		this.d = d;
 		this.type = type;
 	}
@@ -16,10 +16,7 @@ public class DateTimeData extends Data {
 	public int compareTo(Data args0) {
 		if (args0 instanceof DateTimeData) {
 			DateTimeData o = (DateTimeData)args0;
-			if (this.isNull()) {
-				return o.isNull() ? 0 : -1;
-			}
-			if (o.isNull()) {
+			if (isNull() || o.isNull()) {
 				return 1;
 			}
 			return d.compareTo(o.d);

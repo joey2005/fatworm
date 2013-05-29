@@ -45,11 +45,7 @@ public class VarcharData extends StringData {
 		if (c.length() > type.storageRequired()) {
 			return c.substring(0, type.storageRequired());
 		}
-		String result = c;
-		while (result.length() < type.storageRequired()) {
-			result += '\0';
-		}
-		return result;
+		return c;
 	}
 	
 }

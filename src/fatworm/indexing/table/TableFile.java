@@ -3,19 +3,7 @@ package fatworm.indexing.table;
 import java.math.BigInteger;
 import java.util.*;
 
-import fatworm.indexing.data.BooleanData;
-import fatworm.indexing.data.BooleanType;
-import fatworm.indexing.data.CharType;
-import fatworm.indexing.data.Data;
-import fatworm.indexing.data.DataType;
-import fatworm.indexing.data.DateTimeType;
-import fatworm.indexing.data.DecimalType;
-import fatworm.indexing.data.FloatData;
-import fatworm.indexing.data.FloatType;
-import fatworm.indexing.data.IntegerData;
-import fatworm.indexing.data.IntegerType;
-import fatworm.indexing.data.TimestampType;
-import fatworm.indexing.data.VarcharType;
+import fatworm.indexing.data.*;
 import fatworm.indexing.metadata.TableInfo;
 import fatworm.indexing.schema.AttributeField;
 import fatworm.indexing.schema.Schema;
@@ -38,39 +26,66 @@ public class TableFile {
 		for (AttributeField af : s.getAllFields()) {
 			DataType type = af.getType();
 			String fieldName = af.getColumnName();
+			String val = rf.getString(fieldName);
 			if (type instanceof IntegerType) {
 				IntegerType itype = (IntegerType) type;
-				datas.add(new IntegerData(rf.getInt(fieldName), itype));
+				if (val.equals("null")) {
+					datas.add(new IntegerData((String)null, itype));
+				} else {
+					int i = Integer.parseInt(val);
+					datas.add(new IntegerData(i, itype));
+				}
 			} else if (type instanceof FloatType) {
-				byte[] buf = rf.getString(fieldName).getBytes();
-				Float f = Float.intBitsToFloat(Lib.bytesToInt(buf, 0));
 				FloatType ftype = (FloatType) type;
-				datas.add(new FloatData(f, ftype));
+				if (val.equals("null")) {
+					datas.add(new FloatData((String)null, ftype));
+				} else {
+					float f = Float.parseFloat(val);
+					datas.add(new FloatData(f, ftype));
+				}
 			} else if (type instanceof DecimalType) {
-				byte[] buf = rf.getString(fieldName).getBytes();
-				String str = new BigInteger(buf).toString();
 				DecimalType dtype = (DecimalType) type;
-				datas.add(dtype.valueOf(str));
+				if (val.equals("null")) {
+					datas.add(new DecimalData(null, dtype));
+				} else {
+					datas.add(dtype.valueOf(val));
+				}
 			} else if (type instanceof BooleanType) {
-				byte[] buf = rf.getString(fieldName).getBytes();
 				BooleanType btype = (BooleanType) type;
-				datas.add(new BooleanData(buf[0] != 0, btype));
+				if (val.equals("null")) {
+					datas.add(new BooleanData((String)null, btype));
+				} else {
+					datas.add(btype.valueOf(val));
+				}
 			} else if (type instanceof DateTimeType) {
 				DateTimeType dttype = (DateTimeType) type;
-				String str = rf.getString(fieldName);
-				datas.add(dttype.valueOf(str));
+				if (val.equals("null")) {
+					datas.add(new DateTimeData(null, dttype));
+				} else {
+					datas.add(dttype.valueOf(val));
+				}
 			} else if (type instanceof TimestampType) {
-				TimestampType dttype = (TimestampType) type;
-				String str = rf.getString(fieldName);
-				datas.add(dttype.valueOf(str));
+				TimestampType tstype = (TimestampType) type;
+				if (val.equals("null")) {
+					datas.add(new TimestampData(null, tstype));
+				} else {
+					datas.add(tstype.valueOf(val));
+				}
 			} else if (type instanceof CharType) {
 				CharType ctype = (CharType) type;
-				String str = rf.getString(fieldName);
-				datas.add(ctype.valueOf(str));
+				if (val.equals("null")) {
+					datas.add(new CharData(null, ctype));
+				} else {
+					datas.add(ctype.valueOf(val));
+				}
+				
 			} else if (type instanceof VarcharType) {
 				VarcharType vctype = (VarcharType) type;
-				String str = rf.getString(fieldName);
-				datas.add(vctype.valueOf(str));			
+				if (val.equals("null")) {
+					datas.add(new VarcharData(null, vctype));
+				} else {
+					datas.add(vctype.valueOf(val));		
+				}
 			}
 		}
 		return new Record(datas, s);
@@ -88,11 +103,11 @@ public class TableFile {
 		
 	}
 	
+	/**
+	 * Deletes all the content in the record file
+	 */
 	public void delete() {
-		rf.beforeFirst();
-		while (rf.hasNext()) {
-			rf.delete();
-		}
+		rf.clear();
 	}
 	
 	public void deleteRecord(List<Record> records) {
@@ -113,10 +128,9 @@ public class TableFile {
 	public void updateRecord(Record record) {
 		int pos = 0;
 		for (Data data : record.getData()) {
-			DataType type = data.getType();
 			String fieldName = ti.schema().getFromColumn(pos).getColumnName();
-			if (type instanceof IntegerType) {
-				rf.setInt(fieldName, (int)data.getValue());
+			if (data == null) {
+				rf.setString(fieldName, "null");
 			} else {
 				rf.setString(fieldName, data.storageValue());
 			}
@@ -136,11 +150,16 @@ public class TableFile {
 		rf.insert();
 		int pos = 0;
 		for (Data data : record.getData()) {
-			DataType type = data.getType();
 			String fieldName = ti.schema().getFromColumn(pos).getColumnName();
-			if (type instanceof IntegerType) {
-				rf.setInt(fieldName, (int)data.getValue());
+			if (data == null) {
+				rf.setString(fieldName, "null");
 			} else {
+				/*
+				DataType type = ti.schema().getFromColumn(pos).getType();
+				if (type instanceof IntegerType) {
+					System.out.println(data.storageValue().length());
+				}
+				*/
 				rf.setString(fieldName, data.storageValue());
 			}
 			pos++;

@@ -12,7 +12,8 @@ public class ExistsPredicate extends Predicate {
 	
 	public boolean neg;
 	public Plan subPlan;
-	public DataType type;
+	
+	private DataType type;
 
 	public ExistsPredicate(boolean neg, Plan subPlan) {
 		this.neg = neg;
@@ -45,5 +46,10 @@ public class ExistsPredicate extends Predicate {
 	@Override
 	public DataType getType() {
 		return type;
+	}
+
+	@Override
+	public boolean existsFunction() {
+		return false;
 	}
 }

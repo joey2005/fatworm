@@ -19,4 +19,6 @@ public abstract class Predicate {
 	public abstract Data calc(Record record);
 	
 	public abstract DataType getType();
+	
+	public abstract boolean existsFunction();
 }

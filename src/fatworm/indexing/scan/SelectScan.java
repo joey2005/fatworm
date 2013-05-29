@@ -14,7 +14,6 @@ public class SelectScan extends Scan {
 	public SelectScan(Scan scan, Predicate whereCondition) {
 		this.scan = scan;
 		this.whereCondition = whereCondition;
-		beforeFirst();
 	}
 
 	@Override

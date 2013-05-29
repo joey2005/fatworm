@@ -29,4 +29,9 @@ public class SubQueryPredicate extends Predicate {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public boolean existsFunction() {
+		return false;
+	}
 }

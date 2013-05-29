@@ -77,41 +77,49 @@ public class Statement implements java.sql.Statement {
 			resultSet = null;
 		}
 		
+		if (sql.equals("select name, number as n, score from Classes as c where c.number > ANY(select number from Classes)")) {
+			System.out.println("STOP");
+		}
+		
 		CommonTree tree = null;
 		try {
 			tree = Fatworm.parseQuery(sql);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//System.out.println(tree.toStringTree());
+		} catch (Exception ex) {
+			throw new RuntimeException("parse error");
 		}
 		
-		Scan scan = Fatworm.translateQuery(tree);
-		
-		if (scan instanceof CreateDatabaseScan) {
-			((CreateDatabaseScan) scan).doit();
-		} else if (scan instanceof CreateIndexScan) {
-			((CreateIndexScan) scan).doit();
-		} else if (scan instanceof CreateTableScan) {
-			((CreateTableScan) scan).doit();
-		} else if (scan instanceof DeleteScan) {
-			((DeleteScan) scan).doit();
-		} else if (scan instanceof DropDatabaseScan) {
-			((DropDatabaseScan) scan).doit();
-		} else if (scan instanceof DropIndexScan) {
-			((DropIndexScan) scan).doit();
-		} else if (scan instanceof DropTableScan) {
-			((DropTableScan) scan).doit();
-		} else if (scan instanceof InsertSubQueryScan) {
-			((InsertSubQueryScan) scan).doit();
-		} else if (scan instanceof InsertValueScan) {
-			((InsertValueScan) scan).doit();
-		} else if (scan instanceof UpdateScan) {
-			((UpdateScan) scan).doit();
-		} else if (scan instanceof UseDatabaseScan) {
-			((UseDatabaseScan) scan).doit();
-		} else {
-			Fatworm.bufferMgr().flushAll(Fatworm.txnum);
-			resultSet = new fatworm.driver.ResultSet(scan, connection);
+		try {
+			Scan scan = Fatworm.translateQuery(tree);
+			
+			if (scan instanceof CreateDatabaseScan) {
+				((CreateDatabaseScan) scan).doit();
+			} else if (scan instanceof CreateIndexScan) {
+				((CreateIndexScan) scan).doit();
+			} else if (scan instanceof CreateTableScan) {
+				((CreateTableScan) scan).doit();
+			} else if (scan instanceof DeleteScan) {
+				((DeleteScan) scan).doit();
+			} else if (scan instanceof DropDatabaseScan) {
+				((DropDatabaseScan) scan).doit();
+			} else if (scan instanceof DropIndexScan) {
+				((DropIndexScan) scan).doit();
+			} else if (scan instanceof DropTableScan) {
+				((DropTableScan) scan).doit();
+			} else if (scan instanceof InsertSubQueryScan) {
+				((InsertSubQueryScan) scan).doit();
+			} else if (scan instanceof InsertValueScan) {
+				((InsertValueScan) scan).doit();
+			} else if (scan instanceof UpdateScan) {
+				((UpdateScan) scan).doit();
+			} else if (scan instanceof UseDatabaseScan) {
+				((UseDatabaseScan) scan).doit();
+			} else {
+				Fatworm.bufferMgr().flushAll(Fatworm.txnum);
+				resultSet = new fatworm.driver.ResultSet(scan, connection);
+			}
+		} catch (Exception ex) {
+			
 		}
 		
 		return true;

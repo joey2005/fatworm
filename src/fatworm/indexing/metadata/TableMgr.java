@@ -30,29 +30,28 @@ public class TableMgr {
         fields.add(new AttributeField("fldname", new CharType(MAXLEN)));
         fields.add(new AttributeField("type", new IntegerType()));
         fields.add(new AttributeField("null", new IntegerType()));
-        fields.add(new AttributeField("default", new CharType(MAXLEN * 4)));
+        fields.add(new AttributeField("default", new CharType(200)));
         fields.add(new AttributeField("autoinc", new IntegerType()));
         Schema fcatSchema = new Schema("fldcat", fields);
         fcatInfo = new TableInfo("fldcat", fcatSchema);
         
         List<AttributeField> fields2 = new ArrayList<AttributeField>();
-        fields2.add(new AttributeField("fake", new IntegerType()));
+        fields2.add(new AttributeField("fake", new CharType(MAXLEN)));
         Schema fakeSchema = new Schema("fakeTable", fields2);
         fakeInfo = new TableInfo("fakeTable", fakeSchema);
-
-        if (isnew) {
-            createTable("fldcat", fcatSchema);
-            
-            createTable("fakeTable", fakeSchema);
-            RecordFile fakefile = new RecordFile(fakeInfo);
-            for (AttributeField af : fakeSchema.getAllFields()) {
-                String fldname = af.getColumnName();
-                fakefile.insert();
-                fakefile.setInt("fake", 0);
-            }
-            fakefile.close();
-            
-        } else {
+        
+        createTable("fldcat", fcatSchema);
+        
+        createTable("fakeTable", fakeSchema);
+        RecordFile fakefile = new RecordFile(fakeInfo);
+        for (AttributeField af : fakeSchema.getAllFields()) {
+            String fldname = af.getColumnName();
+            fakefile.insert();
+            fakefile.setString("fake", "0");
+        }
+        fakefile.close();
+  
+        if (!isnew) {
             RecordFile fcatfile = new RecordFile(fcatInfo);
             Map<String, List<AttributeField>> mapping = new HashMap<String, List<AttributeField>>();
             while (fcatfile.hasNext()) {

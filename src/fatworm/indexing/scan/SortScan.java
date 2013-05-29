@@ -39,7 +39,6 @@ public class SortScan extends Scan {
 		this.orders = orders;
 		
 		prepare();
-		beforeFirst();
 	}
 	
 	private Record[] list, tmp;
@@ -49,6 +48,7 @@ public class SortScan extends Scan {
 			order.prepare(schema);
 		}
 		ArrayList<Record> tmpList = new ArrayList<Record>();
+		scan.beforeFirst();
 		while (scan.hasNext()) {
 			Record record = scan.next();
 			tmpList.add(record);
@@ -61,6 +61,9 @@ public class SortScan extends Scan {
 		tmp = new Record[list.length];
 		
 		qsort(0, list.length);
+		
+		this.next = null;
+		this.pos = 0;
 	}
 	
 	private void qsort(int left, int right) {
@@ -69,20 +72,20 @@ public class SortScan extends Scan {
 		}
 		int mid = (left + right) / 2;
 		qsort(left, mid);
-		qsort(mid + 1, right);
-		int i = left, j = right, pos = left;
+		qsort(mid, right);
+		int i = left, j = mid, ptr = left;
 		while (i < mid && j < right) {
 			if (compareTo(list[i], list[j]) < 0) {
-				tmp[pos++] = list[i++];
+				tmp[ptr++] = list[i++];
 			} else {
-				tmp[pos++] = list[j++];
+				tmp[ptr++] = list[j++];
 			}
 		}
 		while (i < mid) {
-			tmp[pos++] = list[i++];
+			tmp[ptr++] = list[i++];
 		}
 		while (j < right) {
-			tmp[pos++] = list[j++];
+			tmp[ptr++] = list[j++];
 		}
 		for (i = left; i < right; ++i) {
 			list[i] = tmp[i];
@@ -94,7 +97,7 @@ public class SortScan extends Scan {
 			int result = r1.getFromColumn(order.columnIndex).compareTo(
 					r2.getFromColumn(order.columnIndex));
 			if (result != 0) {
-				return result;
+				return order.ascending ? result : -result;
 			}
 		}
 		return 0;
@@ -126,8 +129,7 @@ public class SortScan extends Scan {
 
 	@Override
 	public void beforeFirst() {
-		next = null;
-		pos = 0;
+		prepare();
 	}
 
 	@Override

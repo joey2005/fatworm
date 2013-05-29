@@ -17,7 +17,6 @@ public class TableScan extends Scan {
 	public TableScan(String tableName) {
 		this.ti = Fatworm.metadataMgr().getTableInfo(tableName);
 		this.tf = Fatworm.metadataMgr().getTableAccess(tableName);
-		beforeFirst();
 	}
 
 	@Override

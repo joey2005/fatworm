@@ -16,13 +16,10 @@ public class TimestampData extends Data {
 	public int compareTo(Data arg0) {
 		if (arg0 instanceof TimestampData) {
 			TimestampData o = (TimestampData)arg0;
-			if (isNull()) {
-				return o.isNull() ? 0 : -1;
-			}
-			if (o.isNull()) {
+			if (isNull() || o.isNull()) {
 				return 1;
 			}
-			return this.compareTo(o);
+			return time.compareTo(o.time);
 		}
 		return 0x0fffffff;
 	}

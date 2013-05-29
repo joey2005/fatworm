@@ -29,13 +29,10 @@ public class IntegerData extends NumberData {
 	}
 
 	public int compareTo(Data o) {
+		if (isNull() || o.isNull()) {
+			return 1;
+		}
 		if (o instanceof IntegerData) {
-			if (isNull()) {
-				return o.isNull() ? 0 : -1;
-			}
-			if (o.isNull()) {
-				return 1;
-			}
 			IntegerData data = (IntegerData) o;
 			return i.compareTo(data.i);
 		}
@@ -106,8 +103,7 @@ public class IntegerData extends NumberData {
 		if (i == null) {
 			return type.getDefaultValue().storageValue();
 		}
-		byte[] buf = Lib.bytesFromInt(i);
-		return new String(buf);
+		return i.toString();
 	}
 
 }

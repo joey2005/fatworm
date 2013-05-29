@@ -5,10 +5,7 @@ public abstract class StringData extends Data {
 	public int compareTo(Data o) {
 		if (o instanceof StringData) {
 			StringData str = (StringData) o;
-			if (isNull()) {
-				return str.isNull() ? 0 : -1;
-			}
-			if (str.isNull()) {
+			if (isNull() || o.isNull()) {
 				return 1;
 			}
 			return getValue().compareTo(str.getValue());

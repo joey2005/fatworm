@@ -25,10 +25,7 @@ public class FloatData extends NumberData {
 
 	public int compareTo(Data o) {
 		if (o instanceof NumberData) {
-			if (isNull()) {
-				return o.isNull() ? 0 : -1;
-			}
-			if (o.isNull()) {
+			if (isNull() || o.isNull()) {
 				return 1;
 			}
 			if (o instanceof FloatData) {
@@ -105,7 +102,6 @@ public class FloatData extends NumberData {
 		if (f == null) {
 			return type.getDefaultValue().storageValue();
 		}
-		byte[] buf = Lib.bytesFromInt(Float.floatToIntBits(f));
-		return new String(buf);
+		return f.toString();
 	}
 }

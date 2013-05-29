@@ -12,7 +12,6 @@ public class RenameScan extends Scan {
 	public RenameScan(Scan scan, Schema schema) {
 		this.scan = scan;
 		this.schema = schema;
-		beforeFirst();
 	}
 
 	@Override

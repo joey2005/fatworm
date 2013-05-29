@@ -14,7 +14,7 @@ public class DecimalType extends NumberType {
 	public DecimalType(int precision, int scale) {
 		this.precision = precision;
 		this.scale = scale;
-		this.storageRequired = getStoreSize(precision);
+		this.storageRequired = precision + scale + 1;
 	}
 
 	@Override
@@ -65,23 +65,6 @@ public class DecimalType extends NumberType {
 
 	public int getScale() {
 		return scale;
-	}
-
-	protected static int getStoreSize(int k) {
-		if (k == 0) {
-			return 0;
-		}
-		int result = 0;
-		BigInteger b = BigInteger.ONE;
-		BigInteger two = b.add(BigInteger.ONE);
-		for (int i = 0; i < k; i++) {
-			b = b.multiply(BigInteger.valueOf(10));
-		}
-		while (b.compareTo(BigInteger.ONE) >= 0) {
-			b = b.divide(two);
-			result++;
-		}
-		return (result - 1) / 8 + 1;
 	}
 	
 	@Override

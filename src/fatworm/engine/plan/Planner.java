@@ -159,7 +159,7 @@ public class Planner {
 			cur.getType() == Symbol.GROUP) {
 				// select_suffix*
 				break;
-			} else if (cur.getType() == Symbol.MUL) {
+			} else if (cur.getType() == Symbol.MUL && cur.getChildCount() == 0) {
 				// '*'
 				selectAll = true;
 			} else if (cur.getType() == Symbol.AS) {
@@ -256,60 +256,74 @@ public class Planner {
 		result = new SelectPlan(result, whereCondition);
 		
 		//group_by_clause
+		boolean changed = false;
+		Set<FuncPredicate> allfs = new HashSet<FuncPredicate>();
+		for (Predicate p : projectList) {
+			allfs.addAll(getAllFunc(p));
+		}
+		List<Predicate> projectList2 = new ArrayList<Predicate>(projectList);
+		Predicate havingCondition = null;
 		if (groupBy != null) {
-			Predicate havingCondition = null;
 			if (havingConditionTree != null) {
 				havingCondition = getCondition(havingConditionTree, "");
 			}
 			if (havingCondition != null) {
-				Set<FuncPredicate> allfs = getAllFunc(havingCondition);
-				List<Predicate> projectList2 = new ArrayList<Predicate>(projectList);
-				boolean changed = false;
-				for (FuncPredicate fp : allfs) {
-					boolean contained = false;
-					for (Predicate p : projectList2) {
-						if (p.toString().equals(fp.toString())) {
-							contained = true;
-							break;
-						}
-					}
-					if (!contained) {
-						projectList2.add(fp);
-						changed = true;
-					}
-				}
+				allfs.addAll(getAllFunc(havingCondition));
+			}
+		}
 				
-				result = new ProjectPlan(result, projectList2, groupBy);
+		for (FuncPredicate fp : allfs) {
+			boolean contained = false;
+			for (Predicate p : projectList2) {
+				if (p.toString().equals(fp.toString())) {
+					contained = true;
+					break;
+				}
+			}
+			if (!contained) {
+				projectList2.add(fp);
+				changed = true;
+			}
+		}
+				
+		if (changed) {
+			result = new ProjectPlan(result, projectList2, groupBy);
+			if (havingCondition != null) {
 				Schema schema = result.getSchema();
 				Predicate predict = translateHavingCondition(havingCondition, schema.getTableName());
 				result = new SelectPlan(result, predict);
-				
-				if (changed) {
-					List<Predicate> projectList3 = new ArrayList<Predicate>();
-					String tableName = result.getSchema().getTableName();
-					for (Predicate p : projectList) {
-						if (p instanceof ConstantPredicate) {
-							ConstantPredicate cp = (ConstantPredicate) p;
-							projectList3.add(new VariablePredicate(tableName + "." + cp.toString(), cp.getType()));
-						} else if (p instanceof FuncPredicate) {
-							FuncPredicate fp = (FuncPredicate) p;
-							projectList3.add(new VariablePredicate(tableName + "." + fp.toString(), fp.getType()));
-						} else if (p instanceof NumberCalcPredicate) {
-							NumberCalcPredicate np = (NumberCalcPredicate) p;
-							projectList3.add(new VariablePredicate(tableName + "." + np.toString(), np.getType()));
-						} else if (p instanceof VariablePredicate) {
-							VariablePredicate vp = (VariablePredicate) p;
-							projectList3.add(new VariablePredicate(tableName + "." + vp.toString(), vp.getType()));
-						}
-					}
-					result = new ProjectPlan(result, projectList3, null);
+			}
+			
+			List<Predicate> projectList3 = new ArrayList<Predicate>();
+			String tableName = result.getSchema().getTableName();
+			for (Predicate p : projectList) {
+				if (p instanceof ConstantPredicate) {
+					ConstantPredicate cp = (ConstantPredicate) p;
+					projectList3.add(new VariablePredicate(tableName + "." + cp.toString(), cp.getType()));
+				} else if (p instanceof FuncPredicate) {
+					FuncPredicate fp = (FuncPredicate) p;
+					projectList3.add(new VariablePredicate(tableName + "." + fp.toString(), fp.getType()));
+				} else if (p instanceof NumberCalcPredicate) {
+					NumberCalcPredicate np = (NumberCalcPredicate) p;
+					projectList3.add(new VariablePredicate(tableName + "." + np.toString(), np.getType()));
+				} else if (p instanceof VariablePredicate) {
+					VariablePredicate vp = (VariablePredicate) p;
+					projectList3.add(new VariablePredicate(tableName + "." + vp.toString(), vp.getType()));
+				}
+			}
+			result = new ProjectPlan(result, projectList3, null);
+		} else {
+			if (groupBy != null) {
+				result = new ProjectPlan(result, projectList, groupBy);
+				if (havingCondition != null) {
+					Schema schema = result.getSchema();
+					Predicate predict = translateHavingCondition(havingCondition, schema.getTableName());
+					result = new SelectPlan(result, predict);					
 				}
 			} else {
-				result = new ProjectPlan(result, projectList, groupBy);
-			}
-		} else {
-			if (!selectAll) {
-				result = new ProjectPlan(result, projectList, null);
+				if (!selectAll) {
+					result = new ProjectPlan(result, projectList, null);
+				}
 			}
 		}
 		
@@ -391,10 +405,11 @@ public class Planner {
 			return new InPredicate(translateHavingCondition(((InPredicate) p).value, tableName), 
 					((InPredicate) p).subPlan);
 		} else if (p instanceof NumberCalcPredicate) {
-			return new NumberCalcPredicate(translateHavingCondition(((NumberCalcPredicate) p).lhs, tableName), 
-					translateHavingCondition(((NumberCalcPredicate) p).rhs, tableName), 
-					((NumberCalcPredicate) p).oper,
-					((NumberCalcPredicate) p).type);
+			NumberCalcPredicate ncp = (NumberCalcPredicate) p;
+			return new NumberCalcPredicate(translateHavingCondition(ncp.lhs, tableName), 
+					translateHavingCondition(ncp.rhs, tableName), 
+					ncp.oper,
+					ncp.getType());
 		}
 		return p;
 	}
@@ -739,7 +754,7 @@ public class Planner {
 			String colName = translateColName(tableName, child.getChild(0));
 			DataType type = getType(colName);
 			return new FuncPredicate(child.getType(), new VariablePredicate(colName, type));
-		} else if (child.getType() == Symbol.MINUS) {
+		} else if (child.getType() == Symbol.MINUS && child.getChildCount() == 1) {
 			// -^ atom
 			Predicate left = new ConstantPredicate(new IntegerData(0, new IntegerType()));
 			Predicate right = translateAtom(child.getChild(0), tableName);
@@ -780,6 +795,9 @@ public class Planner {
 			}
 		} else if (child.getType() == Symbol.STRING_LITERAL) {
 			String c = child.toString();
+			if (c.length() >= 2 && c.charAt(0) == '\'' && c.charAt(c.length() - 1) == '\'') {
+				c = c.substring(1, c.length() - 1);
+			}
 			return new ConstantPredicate(new CharType(c.length()).valueOf(c));
 		} else if (child.getType() == Symbol.FLOAT_LITERAL) {
 			return new ConstantPredicate(new FloatType().valueOf(child.toString()));
@@ -802,7 +820,11 @@ public class Planner {
 		DataType result = null;
 		if (t1 instanceof IntegerType) {
 			if (t2 instanceof IntegerType) {
-				result = new IntegerType();
+				if (op == Symbol.DIV) {
+					result = new FloatType();
+				} else {
+					result = new IntegerType();
+				}
 			} else if (t2 instanceof FloatType) {
 				result = new FloatType();
 			} else if (t2 instanceof DecimalType) {
@@ -813,7 +835,7 @@ public class Planner {
 			
 		} else if (t1 instanceof FloatType) {
 			if (t2 instanceof IntegerType) {
-				result = new IntegerType();
+				result = new FloatType();
 			} else if (t2 instanceof FloatType) {
 				result = new FloatType();
 			} else if (t2 instanceof DecimalType) {

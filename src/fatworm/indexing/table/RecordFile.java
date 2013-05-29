@@ -60,6 +60,17 @@ public class RecordFile {
 		rp.delete();
 	}
 	
+	public void clear() {
+		moveTo(0);
+		while (true) {
+			rp.clear();
+			if (atLastBlock()) {
+				break;
+			}
+			moveTo(currentblocknum + 1);
+		}
+	}
+	
 	public void insert() {
 		while (!rp.insert()) {
 			if (atLastBlock()) {

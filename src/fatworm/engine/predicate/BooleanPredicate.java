@@ -11,7 +11,8 @@ public class BooleanPredicate extends Predicate {
 	
 	public Predicate lhs, rhs;
 	public int oper;
-	public DataType type;
+	
+	private DataType type;
 	
 	public BooleanPredicate(Predicate lhs, Predicate rhs, int oper) {
 		this.lhs = lhs;
@@ -29,6 +30,9 @@ public class BooleanPredicate extends Predicate {
 	public Data calc(Record record) {
 		Data d1 = lhs.calc(record);
 		Data d2 = rhs.calc(record);
+		if (d1.isNull() || d2.isNull()) {
+			return BooleanData.NULL;
+		}
 		if (!(d1 instanceof BooleanData) || !(d2 instanceof BooleanData)) {
 			try {
 				throw new Exception("BooleanPredicate Error");
@@ -51,5 +55,10 @@ public class BooleanPredicate extends Predicate {
 	@Override
 	public DataType getType() {
 		return type;
+	}
+
+	@Override
+	public boolean existsFunction() {
+		return lhs.existsFunction() || rhs.existsFunction();
 	}
 }

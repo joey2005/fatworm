@@ -19,7 +19,6 @@ public class DistinctScan extends Scan {
 		}
 		
 		this.scan = new SortScan(scan, sorts);
-		this.beforeFirst();
 	}
 
 	@Override

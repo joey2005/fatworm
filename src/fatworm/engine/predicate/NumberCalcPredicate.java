@@ -11,7 +11,8 @@ public class NumberCalcPredicate extends Predicate {
 
 	public Predicate lhs, rhs;
 	public int oper;
-	public NumberType type;
+	
+	private NumberType type;
 	
 	public NumberCalcPredicate(Predicate lhs, Predicate rhs, int oper, NumberType type) {
 		this.lhs = lhs;
@@ -42,6 +43,9 @@ public class NumberCalcPredicate extends Predicate {
 	public Data calc(Record record) {
 		Data d1 = lhs.calc(record);
 		Data d2 = rhs.calc(record);
+		if (d1.isNull() || d2.isNull()) {
+			return d1;
+		}
 		if (!(d1 instanceof NumberData) || !(d2 instanceof NumberData)) {
 			try {
 				throw new Exception("NumberCalcPredicate error");
@@ -66,8 +70,12 @@ public class NumberCalcPredicate extends Predicate {
 		return null;
 	}
 
-	@Override
-	public DataType getType() {
+	public NumberType getType() {
 		return type;
+	}
+
+	@Override
+	public boolean existsFunction() {
+		return lhs.existsFunction() || rhs.existsFunction();
 	}
 }

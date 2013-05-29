@@ -13,7 +13,8 @@ public class BooleanCompPredicate extends Predicate {
 	
 	public Predicate lhs, rhs;
 	public int oper;
-	public DataType type;
+	
+	private DataType type;
 	
 	public BooleanCompPredicate(Predicate lhs, Predicate rhs, int oper) {
 		this.lhs = lhs;
@@ -46,6 +47,9 @@ public class BooleanCompPredicate extends Predicate {
 	public Data calc(Record record) {
 		Data d1 = lhs.calc(record);
 		Data d2 = rhs.calc(record);
+		if (d1.isNull() || d2.isNull()) {
+			return BooleanData.NULL;
+		}
 		boolean n1 = (d1 instanceof NumberData);
 		boolean n2 = (d2 instanceof NumberData);
 		if (n1 != n2) {
@@ -58,11 +62,11 @@ public class BooleanCompPredicate extends Predicate {
 		}
 		int compKey = -1;
 		if (!n1) {
-			if ((d1 instanceof StringData) || (d2 instanceof StringData)) {
+			if ((d1 instanceof StringData) && (d2 instanceof StringData)) {
 				compKey = d1.toString().compareTo(d2.toString());
 			} else {
-				java.sql.Date left = (java.sql.Date)d1.getValue();
-				java.sql.Date right = (java.sql.Date)d2.getValue();
+				java.sql.Timestamp left = java.sql.Timestamp.valueOf(d1.toString());
+				java.sql.Timestamp right = java.sql.Timestamp.valueOf(d2.toString());
 				compKey = left.compareTo(right);
 			}
 		} else {
@@ -87,6 +91,11 @@ public class BooleanCompPredicate extends Predicate {
 	@Override
 	public DataType getType() {
 		return type;
+	}
+
+	@Override
+	public boolean existsFunction() {
+		return lhs.existsFunction() || rhs.existsFunction();
 	}
 	
 }

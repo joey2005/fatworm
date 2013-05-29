@@ -17,7 +17,6 @@ public class ProjectScan extends Scan {
 		
 		public NormalScan(Scan s) {
 			this.scan = s;
-			beforeFirst();
 		}
 
 		@Override
@@ -76,6 +75,80 @@ public class ProjectScan extends Scan {
 		
 	}
 	
+	private class SingleScan extends Scan {
+		
+		private Scan scan;
+		private Record next;
+		
+		public SingleScan(Scan s) {
+			scan = s;
+			prepare();
+		}
+		
+		private void prepare() {
+			List<Record> sublists = new ArrayList<Record>();
+			scan.beforeFirst();
+			while (scan.hasNext()) {
+				sublists.add(scan.next());
+			}
+			
+			for (Predicate p : pList) {
+				if (p instanceof FuncPredicate) {
+					FuncPredicate fp = (FuncPredicate) p;
+					fp.prepare(sublists);
+				}
+			}
+			
+			List<Data> datas = new ArrayList<Data>();
+			for (Predicate p : pList) {
+				if (sublists.isEmpty()) {
+					datas.add(p.calc(null));
+				} else {
+					datas.add(p.calc(sublists.get(0)));
+				}
+			}
+			
+			next = new Record(datas, getSchema());
+		}
+
+		@Override
+		public boolean hasNext() {
+			return next != null;
+		}
+
+		@Override
+		public Record next() {
+			Record result = next;
+			next = null;
+			return result;
+		}
+
+		@Override
+		public Schema getSchema() {
+			return ProjectScan.this.getSchema();
+		}
+
+		@Override
+		public void beforeFirst() {
+			prepare();
+		}
+
+		@Override
+		public void close() {
+			if (scan != null) {
+				scan.close();
+				scan = null;
+			}
+			next = null;
+		}
+
+		@Override
+		public String toString() {
+			return "single scan(" + scan.toString() + ")";
+		}
+		
+	}
+	
 	private class GroupByScan extends Scan {
 
 		private Scan scan;
@@ -92,11 +165,6 @@ public class ProjectScan extends Scan {
 			} else {
 				scan = null;
 			}
-			
-			beforeFirst();
-			
-			start = false;
-			finish = false;
 		}
 
 		@Override
@@ -129,14 +197,24 @@ public class ProjectScan extends Scan {
 					}
 					sublists.add(now);
 				}
-				
-				List<Data> datas = new ArrayList<Data>();
+				if (finish) {
+					return false;
+				}
+
 				for (Predicate p : pList) {
 					if (p instanceof FuncPredicate) {
 						FuncPredicate fp = (FuncPredicate) p;
 						fp.prepare(sublists);
 					}
-					datas.add(p.calc(sublists.get(0)));
+				}
+				
+				List<Data> datas = new ArrayList<Data>();
+				for (Predicate p : pList) {
+					if (sublists.isEmpty()) {
+						datas.add(p.calc(null));
+					} else {
+						datas.add(p.calc(sublists.get(0)));
+					}
 				}
 				
 				next = new Record(datas, getSchema());
@@ -158,7 +236,12 @@ public class ProjectScan extends Scan {
 
 		@Override
 		public void beforeFirst() {
+			if (scan != null) {
+				scan.beforeFirst();
+			}
 			next = null;
+			start = false;
+			finish = false;
 		}
 
 		@Override
@@ -189,15 +272,26 @@ public class ProjectScan extends Scan {
 		
 		if (s != null) {
 			if (groupBy == null) {
-				this.scan = new NormalScan(s);
+				if (hasFunction()) {
+					scan = new SingleScan(s);
+				} else {
+					scan = new NormalScan(s);
+				}
 			} else {
-				this.scan = new GroupByScan(s);
+				scan = new GroupByScan(s);
 			}
 		} else {
-			this.scan = null;
+			scan = null;
 		}
-		
-		beforeFirst();
+	}
+	
+	private boolean hasFunction() {
+		for (Predicate p : pList) {
+			if (p.existsFunction()) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	private Record next;
@@ -230,6 +324,9 @@ public class ProjectScan extends Scan {
 
 	@Override
 	public void beforeFirst() {
+		if (scan != null) {
+			scan.beforeFirst();
+		}
 		next = null;
 	}
 

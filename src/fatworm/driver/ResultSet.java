@@ -22,6 +22,7 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.Map;
 
+import fatworm.indexing.data.Data;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
@@ -383,7 +384,11 @@ public class ResultSet implements java.sql.ResultSet {
 
 	@Override
 	public Object getObject(int columnIndex) throws SQLException {
-		return record.getFromColumn(columnIndex - 1).getValue();
+		Data result = record.getFromColumn(columnIndex - 1);
+		if (result == null) {
+			return null;
+		}
+		return result.getValue();
 	}
 
 	@Override
@@ -633,6 +638,7 @@ public class ResultSet implements java.sql.ResultSet {
 
 	@Override
 	public boolean next() throws SQLException {
+		//System.out.println(scan.toString());
 		boolean result = scan.hasNext();
 		record = scan.next();
 		return result;

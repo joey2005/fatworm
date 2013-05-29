@@ -22,6 +22,18 @@ public class Record {
 	public List<Data> getData() {
 		return datas;
 	}
+	
+	public void setValue(int columnIndex, Data data) {
+		List<Data> tmp = new ArrayList<Data>();
+		for (int i = 0; i < datas.size(); ++i) {
+			if (i != columnIndex) {
+				tmp.add(datas.get(i));
+			} else {
+				tmp.add(data);
+			}
+		}
+		datas = tmp;
+	}
 
 	/**
 	 * get data from specific column
@@ -44,5 +56,22 @@ public class Record {
 		} else {
 			return datas.get(index);
 		}
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (!(o instanceof Record)) {
+			return false;
+		}
+		Record r = (Record) o;
+		if (r.datas.size() != datas.size()) {
+			return false;
+		}
+		for (int i = 0; i < datas.size(); ++i) {
+			if (!(datas.get(i).equals(r.datas.get(i)))) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

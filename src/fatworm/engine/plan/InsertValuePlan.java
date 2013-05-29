@@ -1,7 +1,7 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.LogicalFileMgr;
-import fatworm.indexing.data.Data;
+import fatworm.indexing.data.*;
 import fatworm.indexing.scan.InsertValueScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.*;
@@ -30,6 +30,8 @@ public class InsertValuePlan extends Plan {
 			for (Predicate p : list) {
 				if (p != null) {
 					tmp[pos] = p.calc(null);
+				} else {
+					tmp[pos] = schema.getFromColumn(pos).defaultValue;
 				}
 				pos++;
 			}
@@ -40,6 +42,8 @@ public class InsertValuePlan extends Plan {
 				int index = schema.indexOf(fieldName);
 				if (list.get(pos) != null) {
 					tmp[index] = list.get(pos).calc(null);
+				} else {
+					tmp[index] = schema.getFromColumn(index).defaultValue;
 				}
 				pos++;
 			}
@@ -49,14 +53,23 @@ public class InsertValuePlan extends Plan {
 			if (af.autoIncrement) {
 				tmp[i] = af.getAutoIncrement();
 			}
-			if (af.defaultValue != null) {
-				tmp[i] = af.getDefault();
+			if (af.isNull == af.ONLY_NOT_NULL && tmp[i].getValue() == null) {
+				//ERROR
+			}
+			if (af.isNull == af.ONLY_NULL && tmp[i].getValue() != null) {
+				//ERROR
 			}
 		}
 		
 		datas = new ArrayList<Data>();
 		for (int i = 0; i < count; ++i) {
-			datas.add(tmp[i]);
+			Data data = null;
+			if (tmp[i] != null) {
+				DataType datatype = tmp[i].getType();
+				DataType realtype = schema.getFromColumn(i).getType();
+				data = realtype.valueOf(tmp[i].toString());
+			}
+			datas.add(data);
 		}
 	}
 	

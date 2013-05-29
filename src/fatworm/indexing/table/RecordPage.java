@@ -1,6 +1,9 @@
 package fatworm.indexing.table;
 
 import static fatworm.storage.file.Page.*;
+
+import java.util.Arrays;
+
 import fatworm.indexing.metadata.TableInfo;
 import fatworm.storage.buffer.Buffer;
 import fatworm.storage.file.Block;
@@ -101,6 +104,13 @@ public class RecordPage {
     		Fatworm.storageMgr().setInt(block, pos, EMPTY);
     	}
     }
+    
+    public void clear() {
+		byte[] buf = new byte[BLOCK_SIZE - 4];
+		Arrays.fill(buf, (byte) 0);
+		Fatworm.storageMgr().setString(block, 0, new String(buf));
+    	Fatworm.storageMgr().setInt(block, 0, 0);
+    }
 
     /**
      * Inserts a new, blank record somewhere in the page.
@@ -124,6 +134,7 @@ public class RecordPage {
     		int pos = currentpos();
     		Fatworm.storageMgr().setInt(block, pos, INUSE);
     	}
+    	//System.out.println(block.toString() + " " + currentSlot);
     	return found;
     	/*
     	boolean found = searchFor(EMPTY);
@@ -149,6 +160,7 @@ public class RecordPage {
      * @return the ID of the current record
      */
     public int currentId() {
+    	//System.out.println(block.toString() + " " + currentSlot);
     	return currentSlot;
     }
 

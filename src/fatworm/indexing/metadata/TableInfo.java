@@ -30,9 +30,7 @@ public class TableInfo {
 		   offsets.put(af.getColumnName(), offset);
 		   DataType type = af.getType();
 		   offset += type.storageRequired();
-		   if (!(type instanceof IntegerType)) {
-			   offset += 4;
-		   }
+		   offset += 4;
 	   }
 	   recordLen = offset;
    }

@@ -69,28 +69,26 @@ public class Fatworm {
 	}
 	
 	public static CommonTree parseQuery(String query) throws Exception {
-		//System.out.println(query);
 		java.io.InputStream inp = new java.io.ByteArrayInputStream(query.getBytes());
         ANTLRInputStream input = new ANTLRInputStream(inp);
         FatwormLexer lexer = new FatwormLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         FatwormParser parser = new FatwormParser(tokens);
         CommonTree result = (CommonTree)parser.statement().getTree();   		
-        //System.out.println(result.toStringTree());
         return result;
 	}
 	
 	public static Scan translateQuery(CommonTree tree) {
-		Planner planner = new Planner(tree);
-		Plan plan = null;
 		Scan result = null;
+		
 		try {
-			plan = planner.generatePlan();
-			//System.out.println(plan.toString());
+			Planner planner = new Planner(tree);
+			Plan plan = planner.generatePlan();
 			result = plan.createScan();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			throw new RuntimeException("cannot create scan");
 		}
+			
 		return result;
 	}
 	

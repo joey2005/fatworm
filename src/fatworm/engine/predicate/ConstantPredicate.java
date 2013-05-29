@@ -26,4 +26,9 @@ public class ConstantPredicate extends Predicate {
 	public DataType getType() {
 		return data.getType();
 	}
+
+	@Override
+	public boolean existsFunction() {
+		return false;
+	}
 }

@@ -1,18 +1,9 @@
 package fatworm.engine.predicate;
 
-import java.util.List;
+import java.util.*;
 
 import fatworm.engine.symbol.Symbol;
-import fatworm.indexing.data.Data;
-import fatworm.indexing.data.DataType;
-import fatworm.indexing.data.DecimalData;
-import fatworm.indexing.data.DecimalType;
-import fatworm.indexing.data.FloatData;
-import fatworm.indexing.data.FloatType;
-import fatworm.indexing.data.IntegerData;
-import fatworm.indexing.data.IntegerType;
-import fatworm.indexing.data.NumberData;
-import fatworm.indexing.data.NumberType;
+import fatworm.indexing.data.*;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.table.Record;
 
@@ -20,28 +11,35 @@ public class FuncPredicate extends Predicate {
 	
 	public int func;
 	public VariablePredicate colName;
-	public DataType type;
 	public Data result;
+	
+	private DataType type;
+	private NumberType restype;
 	
 	public FuncPredicate(int func, VariablePredicate colName) {
 		this.func = func;
 		this.colName = colName;
 		try {
+			restype = null;
 			if (func == Symbol.COUNT) {
 				type = new IntegerType();
-			} else if (func == Symbol.AVG) {
-				if (!(colName.getType() instanceof NumberType)) {
-					throw new Exception("FuncPredicate error: avg");
+			} else if (func == Symbol.AVG || func == Symbol.SUM) {
+				type = colName.getType();
+				if (!(type instanceof NumberType)) {
+					throw new RuntimeException("cannot resolve a type");
 				}
-				type = new DecimalType(20, 10);
+				if (type instanceof IntegerType) {
+					restype = new FloatType();
+				} else if (type instanceof FloatType) {
+					restype = (FloatType) type;
+				} else if (type instanceof DecimalType) {
+					restype = (DecimalType) type;
+				}
 			} else {
 				type = colName.getType();
-				if (!(type instanceof NumberType) && func == Symbol.SUM) {
-					throw new Exception("FuncPredicate error: sum");
-				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			throw new RuntimeException("FuncPredicate construct error");
 		}
 	}
 	
@@ -67,18 +65,17 @@ public class FuncPredicate extends Predicate {
 		result = null;
 		
 		if (func == Symbol.AVG) {
-			DecimalType dtype = (DecimalType)type;
-			result = dtype.valueOf("0");
+			result = restype.valueOf("0");
 			int count = 0;
 			for (Record record : sublists) {
 				NumberData now = (NumberData)record.getFromVariableName(colName.toString());
 				if (now.getValue() != null) {
-					result = NumberData.add((NumberData)result, now, dtype);
+					result = NumberData.add((NumberData)result, now, restype);
 					count++;
 				}
 			}
 			if (count > 0) {
-				result = NumberData.divide((NumberData)result, new IntegerData(count, new IntegerType()), dtype);
+				result = NumberData.divide((NumberData)result, new IntegerData(count, new IntegerType()), restype);
 			} else {
 				result = null;
 			}
@@ -110,24 +107,23 @@ public class FuncPredicate extends Predicate {
 			}
 			result = new IntegerData(count, new IntegerType());
 		} else if (func == Symbol.SUM) {
+			result = restype.valueOf("0");
+			int count = 0;
 			for (Record record : sublists) {
 				Data now = record.getFromVariableName(colName.toString());
 				if (now.getValue() != null) {
-					if (result == null) {
-						try {
-							result = type.valueOf(now);
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					} else if (type instanceof IntegerType) {
-						result = NumberData.add((IntegerData)result, (IntegerData)now, (IntegerType)type);
+					if (type instanceof IntegerType) {
+						result = NumberData.add((FloatData)result, (IntegerData)now, restype);
 					} else if (type instanceof FloatType) {
-						result = NumberData.add((FloatData)result, (FloatData)now, (FloatType)type);
+						result = NumberData.add((FloatData)result, (FloatData)now, restype);
 					} else if (type instanceof DecimalType) {
-						result = NumberData.add((DecimalData)result, (DecimalData)now, (DecimalType)type);
+						result = NumberData.add((DecimalData)result, (DecimalData)now, restype);
 					}
+					count++;
 				}
+			}
+			if (count == 0) {
+				result = null;
 			}
 		}
 	}
@@ -139,6 +135,14 @@ public class FuncPredicate extends Predicate {
 
 	@Override
 	public DataType getType() {
+		if (restype != null) {
+			return restype;
+		}
 		return type;
+	}
+
+	@Override
+	public boolean existsFunction() {
+		return true;
 	}
 }

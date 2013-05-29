@@ -12,7 +12,8 @@ public class InPredicate extends Predicate {
 	
 	public Predicate value;
 	public Plan subPlan;
-	public DataType type;
+	
+	private DataType type;
 	
 	public InPredicate(Predicate value, Plan subPlan) {
 		this.value = value;
@@ -38,6 +39,9 @@ public class InPredicate extends Predicate {
 			}
 		}
 		Data result = value.calc(record);
+		if (result.isNull()) {
+			return BooleanData.NULL;
+		}
 		Scan s = subPlan.createScan();
 		for (s.beforeFirst(); s.hasNext(); ) {
 			Record now = s.next();
@@ -53,5 +57,10 @@ public class InPredicate extends Predicate {
 	public DataType getType() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean existsFunction() {
+		return value.existsFunction();
 	}
 }

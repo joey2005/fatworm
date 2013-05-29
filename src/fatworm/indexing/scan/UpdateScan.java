@@ -45,18 +45,15 @@ public class UpdateScan extends Operation {
 				e.printStackTrace();
 			}
 			if (!ok.isNull() && (Boolean)ok.getValue()) {
-				for (int i = 0; i < count; ++i) {
-					tmp[i] = record.getFromColumn(i);
+				Record result = record;
+				int ptr = 0;
+				for (Predicate p : valueList) {
+					int pos = schema.indexOf(colNameList.get(ptr));
+					Data value = p.calc(result);
+					result.setValue(pos, value);
+					tf.updateRecord(result);
+					ptr++;
 				}
-				for (int i = 0; i < colNameList.size(); ++i) {
-					int pos = schema.indexOf(colNameList.get(i));
-					tmp[pos] = valueList.get(i).calc(record);
-				}
-				ArrayList<Data> datas = new ArrayList<Data>();
-				for (int i = 0; i < count; ++i) {
-					datas.add(tmp[i]);
-				}
-				tf.updateRecord(new Record(datas, schema));
 			}
 		}
 		

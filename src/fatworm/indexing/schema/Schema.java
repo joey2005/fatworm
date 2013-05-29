@@ -65,8 +65,14 @@ public class Schema {
 					}
 				}
 			} else {
-				if (name.equals(colName)) {
-					return i;
+				if (posj > 0 && name.substring(posj + 1).indexOf(".") > 0) {
+					if (name.endsWith(colName)) {
+						return i;
+					}
+				} else {
+					if (name.equals(colName)) {
+						return i;
+					}
 				}
 			}
 		}

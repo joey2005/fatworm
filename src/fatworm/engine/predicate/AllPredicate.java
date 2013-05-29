@@ -14,7 +14,8 @@ public class AllPredicate extends Predicate {
 	public Predicate value;
 	public int oper;
 	public Plan subPlan;
-	public DataType type;
+	
+	private DataType type;
 	
 	public AllPredicate(Predicate value, String oper, Plan subPlan) {
 		this.value = value;
@@ -73,6 +74,9 @@ public class AllPredicate extends Predicate {
 			}
 		}
 		Data result = value.calc(record);
+		if (result.isNull()) {
+			return BooleanData.NULL;
+		}
 		Scan s = subPlan.createScan();
 		for (s.beforeFirst(); s.hasNext(); ) {
 			Record now = s.next();
@@ -81,7 +85,7 @@ public class AllPredicate extends Predicate {
 					new ConstantPredicate(result),
 					new ConstantPredicate(data),
 					oper);
-			if (!test.equals(BooleanData.TRUE)) {
+			if (!test.calc(null).equals(BooleanData.TRUE)) {
 				return BooleanData.FALSE;
 			}
 		}
@@ -91,6 +95,11 @@ public class AllPredicate extends Predicate {
 	@Override
 	public DataType getType() {
 		return type;
+	}
+
+	@Override
+	public boolean existsFunction() {
+		return value.existsFunction();
 	}
 
 }
