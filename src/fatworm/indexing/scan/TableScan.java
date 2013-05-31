@@ -8,22 +8,34 @@ import fatworm.indexing.table.RecordFile;
 import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
 
+import java.util.*;
+
 public class TableScan extends Scan {
 	
 	private TableInfo ti;
 	private TableFile tf;
 	private Record next;
+	private List<Record> table;
+	private int ptr;
 	
 	public TableScan(String tableName) {
 		this.ti = Fatworm.metadataMgr().getTableInfo(tableName);
 		this.tf = Fatworm.metadataMgr().getTableAccess(tableName);
+		
+		prepare();
+	}
+	
+	private void prepare() {
+		tf.beforeFirst();
+		table = tf.records();
+		ptr = 0;
 	}
 
 	@Override
 	public boolean hasNext() {
 		if (next == null) {
-			if (tf.hasNext()) {
-				next = tf.next();
+			if (ptr < table.size()) {
+				next = table.get(ptr++);
 			}
 		}
 		return next != null;
@@ -43,13 +55,14 @@ public class TableScan extends Scan {
 
 	@Override
 	public void beforeFirst() {
-		tf.beforeFirst();
+		ptr = 0;
 		next = null;
 	}
 
 	@Override
 	public void close() {
 		next = null;
+		table.clear();
 		tf.close();
 	}
 

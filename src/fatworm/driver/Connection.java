@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import fatworm.util.Fatworm;
+
 public class Connection implements java.sql.Connection {
 	
 	private List<Statement> statements;
@@ -56,6 +58,9 @@ public class Connection implements java.sql.Connection {
 	public void close() throws SQLException {
 		for (Statement statement : statements) {
 			statement.close();
+		}
+		if (Fatworm.bufferMgr() != null) {
+			Fatworm.bufferMgr().flushAll(Fatworm.txnum);
 		}
 	}
 

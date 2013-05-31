@@ -10,6 +10,7 @@ import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.tree.CommonTree;
 
+import fatworm.engine.optimization.Optimizer;
 import fatworm.engine.parser.FatwormLexer;
 import fatworm.engine.parser.FatwormParser;
 import fatworm.engine.plan.Planner;
@@ -84,6 +85,8 @@ public class Fatworm {
 		try {
 			Planner planner = new Planner(tree);
 			Plan plan = planner.generatePlan();
+			Optimizer optimizer = new Optimizer(plan);
+			plan = optimizer.optimize();
 			result = plan.createScan();
 		} catch (Exception ex) {
 			throw new RuntimeException("cannot create scan");

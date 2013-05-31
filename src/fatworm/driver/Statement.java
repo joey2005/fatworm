@@ -79,11 +79,10 @@ public class Statement implements java.sql.Statement {
 		
 		/*
 		System.out.println(sql);
-		String cmd = "select customer_name\n" +
-				"from borrower\n" +
-				"where exists (select *\n" +
-				"from depositor\n" +
-				"where depositor.customer_name = borrower.customer_name)";
+		String cmd = "select * from\n" +
+				"(select a.ch*10000000+b.ch*1000000+c.ch*100000+d.ch*10000+e.ch*1000+f.ch*100+g.ch*10+h.ch as ans from chars as a, chars as b, chars as c, chars as d, chars as e,chars as f,chars as g,chars as h order by ans) as tab\n" +
+				"where ans <21 or ans > 99999978\n" +
+				"order by ans";
 		if (sql.equals(cmd)) {
 			System.out.println("STOP");
 		}
@@ -123,7 +122,7 @@ public class Statement implements java.sql.Statement {
 			} else if (scan instanceof UseDatabaseScan) {
 				((UseDatabaseScan) scan).doit();
 			} else {
-				Fatworm.bufferMgr().flushAll(Fatworm.txnum);
+				//Fatworm.bufferMgr().flushAll(Fatworm.txnum);
 				resultSet = new fatworm.driver.ResultSet(scan, connection);
 			}
 		} catch (Exception ex) {
