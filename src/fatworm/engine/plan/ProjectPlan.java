@@ -1,6 +1,5 @@
 package fatworm.engine.plan;
 
-import fatworm.indexing.data.Data;
 import fatworm.indexing.data.DataType;
 import fatworm.indexing.scan.ProjectScan;
 import fatworm.indexing.scan.Scan;

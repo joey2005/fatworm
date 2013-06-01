@@ -1,10 +1,11 @@
 package fatworm.indexing.metadata;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 import fatworm.indexing.data.DataType;
-import fatworm.indexing.data.IntegerType;
-import fatworm.indexing.schema.*;
+import fatworm.indexing.schema.AttributeField;
+import fatworm.indexing.schema.Schema;
 
 public class TableInfo {
 

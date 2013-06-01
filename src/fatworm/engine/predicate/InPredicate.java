@@ -7,6 +7,7 @@ import fatworm.indexing.data.Data;
 import fatworm.indexing.data.DataType;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.table.Record;
+import fatworm.util.Fatworm;
 
 public class InPredicate extends Predicate {
 	
@@ -39,21 +40,23 @@ public class InPredicate extends Predicate {
 			}
 		}
 		Data result = value.calc(record);
+		Fatworm.paths.add(record);
 		Scan s = subPlan.createScan();
 		for (s.beforeFirst(); s.hasNext(); ) {
 			Record now = s.next();
 			Data data = now.getFromColumn(0);
 			if (result.compareTo(data) == 0) {
+				Fatworm.paths.remove(Fatworm.paths.size() - 1);
 				return BooleanData.TRUE;
 			}
 		}
+		Fatworm.paths.remove(Fatworm.paths.size() - 1);
 		return BooleanData.FALSE;
 	}
 
 	@Override
 	public DataType getType() {
-		// TODO Auto-generated method stub
-		return null;
+		return type;
 	}
 
 	@Override

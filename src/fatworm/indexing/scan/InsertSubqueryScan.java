@@ -1,13 +1,11 @@
 package fatworm.indexing.scan;
 
-import fatworm.engine.plan.Plan;
-import fatworm.indexing.LogicalFileMgr;
-import fatworm.indexing.schema.Schema;
+import java.util.ArrayList;
+import java.util.List;
+
 import fatworm.indexing.table.Record;
 import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
-
-import java.util.*;
 
 public class InsertSubQueryScan extends Operation {
 	

@@ -3,8 +3,6 @@ package fatworm.engine.plan;
 import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.data.*;
 import fatworm.indexing.schema.*;
-import fatworm.util.Fatworm;
-
 import java.util.*;
 
 import org.antlr.runtime.tree.CommonTree;
@@ -192,7 +190,6 @@ public class Planner {
 				// from clause
 				for (int pos = 0; pos < child.getChildCount(); ++pos) {
 					// tbl_ref
-					Plan tmp = null;
 					Tree cur = child.getChild(pos);
 					
 					if (cur.getType() == Symbol.AS) {
@@ -360,6 +357,7 @@ public class Planner {
 		return result;
 	}
 	
+	/*
 	private Predicate replaceAlias(Predicate p) {
 		if (p instanceof AllPredicate) {
 			AllPredicate ap = (AllPredicate) p;
@@ -408,26 +406,32 @@ public class Planner {
 		}
 		return p;
 	}
+	*/
 
 	private Schema translateSelectExpr(List<Predicate> projectList,
 			List<String> newAlias, Schema schema) {
 		List<AttributeField> attrList = new ArrayList<AttributeField>();
 		boolean changed = false;
 		for (int i = 0; i < projectList.size(); ++i) {
-			AttributeField af = schema.getFromColumn(i);
-			if (newAlias.get(i) != null) {
-				changed = true;
+			if (i < schema.getColumnCount()) {
+				AttributeField af = schema.getFromColumn(i);
+				if (newAlias.get(i) != null) {
+					changed = true;
+					
+					String fieldName = af.colName;
+					int dotpos = fieldName.indexOf(".");
+					String tableName = fieldName.substring(0, dotpos);
+					fieldName = tableName + "." + newAlias.get(i);
+					attrList.add(new AttributeField(fieldName, af.type, af.isNull, af.defaultValue, af.autoIncrement));
 				
-				String fieldName = af.colName;
-				int dotpos = fieldName.indexOf(".");
-				String tableName = fieldName.substring(0, dotpos);
-				fieldName = tableName + "." + newAlias.get(i);
-				attrList.add(new AttributeField(fieldName, af.type, af.isNull, af.defaultValue, af.autoIncrement));
-			
-				ColnameToType.put(newAlias.get(i), af.getType());
-				AliasToColname.put(tableName + "." + newAlias.get(i), af.getColumnName());
+					ColnameToType.put(newAlias.get(i), af.getType());
+					AliasToColname.put(tableName + "." + newAlias.get(i), af.getColumnName());
+				} else {
+					attrList.add(af);
+				}
 			} else {
-				attrList.add(af);
+				Predicate p = projectList.get(i);
+				attrList.add(new AttributeField(schema.getTableName() + "." + p.toString(), p.getType()));
 			}
 		}
 		if (!changed) {

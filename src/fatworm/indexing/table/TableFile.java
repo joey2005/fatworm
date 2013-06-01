@@ -1,13 +1,29 @@
 package fatworm.indexing.table;
 
-import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import fatworm.indexing.data.*;
+import fatworm.indexing.data.BooleanData;
+import fatworm.indexing.data.BooleanType;
+import fatworm.indexing.data.CharData;
+import fatworm.indexing.data.CharType;
+import fatworm.indexing.data.Data;
+import fatworm.indexing.data.DataType;
+import fatworm.indexing.data.DateTimeData;
+import fatworm.indexing.data.DateTimeType;
+import fatworm.indexing.data.DecimalData;
+import fatworm.indexing.data.DecimalType;
+import fatworm.indexing.data.FloatData;
+import fatworm.indexing.data.FloatType;
+import fatworm.indexing.data.IntegerData;
+import fatworm.indexing.data.IntegerType;
+import fatworm.indexing.data.TimestampData;
+import fatworm.indexing.data.TimestampType;
+import fatworm.indexing.data.VarcharData;
+import fatworm.indexing.data.VarcharType;
 import fatworm.indexing.metadata.TableInfo;
 import fatworm.indexing.schema.AttributeField;
 import fatworm.indexing.schema.Schema;
-import fatworm.util.Lib;
 
 public class TableFile {
 

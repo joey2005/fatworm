@@ -1,10 +1,6 @@
 package fatworm.indexing.scan;
 
 import fatworm.indexing.LogicalFileMgr;
-import fatworm.indexing.schema.Schema;
-import fatworm.indexing.table.Record;
-import fatworm.storage.file.FileMgr;
-import fatworm.util.Fatworm;
 
 public class CreateDatabaseScan extends Operation {
 	

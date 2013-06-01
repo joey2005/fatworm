@@ -89,7 +89,8 @@ public class ProjectScan extends Scan {
 			List<Record> sublists = new ArrayList<Record>();
 			scan.beforeFirst();
 			while (scan.hasNext()) {
-				sublists.add(scan.next());
+				Record record = scan.next();
+				sublists.add(record);
 			}
 			
 			for (Predicate p : pList) {

@@ -1,8 +1,6 @@
 package fatworm.indexing.data;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-
 
 public class DecimalType extends NumberType {
 

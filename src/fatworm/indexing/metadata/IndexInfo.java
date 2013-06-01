@@ -1,14 +1,14 @@
 package fatworm.indexing.metadata;
 
-import java.util.*;
-
 import fatworm.indexing.index.Index;
 import fatworm.indexing.schema.Schema;
 
 public class IndexInfo {
 
-    private String indexName, fieldName;
-    private TableInfo ti;
+    @SuppressWarnings("unused")
+	private String indexName, fieldName;
+    @SuppressWarnings("unused")
+	private TableInfo ti;
 
     /**
      * Creates an IndexInfo object for the specified index.
@@ -18,7 +18,8 @@ public class IndexInfo {
      * @param tx the calling transaction
      */
     public IndexInfo(String idxname, String tblname, String fldname) {
-
+    	this.indexName = tblname + "_" + idxname;
+    	this.fieldName = fldname;
     }
 
     /**
@@ -38,7 +39,8 @@ public class IndexInfo {
      * via the table's metadata.
      * @return the schema of the index records
      */
-    private Schema schema() {
+    @SuppressWarnings("unused")
+	private Schema schema() {
     	return null;
     }
 }

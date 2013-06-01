@@ -4,7 +4,8 @@ import java.util.*;
 
 public class IndexMgr {
 
-    private TableInfo ti;
+    @SuppressWarnings("unused")
+	private TableInfo ti;
 
     /**
      * Creates the index manager.

@@ -6,8 +6,6 @@ import fatworm.indexing.scan.InsertValueScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.*;
 import fatworm.indexing.table.Record;
-import fatworm.util.Fatworm;
-
 import java.util.*;
 
 import fatworm.engine.predicate.*;
@@ -60,10 +58,10 @@ public class InsertValuePlan extends Plan {
 					tmp[i] = af.getType().valueOf((String)null);
 				}
 			}
-			if (af.isNull == af.ONLY_NOT_NULL && tmp[i].getValue() == null) {
+			if (af.isNull == AttributeField.ONLY_NOT_NULL && tmp[i].getValue() == null) {
 				//ERROR
 			}
-			if (af.isNull == af.ONLY_NULL && tmp[i].getValue() != null) {
+			if (af.isNull == AttributeField.ONLY_NULL && tmp[i].getValue() != null) {
 				//ERROR
 			}
 			if ((tmp[i] instanceof StringData) && !(tmp[i].getType().equals(af.getType()))) {
@@ -75,7 +73,6 @@ public class InsertValuePlan extends Plan {
 		for (int i = 0; i < count; ++i) {
 			Data data = null;
 			if (tmp[i] != null) {
-				DataType datatype = tmp[i].getType();
 				DataType realtype = schema.getFromColumn(i).getType();
 				data = realtype.valueOf(tmp[i].toString());
 			}

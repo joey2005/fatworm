@@ -22,6 +22,7 @@ public class RenameScan extends Scan {
 		if (next == null) {
 			if (scan.hasNext()) {
 				next = scan.next();
+				next = new Record(next.getData(), getSchema());
 			}
 		}
 		return next != null;

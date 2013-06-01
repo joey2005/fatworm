@@ -8,6 +8,7 @@ public class DecimalData extends NumberData {
 	private BigDecimal d;
 	private DecimalType type;
 
+	@SuppressWarnings("null")
 	public DecimalData(String s, DecimalType type) {
 		this.type = type;
 		if (s != null || s.equals("null")) {

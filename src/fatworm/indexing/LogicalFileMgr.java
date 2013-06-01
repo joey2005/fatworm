@@ -1,10 +1,8 @@
 package fatworm.indexing;
 
-import java.util.*;
+import java.util.List;
 
-import fatworm.indexing.metadata.TableInfo;
 import fatworm.indexing.schema.Schema;
-import fatworm.indexing.table.Record;
 import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
 

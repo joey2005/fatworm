@@ -1,11 +1,10 @@
 package fatworm.indexing.scan;
 
-import fatworm.indexing.schema.Schema;
-import fatworm.indexing.table.Record;
-
 public class DropIndexScan extends Operation {
 	
+	@SuppressWarnings("unused")
 	private String indexName;
+	@SuppressWarnings("unused")
 	private String tableName;
 	
 	public DropIndexScan(String tableName, String indexName) {

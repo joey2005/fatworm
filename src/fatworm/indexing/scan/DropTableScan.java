@@ -1,11 +1,8 @@
 package fatworm.indexing.scan;
 
-import java.util.*;
+import java.util.List;
 
 import fatworm.indexing.LogicalFileMgr;
-import fatworm.indexing.schema.Schema;
-import fatworm.indexing.table.Record;
-import fatworm.util.Fatworm;
 
 public class DropTableScan extends Operation {
 	

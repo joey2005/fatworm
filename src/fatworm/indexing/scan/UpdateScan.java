@@ -1,9 +1,8 @@
 package fatworm.indexing.scan;
 
-import java.util.*;
+import java.util.List;
 
 import fatworm.engine.predicate.Predicate;
-import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.data.BooleanData;
 import fatworm.indexing.data.Data;
 import fatworm.indexing.schema.Schema;
@@ -29,9 +28,6 @@ public class UpdateScan extends Operation {
 
 	@Override
 	public void doit() {
-
-		int count = schema.getColumnCount();
-		Data[] tmp = new Data[count];
 		
 		tf.beforeFirst();
 		while (tf.hasNext()) {

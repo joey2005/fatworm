@@ -1,11 +1,11 @@
 package fatworm.indexing.table;
 
-import static fatworm.storage.file.Page.*;
+import static fatworm.storage.file.Page.BLOCK_SIZE;
+import static fatworm.storage.file.Page.INT_SIZE;
 
 import java.util.Arrays;
 
 import fatworm.indexing.metadata.TableInfo;
-import fatworm.storage.buffer.Buffer;
 import fatworm.storage.file.Block;
 import fatworm.util.Fatworm;
 

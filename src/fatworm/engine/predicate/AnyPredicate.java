@@ -8,6 +8,7 @@ import fatworm.indexing.data.Data;
 import fatworm.indexing.data.DataType;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.table.Record;
+import fatworm.util.Fatworm;
 
 public class AnyPredicate extends Predicate {
 
@@ -75,6 +76,7 @@ public class AnyPredicate extends Predicate {
 		}
 		Data result = value.calc(record);
 		Scan s = subPlan.createScan();
+		Fatworm.paths.add(record);
 		for (s.beforeFirst(); s.hasNext(); ) {
 			Record now = s.next();
 			Data data = now.getFromColumn(0);
@@ -83,9 +85,11 @@ public class AnyPredicate extends Predicate {
 					new ConstantPredicate(data),
 					oper);
 			if (test.calc(null).equals(BooleanData.TRUE)) {
+				Fatworm.paths.remove(Fatworm.paths.size() - 1);
 				return BooleanData.TRUE;
 			}
 		}
+		Fatworm.paths.remove(Fatworm.paths.size() - 1);
 		return BooleanData.FALSE;
 	}
 

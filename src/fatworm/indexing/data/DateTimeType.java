@@ -1,6 +1,5 @@
 package fatworm.indexing.data;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 
 public class DateTimeType extends DataType {
@@ -29,7 +28,7 @@ public class DateTimeType extends DataType {
 	public Data valueOf(Data data) throws Exception {
 		if (data instanceof DateTimeData) {
 			DateTimeData date = (DateTimeData)data;
-			return new DateTimeData((Timestamp)data.getValue(), this);
+			return new DateTimeData((Timestamp)date.getValue(), this);
 		}
 		throw new Exception("Data Format Wrong");
 	}

@@ -1,12 +1,7 @@
 package fatworm.indexing.schema;
 
-import fatworm.indexing.data.*;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
-import fatworm.engine.predicate.*;
 
 public class Schema {
 

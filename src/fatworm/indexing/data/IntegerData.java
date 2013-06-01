@@ -2,8 +2,6 @@ package fatworm.indexing.data;
 
 import java.math.BigDecimal;
 
-import fatworm.util.Lib;
-
 public class IntegerData extends NumberData {
 
 	private Integer i;

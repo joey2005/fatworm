@@ -2,11 +2,8 @@ package fatworm.engine.plan;
 
 import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.scan.TableScan;
 import fatworm.indexing.scan.UpdateScan;
 import fatworm.indexing.schema.*;
-import fatworm.util.Fatworm;
-
 import java.util.*;
 
 import fatworm.engine.predicate.*;

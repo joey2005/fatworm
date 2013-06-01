@@ -1,14 +1,14 @@
 package fatworm.indexing.scan;
 
-import java.util.*;
+import java.util.List;
 
 import fatworm.indexing.schema.Schema;
-import fatworm.indexing.table.Record;
 import fatworm.util.Fatworm;
 
 public class CreateTableScan extends Operation {
 	
 	private Schema schema;
+	@SuppressWarnings("unused")
 	private List<String> primaryKeys;
 	
 	public CreateTableScan(Schema schema, List<String> primaryKeys) {

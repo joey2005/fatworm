@@ -1,19 +1,13 @@
 package fatworm.storage;
 
 import java.io.File;
-import java.util.*;
 
-import fatworm.indexing.metadata.MetadataMgr;
 import fatworm.storage.buffer.Buffer;
-import fatworm.storage.buffer.BufferMgr;
 import fatworm.storage.buffer.PageFormatter;
 import fatworm.storage.file.Block;
-import fatworm.storage.file.FileMgr;
 import fatworm.util.Fatworm;
 
 public class StorageMgr {
-
-    private static final int END_OF_FILE = -1;
 
     private int txnum;
     private BufferList myBuffers = new BufferList();

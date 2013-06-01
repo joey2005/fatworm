@@ -3,6 +3,7 @@ package fatworm.engine.predicate;
 import fatworm.indexing.data.Data;
 import fatworm.indexing.data.DataType;
 import fatworm.indexing.table.Record;
+import fatworm.util.Fatworm;
 
 public class VariablePredicate extends Predicate {
 	
@@ -25,7 +26,16 @@ public class VariablePredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
-		return record.getFromVariableName(variableName);
+		Data res = record.getFromVariableName(variableName);
+		if (res == null) {
+			for (int i = Fatworm.paths.size() - 1; i >= 0; --i) {
+				res = Fatworm.paths.get(i).getFromVariableName(variableName);
+				if (res != null) {
+					break;
+				}
+			}
+		}
+		return res;
 	}
 
 	@Override

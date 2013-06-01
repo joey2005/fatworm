@@ -6,8 +6,6 @@ import fatworm.indexing.schema.*;
 
 import java.util.*;
 
-import org.antlr.runtime.tree.Tree;
-
 public class DropTablePlan extends Plan {
 	
 	public List<String> tableNameList;

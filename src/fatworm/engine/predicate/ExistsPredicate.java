@@ -7,6 +7,7 @@ import fatworm.indexing.data.Data;
 import fatworm.indexing.data.DataType;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.table.Record;
+import fatworm.util.Fatworm;
 
 public class ExistsPredicate extends Predicate {
 	
@@ -34,12 +35,14 @@ public class ExistsPredicate extends Predicate {
 
 	@Override
 	public Data calc(Record record) {
+		Fatworm.paths.add(record);
 		Scan s = subPlan.createScan();
 		s.beforeFirst();
 		boolean exists = s.hasNext();
 		if (neg) {
 			exists = !exists;
 		}
+		Fatworm.paths.remove(Fatworm.paths.size() - 1);
 		return new BooleanData(exists, new BooleanType());
 	}
 

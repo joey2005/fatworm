@@ -1,10 +1,18 @@
 package fatworm.engine.predicate;
 
-import java.util.*;
+import java.util.List;
 
 import fatworm.engine.symbol.Symbol;
-import fatworm.indexing.data.*;
-import fatworm.indexing.scan.Scan;
+import fatworm.indexing.data.Data;
+import fatworm.indexing.data.DataType;
+import fatworm.indexing.data.DecimalData;
+import fatworm.indexing.data.DecimalType;
+import fatworm.indexing.data.FloatData;
+import fatworm.indexing.data.FloatType;
+import fatworm.indexing.data.IntegerData;
+import fatworm.indexing.data.IntegerType;
+import fatworm.indexing.data.NumberData;
+import fatworm.indexing.data.NumberType;
 import fatworm.indexing.table.Record;
 
 public class FuncPredicate extends Predicate {

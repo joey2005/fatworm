@@ -1,14 +1,12 @@
 package fatworm.indexing.scan;
 
-import fatworm.indexing.LogicalFileMgr;
+import java.util.List;
+
 import fatworm.indexing.metadata.TableInfo;
 import fatworm.indexing.schema.Schema;
 import fatworm.indexing.table.Record;
-import fatworm.indexing.table.RecordFile;
 import fatworm.indexing.table.TableFile;
 import fatworm.util.Fatworm;
-
-import java.util.*;
 
 public class TableScan extends Scan {
 	

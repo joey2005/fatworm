@@ -1,13 +1,14 @@
 package fatworm.storage.file;
 
-import fatworm.indexing.metadata.IndexMgr;
-import fatworm.indexing.metadata.TableMgr;
-import fatworm.util.Fatworm;
-
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import fatworm.util.Fatworm;
 
 public class FileMgr {
 

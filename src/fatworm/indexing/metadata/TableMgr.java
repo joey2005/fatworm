@@ -1,18 +1,18 @@
 package fatworm.indexing.metadata;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import fatworm.indexing.LogicalFileMgr;
 import fatworm.indexing.data.CharType;
 import fatworm.indexing.data.Data;
 import fatworm.indexing.data.DataType;
 import fatworm.indexing.data.IntegerType;
 import fatworm.indexing.schema.AttributeField;
 import fatworm.indexing.schema.Schema;
-import fatworm.indexing.table.Record;
 import fatworm.indexing.table.RecordFile;
 import fatworm.indexing.table.TableFile;
-import fatworm.util.Fatworm;
 
 public class TableMgr {
 
@@ -83,11 +83,8 @@ public class TableMgr {
         	createTable("fakeTable", fakeSchema);
         	
 		    RecordFile fakefile = new RecordFile(fakeInfo);
-		    for (AttributeField af : fakeSchema.getAllFields()) {
-		        String fldname = af.getColumnName();
-		        fakefile.insert();
-		        fakefile.setString("fake", "0");
-		    }
+		    fakefile.insert();
+		    fakefile.setString("fake", "0");
 		    fakefile.close();
         }
     }

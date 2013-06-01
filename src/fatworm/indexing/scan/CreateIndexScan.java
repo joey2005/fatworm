@@ -1,17 +1,18 @@
 package fatworm.indexing.scan;
 
-import fatworm.indexing.schema.Schema;
-import fatworm.indexing.table.Record;
-
 public class CreateIndexScan extends Operation {
 	
+	@SuppressWarnings("unused")
 	private String indexName;
+	@SuppressWarnings("unused")
 	private boolean isUnique;
+	@SuppressWarnings("unused")
 	private String tableName;
+	@SuppressWarnings("unused")
 	private String colName;
 	
 	public CreateIndexScan(String tableName, String indexName, String colName, boolean isUnique) {
-		this.tableName = this.tableName;
+		this.tableName = tableName;
 		this.indexName = tableName + "_" + indexName;
 		this.colName = colName;
 		this.isUnique = isUnique;

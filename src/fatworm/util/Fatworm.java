@@ -1,10 +1,8 @@
 package fatworm.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.runtime.ANTLRInputStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -13,15 +11,14 @@ import org.antlr.runtime.tree.CommonTree;
 import fatworm.engine.optimization.Optimizer;
 import fatworm.engine.parser.FatwormLexer;
 import fatworm.engine.parser.FatwormParser;
-import fatworm.engine.plan.Planner;
 import fatworm.engine.plan.Plan;
+import fatworm.engine.plan.Planner;
 import fatworm.indexing.metadata.MetadataMgr;
 import fatworm.indexing.scan.Scan;
-import fatworm.indexing.schema.Schema;
+import fatworm.indexing.table.Record;
 import fatworm.storage.StorageMgr;
 import fatworm.storage.buffer.BufferMgr;
 import fatworm.storage.file.FileMgr;
-import fatworm.test.DriverTest;
 
 public class Fatworm {
 	public static int BUFFER_SIZE = 128;
@@ -33,10 +30,11 @@ public class Fatworm {
 	private static BufferMgr bm;
 	private static MetadataMgr mdm;
 	private static StorageMgr stm;
+	
+	public static List<Record> paths = new ArrayList<Record>();
 
 	public static void main(String[] args) {
-		//Fatworm.init(args[0]);
-		//new DriverTest().test();
+		// Do Nothing
 	}
 	
 	public static void init(String dirname) {
@@ -99,4 +97,5 @@ public class Fatworm {
 	public static BufferMgr bufferMgr() { return bm; }
 	public static MetadataMgr metadataMgr() { return mdm; }
 	public static StorageMgr storageMgr() { return stm; }
+	
 }

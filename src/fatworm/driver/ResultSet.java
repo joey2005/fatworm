@@ -32,6 +32,7 @@ public class ResultSet implements java.sql.ResultSet {
 	private Scan scan;
 	private Record record;
 	private Schema schema;
+	@SuppressWarnings("unused")
 	private Connection connection;
 
 	public ResultSet(Scan scan, Connection connection) {

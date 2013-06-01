@@ -1,11 +1,9 @@
 package fatworm.engine.plan;
 
 import fatworm.indexing.LogicalFileMgr;
-import fatworm.indexing.metadata.*;
 import fatworm.indexing.scan.DeleteScan;
 import fatworm.indexing.scan.Scan;
 import fatworm.indexing.schema.*;
-import fatworm.util.Fatworm;
 import fatworm.engine.predicate.*;
 
 public class DeletePlan extends Plan {
