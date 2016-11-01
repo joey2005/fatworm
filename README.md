@@ -1,3 +1,4 @@
-## This is database course project - FatWorm
+# README #
 
+## What is this for?
 
